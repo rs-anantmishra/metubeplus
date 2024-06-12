@@ -76,21 +76,3 @@ type VideoFormat struct {
 
 //Source - yt-dlp only
 //Operations - DOWNLOAD, READ, DELETE
-
-type Download struct {
-	URL           string
-	Progress      string
-	Filepath      string
-	Channel       string
-	Title         string
-	Description   string
-	Extension     string
-	Duration      string
-	Domain        string
-	OriginalURL   string
-	PlaylistTitle string
-	PlaylistCount string
-	PlaylistIndex string
-	Thumbnail     string
-	Format        string
-}

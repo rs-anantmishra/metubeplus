@@ -4,9 +4,9 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	m "github.com/rsanantmishra/metubeplus/api/middleware"
-	r "github.com/rsanantmishra/metubeplus/api/routes"
-	c "github.com/rsanantmishra/metubeplus/config"
+	m "github.com/rs-anantmishra/metubeplus/api/middleware"
+	r "github.com/rs-anantmishra/metubeplus/api/routes"
+	c "github.com/rs-anantmishra/metubeplus/config"
 )
 
 func main() {

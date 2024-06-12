@@ -21,6 +21,11 @@
 - option to download db so that its manually backed up and restorable.
 - custom names
 - custom command
+- url extraction on page / page change pattern with start and end index
+- add extracted urls to a note and save it with a name 
+- the name is a required field to start extraction.
+- change db to litestream at a later point.
+- Save executed commands. log all failed commands and provide options to show it. (Implement a basic activity Viewer)
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos
@@ -134,7 +139,7 @@ tblVideoFormat
 //////////////////////////////////////////////////////////////////////////////////////////
 
 metubeplus
-	Config
+	Config -> .env file
 		yt_media_directory_location(s) [; separated]
 		local_media_directory_location(s) [; separated]
 		backup_db_location [mounted on container, preferably on another disk]

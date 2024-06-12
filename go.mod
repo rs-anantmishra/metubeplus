@@ -1,4 +1,4 @@
-module github.com/rsanantmishra/metubeplus
+module github.com/rs-anantmishra/metubeplus
 
 go 1.22.2
 
@@ -22,5 +22,3 @@ require (
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 )
-
-replace github.com/rsanantmishra/metubeplus/cmd => ./metubeplus
