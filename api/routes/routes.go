@@ -12,7 +12,7 @@ func SetupRoutes(app *fiber.App) {
 	api := app.Group("/api", logger.New())
 
 	api.Get("/hello", handler.Hello)
-	api.Get("/meta", handler.MetadataCheck)
+	api.Post("/meta", handler.MetadataCheck)
 
 	//routes Videos, Files, Tags
 }

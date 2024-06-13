@@ -32,6 +32,7 @@ type Playlist struct {
 	Id                int
 	Title             string
 	VideoCount        int
+	File              Files
 	ChannelId         int
 	YoutubePlaylistId int
 	CreatedDate       int

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
+	e "github.com/rs-anantmishra/metubeplus/entities"
 	v "github.com/rs-anantmishra/metubeplus/pkg/videos"
 )
 
@@ -11,9 +12,9 @@ func Hello(c *fiber.Ctx) error {
 
 func MetadataCheck(c *fiber.Ctx) error {
 
-	link := c.Query("data")
+	req := new(e.IncomingRequest)
 
-	svcDownloads := v.InstantiateDownload(link)
+	svcDownloads := v.InstantiateDownload(req.DataIdReq)
 	svcRepo := v.InstantiateRepo("")
 
 	svcVideos := v.Instantiate(svcRepo, svcDownloads)

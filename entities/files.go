@@ -25,9 +25,10 @@ const (
 
 // SourceType Constants
 const (
-	Downloaded = iota
-	Uploaded   = iota
-	Local      = iota
+	Downloaded   = iota
+	Uploaded     = iota
+	Local        = iota
+	MetadataOnly = iota
 )
 
 //operation include - UPLOAD/INSERT, READ, DELETE, METADATA INSERT (for files existing locally)

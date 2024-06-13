@@ -1,2 +1,4 @@
 cmd/docs
 cmd/docs/*
+utils/*
+media/*

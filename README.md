@@ -26,6 +26,12 @@
 - the name is a required field to start extraction.
 - change db to litestream at a later point.
 - Save executed commands. log all failed commands and provide options to show it. (Implement a basic activity Viewer)
+- add videos through uploading a file with links
+- add videos list (; separated values)
+- add single video url
+- So the player has option to download videos, access local video via http, upload videos, and then another mode will be where Video will be added to the library but metadata only, but for playing it, web will be accessed as plyr also supports this kind of thing.
+- Option to download subtitles at a later point should be provided in UI
+- Get Subtitles in a different language
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos
@@ -101,7 +107,6 @@ tblFiles
 	Id
 	FileTypeId
 	SourceId
-	DomainId (determines its local, downloaded)
 	FilePath
 	FileName
 	Extension
@@ -113,7 +118,7 @@ tblFiles
 	
 tblSourceType
 	Id
-	Source (Downloaded, Uploaded, Local)
+	Source (Downloaded, Uploaded, Local, Metadata)
 
 tblFileType
 	Id
@@ -154,9 +159,15 @@ metubeplus
 			Domain
 				Channels
 					PlaylistName
-						<FileName>	(Playlist files live inside a Folder)
+						Thumbnails
+						Subtitles	
+						<FileName>	
 					<FileName> (Videos with no playlist are within the Channels Folder)
+					Thumbnails
+					Subtitles	
+
 		Thumbnails
+		Subtitless
 	Uploaded
 		Audio
 		Video	

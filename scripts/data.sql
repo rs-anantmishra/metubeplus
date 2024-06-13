@@ -16,7 +16,8 @@ VALUES('public');
 INSERT INTO tblSourceType (Source)
 VALUES('Downloaded') UNION 
 VALUES('Uploaded') UNION 
-VALUES('Local');
+VALUES('Local') UNION
+VALUES('Metadata') UNION;
 
 INSERT INTO tblFileType (File)
 VALUES('Audio') UNION 
