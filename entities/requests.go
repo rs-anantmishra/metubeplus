@@ -2,7 +2,7 @@ package entities
 
 // Field names should start with an uppercase letter
 type IncomingRequest struct {
-	DataIdReq    string `query:"indicator"`
-	SubtitlesReq bool   `query:"subs"`
-	AudioOnly    bool   `query:"ao"`
+	DataIdReq    string `json:"indicator" form:"indicator"`
+	SubtitlesReq bool   `json:"subs" form:"subs"`
+	AudioOnly    bool   `json:"ao" form:"ao"`
 }
