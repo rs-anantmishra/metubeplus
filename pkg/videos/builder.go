@@ -1,5 +1,11 @@
 package videos
 
+import (
+	"strings"
+
+	c "github.com/rs-anantmishra/metubeplus/config"
+)
+
 type CSwitch struct {
 	Index int
 	Name  string
@@ -11,12 +17,14 @@ type FxGroups struct {
 	Playlist Functions
 	Video    Functions
 	Audio    Functions
+	Generic  Functions
 }
 
 const (
-	Playlist = iota
-	Video    = iota
+	Generic  = iota
 	Audio    = iota
+	Video    = iota
+	Playlist = iota
 )
 
 type Functions struct {
@@ -98,6 +106,26 @@ func BuilderOptions() []CSwitch {
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
+		{Index: 1, Name: `FileSizeApprox`, Value: FileSizeApprox, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 1, Name: `FormatNote`, Value: FormatNote, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 1, Name: `Resolution`, Value: Resolution, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 1, Name: `Categories`, Value: Categories, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
 		{Index: 14, Name: `ShowProgress`, Value: ShowProgress, Group: FxGroups{
 			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
@@ -167,4 +195,129 @@ func BuilderOptions() []CSwitch {
 	}
 
 	return defaults
+}
+
+// [deprecated] never should have made a generic cmdbuilder!
+func cmdBuilder(url string, isMetaCmd bool) (string, string) {
+
+	fg := EvaluateFxGroup(url)
+
+	var args []string
+	args = append(args, url)
+	args = append(args, Channel)
+	args = append(args, Title)
+	args = append(args, Description)
+	args = append(args, Extension)
+	args = append(args, Duration)
+	args = append(args, URLDomain)
+	args = append(args, OriginalURL)
+	args = append(args, YTFormatString)
+	args = append(args, Tags)
+
+	//Playlist specific
+	if fg == Playlist {
+		args = append(args, PlaylistTitle)
+		args = append(args, PlaylistIndex)
+		args = append(args, PlaylistCount)
+	}
+
+	args = append(args, GetMediaDirectory())
+	if isMetaCmd {
+		//thumbnails will be downloaded as part of Metadata
+		if fg == Playlist {
+			args = append(args, OutputPlaylistThumbnailFile)
+		} else {
+			args = append(args, OutputThumbnailFile)
+		}
+		args = append(args, SkipDownload)
+	} else {
+		args = append(args, Filepath)
+		args = append(args, ProgressDelta)
+		args = append(args, ShowProgress)
+
+		// Filepaths for playlist are different
+		if fg == Playlist {
+			args = append(args, OutputPlaylistVideoFile)
+			args = append(args, OutputPlaylistSubtitleFile)
+		} else {
+			args = append(args, OutputVideoFile)
+			args = append(args, OutputSubtitleFile)
+		}
+		args = append(args, WriteSubtitles)
+	}
+
+	arguments := strings.Join(args, Space)
+
+	cmdPath := c.Config("YTDLP_PATH")
+	cmd := cmdPath + "/" + CommandName
+
+	return arguments, cmd
+}
+
+func cmdBuilderRequestValidation(url string) (string, string) {
+
+	var args []string
+	args = append(args, "\""+url+"\"")
+
+	args = append(args, Title)
+	args = append(args, SkipDownload)
+
+	arguments := strings.Join(args, Space)
+	cmdPath := c.Config("YTDLP_PATH")
+	cmd := cmdPath + "/" + CommandName
+
+	return arguments, cmd
+}
+
+func GetCommandString() string {
+	cmdPath := c.Config("YTDLP_PATH")
+	return cmdPath + "/" + CommandName
+}
+
+func cmdBuilderMetadata(url string, metadataType int, ao bool) (string, string) {
+
+	//fg := EvaluateFxGroup(url)
+
+	var args []string
+	args = append(args, "\""+url+"\"")
+
+	bo := BuilderOptions()
+	for _, elem := range bo {
+
+		//Handle Video
+		if metadataType == Video && elem.Group.Video.Metadata {
+			args = append(args, elem.Value)
+		}
+
+		//Handle Playlist
+		if metadataType == Playlist && elem.Group.Playlist.Metadata {
+			args = append(args, elem.Value)
+		}
+
+		//Handle Audio
+		if metadataType == Video && ao && elem.Group.Audio.Metadata {
+			args = append(args, elem.Value)
+		}
+	}
+
+	arguments := strings.Join(args, Space)
+	cmdPath := c.Config("YTDLP_PATH")
+	cmd := cmdPath + "/" + CommandName
+
+	return arguments, cmd
+}
+
+func cmdBuilderDownload() (string, string) {
+
+	return "nil", "nil"
+}
+
+func cmdBuilderSubtitles() (string, string) {
+
+	return "nil", "nil"
+}
+
+func cmdBuilderThumbnails() (string, string) {
+
+	return "nil", "nil"
 }
