@@ -32,6 +32,8 @@
 - So the player has option to download videos, access local video via http, upload videos, and then another mode will be where Video will be added to the library but metadata only, but for playing it, web will be accessed as plyr also supports this kind of thing.
 - Option to download subtitles at a later point should be provided in UI
 - Get Subtitles in a different language
+- Reasonable implementation of activity log is important.
+- Implement litestream instead of sqlite3
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos
