@@ -2,6 +2,8 @@ package videos
 
 import (
 	"bytes"
+	"encoding/json"
+	_ "encoding/json"
 	"fmt"
 	"io"
 	"net/url"
@@ -28,89 +30,75 @@ func InstantiateDownload(URL string) IDownload {
 	}
 }
 
-func getIndicatorType(url string) ([]string, []string, int) {
-
-	arguments := "\"" + url + "\"" + Space + Title + Space + SkipDownload
-	cmd, stdout := ProcessBuilder(arguments, GetCommandString())
-
-	err := cmd.Start()
-	handleErrors(err, "ValidateRequest - Cmd.Start")
-
-	pResult := ProcessResult(stdout)
-
-	var warnings []string
-	var errors []string
-
-	for index, elem := range pResult {
-		if val := strings.Index(elem, WARNING); val == 0 {
-			warnings = append(warnings, elem)
-		} else if val := strings.Index(elem, ERROR); val == 0 {
-			errors = append(errors, elem)
-		} else {
-			_ = index
-			if index == len(pResult)-1 {
-				return warnings, errors, Video
-			} else if len(pResult[index:len(pResult)]) > 1 {
-				warnings = append(warnings, errors...)
-				return warnings, errors, Playlist
-			} else {
-				warnings = append(warnings, errors...)
-				return warnings, errors, Generic
-			}
-		}
-
-	}
-
-	return warnings, errors, Generic
-}
-
 func (d *download) GetMetadata(verbose bool) e.Metadata {
 
-	warnings, errors, indicatorType := getIndicatorType(d.url)
-
-	if len(warnings) > 0 {
-		log.Info(warnings)
-	}
-	if len(errors) > 0 {
-		log.Info(errors)
-	}
+	indicatorType := getIndicatorType(d.url)
 
 	//in case of errors just terminate the flow and return the error to UI
 	fmt.Println(indicatorType)
 	//in case of errors just terminate the flow and return the error to UI
 
-	metadata := e.Metadata{}
 	args, command := cmdBuilderMetadata(d.url, indicatorType, false)
-	metadata.Command = command + Space + args
+	logCommand := command + Space + args
 
 	//log executed command
-	fmt.Println(metadata.Command)
+	fmt.Println(logCommand)
 
-	cmd, stdout := ProcessBuilder(args, GetCommandString())
+	cmd, stdout := buildProcess(args, GetCommandString())
 	//fmt.Println(cmd.String())
 
 	err := cmd.Start()
 	handleErrors(err, "Metadata - Cmd.Start")
 
 	var pResult []string
+	var m e.Metadata
 	if indicatorType == Video {
-		pResult = ProcessResult(stdout)
+		pResult = executeProcess(stdout)
+		video := parseResults(pResult, VideoMetadata)
+
+		//dump data to db and return result from here
+		fmt.Println(video)
+		m = video
 	}
 
 	if indicatorType == Playlist {
-		pResult = ProcessResult(stdout)
+		pResult = executeProcess(stdout)
+		playlist := parseResults(pResult, PlaylistMetadata)
+
+		//dump data to db and return result from here
+		fmt.Println(playlist)
+		m = playlist
 	}
 
-	fmt.Println(pResult)
-
-	return metadata
+	return m
 }
 
 func (d *download) GetVideo() {
 
 }
 
-// if string list in URL then its a playlist.
+func getIndicatorType(url string) int {
+
+	arguments := "\"" + url + "\"" + Space + Title + Space + SkipDownload
+	cmd, stdout := buildProcess(arguments, GetCommandString())
+
+	err := cmd.Start()
+	handleErrors(err, "ValidateRequest - Cmd.Start")
+
+	pResult := executeProcess(stdout)
+	_, _, results := stripResultSections(pResult)
+
+	switch {
+	case len(results) == 1:
+		return Video
+	case len(results) > 1:
+		return Playlist
+	default:
+		return Generic
+	}
+}
+
+// [deprecated] if string list in URL then its a playlist.
 func EvaluateFxGroup(link string) int {
 
 	const playlistKey string = "list"
@@ -129,7 +117,7 @@ func EvaluateFxGroup(link string) int {
 }
 
 // Build a Process to execute & attach pipe to it here
-func ProcessBuilder(args string, command string) (*exec.Cmd, io.ReadCloser) {
+func buildProcess(args string, command string) (*exec.Cmd, io.ReadCloser) {
 
 	cmd := exec.Command(command)
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
@@ -142,7 +130,7 @@ func ProcessBuilder(args string, command string) (*exec.Cmd, io.ReadCloser) {
 	return cmd, stdout
 }
 
-func ProcessResult(stdout io.ReadCloser) []string {
+func executeProcess(stdout io.ReadCloser) []string {
 	// var result string
 	var b bytes.Buffer
 	for {
@@ -164,13 +152,57 @@ func ProcessResult(stdout io.ReadCloser) []string {
 		}
 	}
 
+	//sanitize and return
+	results := sanitizeResults(b)
+	return results
+}
+
+func sanitizeResults(b bytes.Buffer) []string {
+
+	//sanitize json
+	result := strings.ReplaceAll(b.String(), "'", "\"")
+
 	//split by newlines and remove and from the end.
-	result := strings.Split(b.String(), "\n")
-	if result[len(result)-1] == "" {
-		result = result[:len(result)-1]
+	results := strings.Split(result, "\n")
+	if results[len(results)-1] == "" {
+		results = results[:len(results)-1]
+	}
+	return results
+}
+
+func parseResults(pResult []string, metadataType int) e.Metadata {
+
+	m := e.Metadata{}
+
+	_, _, results := stripResultSections(pResult)
+
+	json.Unmarshal([]byte(results[0]), &m)
+	fmt.Println("Channel Result is:", m.Channel)
+
+	json.Unmarshal([]byte(results[1]), &m)
+	fmt.Println("Title Result is:", m.Title)
+
+	return m
+}
+
+func stripResultSections(pResult []string) ([]string, []string, []string) {
+
+	var warnings []string
+	var errors []string
+	var results []string
+
+	for index, elem := range pResult {
+		if val := strings.Index(elem, WARNING); val == 0 {
+			warnings = append(warnings, elem)
+		} else if val := strings.Index(elem, ERROR); val == 0 {
+			errors = append(errors, elem)
+		} else {
+			results = pResult[index:]
+			break
+		}
 	}
 
-	return result
+	return warnings, errors, results
 }
 
 func handleErrors(err error, methodName string) {
@@ -186,3 +218,41 @@ const (
 	PlaylistMetadata = iota
 	Download         = iota
 )
+
+// type Metadata struct {
+// 	InputURL    string
+// 	Progress    string
+// 	Filepath    string
+// 	Channel     string
+// 	Title       string
+// 	Description string
+// 	Extension   string
+// 	Duration    string
+// 	Domain      string
+// 	OriginalURL string
+// 	Playlist    PlaylistMeta //replace unrolled above
+// 	Thumbnail   string
+// 	Format      string
+// 	Tags        []string
+// 	Files       FilesMeta //replace unrolled above
+// 	Command     string
+
+// 	// PlaylistTitle string
+// 	// PlaylistCount string
+// 	// PlaylistIndex string
+// 	// VideoDir  string
+// 	// SubsDir   string
+// 	// ThumbsDir string
+// }
+
+// type PlaylistMeta struct {
+// 	PlaylistTitle string
+// 	PlaylistCount string
+// 	PlaylistIndex string
+// }
+
+// type FilesMeta struct {
+// 	VideoDir  string
+// 	SubsDir   string
+// 	ThumbsDir string
+// }

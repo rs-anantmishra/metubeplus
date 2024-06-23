@@ -34,6 +34,7 @@
 - Get Subtitles in a different language
 - Reasonable implementation of activity log is important.
 - Implement litestream instead of sqlite3
+- Only Show tags and categories on UI that have more than 1 videos attached to it.
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos
