@@ -176,9 +176,11 @@ func parseResults(pResult []string, metadataType int) e.Metadata {
 
 	_, _, results := stripResultSections(pResult)
 
+	//Channel
 	json.Unmarshal([]byte(results[0]), &m)
 	fmt.Println("Channel Result is:", m.Channel)
 
+	//Title
 	json.Unmarshal([]byte(results[1]), &m)
 	fmt.Println("Title Result is:", m.Title)
 
