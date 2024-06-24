@@ -184,6 +184,10 @@ func parseResults(pResult []string, metadataType int) e.Metadata {
 	json.Unmarshal([]byte(results[1]), &m)
 	fmt.Println("Title Result is:", m.Title)
 
+	//OriginalURL
+	json.Unmarshal([]byte(results[6]), &m)
+	fmt.Println("OriginalURL Result is:", m.OriginalURL)
+
 	return m
 }
 
