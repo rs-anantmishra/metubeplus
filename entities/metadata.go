@@ -12,11 +12,9 @@ type Metadata struct {
 	Domain      string `json:"webpage_url_domain"`
 	OriginalURL string `json:"original_url"`
 	Playlist    PlaylistMeta
-	Thumbnail   string
 	Format      string   `json:"format"`
 	Tags        []string `json:"tags"`
 	Files       FilesMeta
-	Command     string
 	Filesize    string `json:"filesize_approx"`
 	FormatNote  string `json:"format_note"`
 	Resolution  string `json:"resolution"`
@@ -30,7 +28,8 @@ type PlaylistMeta struct {
 }
 
 type FilesMeta struct {
-	VideoDir  string
-	SubsDir   string
-	ThumbsDir string
+	VideoFile          string
+	SubsFile           string
+	ThumbsFile         string
+	PlaylistThumbsFile string
 }

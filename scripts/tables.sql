@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS tblAvailabilityType(
 	Availability TEXT
 );
 
-CREATE TABLE IF NOT EXISTS tblPlayList(
+CREATE TABLE IF NOT EXISTS tblPlaylist(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	Title TEXT NOT NULL DEFAULT 'Unavailable',
 	VideoCount INTEGER,
@@ -117,6 +117,7 @@ CREATE TABLE IF NOT EXISTS tblVideoFileCategories(
 	CreatedDate INTEGER
 );
 
+--this is for some history the user may want
 CREATE TABLE IF NOT EXISTS tblActivityLogs(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	ActivityTypeId INTEGER NOT NULL,	
@@ -131,8 +132,13 @@ CREATE TABLE IF NOT EXISTS tblActivityType(
 	IsActive INTEGER NOT NULL DEFAULT 1
 );
 
+--this is for debugging perf/errors
 CREATE TABLE IF NOT EXISTS tblAPILogs(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
-	Command TEXT,
+	APIName TEXT,
+	ExecutionStart INTEGER
+	ExecutionEnd INTEGER
+	APIInputs TEXT
+	APIResult TEXT
 	IsActive INTEGER NOT NULL DEFAULT 1
 );
