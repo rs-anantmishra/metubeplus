@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS tblVideos(
 	VideoFileId INTEGER,
 	ThumbnailFileId INTEGER,
 	SubtitlesFileId INTEGER,
+	FormatId INTEGER,
 	YoutubeVideoId INTEGER,
 	CreatedDate INTEGER NOT NULL
 );
@@ -40,7 +41,9 @@ CREATE TABLE IF NOT EXISTS tblPlayList(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	Title TEXT NOT NULL DEFAULT 'Unavailable',
 	VideoCount INTEGER,
+	Directory TEXT,
 	ChannelId INTEGER,
+	ThumbnailFileId INTEGER,
 	YoutubePlaylistID INTEGER,
 	CreatedDate INTEGER NOT NULL
 );
@@ -75,7 +78,6 @@ CREATE TABLE IF NOT EXISTS tblFiles(
 	Extension TEXT,
 	FileSize INTEGER,
 	FileSizeUnit TEXT,
-	Resolution TEXT,
 	ParentDirectory TEXT,	
 	IsDeleted INTEGER,
 	CreatedDate INTEGER
@@ -91,19 +93,46 @@ CREATE TABLE IF NOT EXISTS tblFileType(
 	File TEXT
 );
 
--- CREATE TABLE IF NOT EXISTS tblStreamType(
--- 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
--- 	Stream TEXT
--- );
-
 CREATE TABLE IF NOT EXISTS tblFormats(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	Format TEXT,
-	StreamType TEXT
+	FormatNote TEXT,
+	Resolution TEXT,
+	StreamType TEXT,
+	CreatedDate INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS tblVideoFormat(
+CREATE TABLE IF NOT EXISTS tblCategories(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Categories TEXT,
+	IsUsed INTEGER NOT NULL DEFAULT 0,	
+	CreatedDate INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS tblVideoFileCategories(
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	CategoryId INTEGER NOT NULL,
 	VideoId INTEGER,
-	FormatId INTEGER
+	FileId INTEGER,
+	CreatedDate INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS tblActivityLogs(
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	ActivityTypeId INTEGER NOT NULL,	
+	Command TEXT,
+	Result TEXT,
+	CreatedDate INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS tblActivityType(
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Command TEXT,
+	IsActive INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS tblAPILogs(
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Command TEXT,
+	IsActive INTEGER NOT NULL DEFAULT 1
 );

@@ -40,7 +40,6 @@ func BuilderOptions() []CSwitch {
 	//this forms the basis of the exectue-custom-commands that may be implemented later on
 	//flexibility of cutom commands may still be a question mark
 	defaults := []CSwitch{
-
 		{Index: 1, Name: `Filepath`, Value: Filepath, Group: FxGroups{
 			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
@@ -190,6 +189,21 @@ func BuilderOptions() []CSwitch {
 			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
 			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 27, Name: `YoutubeVideoId`, Value: VideoId, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 28, Name: `Availability`, Value: Availability, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 29, Name: `LiveStatus`, Value: LiveStatus, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		//Audio only file options to be added later
 	}

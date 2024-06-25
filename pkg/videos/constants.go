@@ -10,6 +10,9 @@ import (
 const Separator string = `*MeTube+*`
 const ShowProgress string = `--progress`
 const ProgressDelta string = `--progress-delta 1`              //seconds
+const VideoId string = `--print %(.{id})s`                     //`--print after_move:id`
+const Availability string = `--print %(.{availability})s`      //`--print after_move:availability`
+const LiveStatus string = `--print %(.{live_status})s`         //`--print after_move:live_status`
 const Filepath string = `--print %(.{filepath})s`              //`--print after_move:filepath`
 const Channel string = `--print %(.{channel})s`                //`--print before_dl:channel`
 const Title string = `--print %(.{title})s`                    //`--print before_dl:title`
