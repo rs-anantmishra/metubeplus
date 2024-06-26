@@ -12,8 +12,8 @@ type NetworkActivityLog struct {
 type LocalActivityLog struct {
 	Id             int
 	ActivityTypeId int
-	InputURL       string
-	Command        string
-	Result         string
+	VideoId        int
+	FileId         int
+	Remarks        string
 	CreatedDate    int
 }
