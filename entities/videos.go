@@ -4,26 +4,27 @@ type Videos struct {
 	Id               int
 	Title            string
 	Description      string
-	Duration         int
-	Channel          Channel
-	Playlist         Playlist
+	DurationSeconds  int
 	WebpageURL       string
-	Domain           Domain
 	IsFileDownloaded int
 	IsDeleted        int
-	AvailabilityId   int
-	LiveStatusId     int
+	Channel          Channel
+	Playlist         Playlist
+	LiveStatus       string
+	Domain           Domain
+	Availability     string
+	Format           Format
+	Files            []Files
+	Tags             []Tags
+	Categories       []Categories
 	YoutubeVideoId   int
 	CreatedDate      int
-	Files            []Files
-	Formats          []Formats
-	Tags             []Tags
 }
 
 type Channel struct {
 	Id               int
-	Title            string
-	WebpageURL       string
+	Name             string
+	ChannelURL       string
 	YoutubeChannelId int
 	CreatedDate      int
 }
@@ -32,8 +33,9 @@ type Playlist struct {
 	Id                int
 	Title             string
 	VideoCount        int
-	File              Files
+	Directory         string
 	ChannelId         int
+	File              Files //for thumbnail file
 	YoutubePlaylistId int
 	CreatedDate       int
 }
@@ -42,6 +44,15 @@ type Domain struct {
 	Id          int
 	Domain      string
 	CreatedDate int
+}
+
+type Format struct {
+	Id          int
+	Format      string
+	FormatNote  string
+	Resolution  string
+	StreamType  string //Audio or Video
+	CreatedDate string
 }
 
 // AvailabilityType Constants
@@ -62,18 +73,6 @@ const (
 	WasLive    = iota
 	PostLive   = iota
 )
-
-type Formats struct {
-	Id         int
-	Format     string
-	StreamType string //Audio or Video
-}
-
-type VideoFormat struct {
-	Id       int
-	VideoId  int
-	FormatId int
-}
 
 //Source - yt-dlp only
 //Operations - DOWNLOAD, READ, DELETE

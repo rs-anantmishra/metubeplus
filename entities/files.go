@@ -9,7 +9,6 @@ type Files struct {
 	Extension       string
 	FileSize        int
 	FileSizeUnit    string
-	Resolution      string
 	ParentDirectory string
 	IsDeleted       int
 	CreatedDate     int

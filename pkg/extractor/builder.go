@@ -1,4 +1,4 @@
-package videos
+package extractor
 
 import (
 	"strings"
@@ -41,9 +41,9 @@ func BuilderOptions() []CSwitch {
 	//flexibility of cutom commands may still be a question mark
 	defaults := []CSwitch{
 		{Index: 1, Name: `Filepath`, Value: Filepath, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 2, Name: `Channel`, Value: Channel, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
@@ -204,6 +204,21 @@ func BuilderOptions() []CSwitch {
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 30, Name: `ChannelId`, Value: ChannelId, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 30, Name: `ChannelURL`, Value: ChannelURL, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 30, Name: `PlaylistId`, Value: PlaylistId, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
+			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		//Audio only file options to be added later
 	}

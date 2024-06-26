@@ -1,4 +1,4 @@
-package videos
+package extractor
 
 import (
 	"strings"
@@ -30,6 +30,9 @@ const FileSizeApprox string = `--print %(.{filesize_approx})s` //`--print before
 const FormatNote string = `--print %(.{format_note})s`         //`--print before_dl:format_note`
 const Resolution string = `--print %(.{resolution})s`          //`--print before_dl:resolution`
 const Categories string = `--print %(.{categories})s`          //`--print before_dl:categories`
+const ChannelId string = `--print %(.{channel_id})s`           //`--print before_dl:channel_id`
+const ChannelURL string = `--print %(.{channel_url})s`         //`--print before_dl:channel_url`
+const PlaylistId string = `--print %(.{playlist_id})s`         //`--print before_dl:playlist_id`
 const WriteSubtitles string = `--write-auto-subs`
 
 // --Extras----------------------------------------------------------------------------------------//

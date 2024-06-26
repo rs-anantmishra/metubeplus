@@ -1,19 +1,16 @@
 package entities
 
-type Tags struct {
+type Categories struct {
 	Id          int
 	Name        string
 	IsUsed      int
 	CreatedDate int
 }
 
-type VideoFileTags struct {
+type VideoFileCategories struct {
 	Id          int
-	TagId       int
+	CategoryId  int
 	VideoId     int
 	FileId      int
 	CreatedDate int
 }
-
-// can be created through UI or through yt-dlp
-// operations include - INSERT, DELETE, READ
