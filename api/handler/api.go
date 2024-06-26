@@ -4,8 +4,8 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 
 	"github.com/gofiber/fiber/v2"
-	e "github.com/rs-anantmishra/metubeplus/entities"
-	v "github.com/rs-anantmishra/metubeplus/pkg/videos"
+	en "github.com/rs-anantmishra/metubeplus/entities"
+	ex "github.com/rs-anantmishra/metubeplus/pkg/extractor"
 )
 
 func Hello(c *fiber.Ctx) error {
@@ -15,7 +15,7 @@ func Hello(c *fiber.Ctx) error {
 func MetadataCheck(c *fiber.Ctx) error {
 
 	//bind incoming data
-	params := new(e.IncomingRequest)
+	params := new(en.IncomingRequest)
 	if err := c.BodyParser(params); err != nil {
 		return err
 	}
@@ -24,9 +24,9 @@ func MetadataCheck(c *fiber.Ctx) error {
 	log.Info("Request Params:", params)
 
 	//Instantiate
-	svcDownloads := v.InstantiateDownload(params.DataIdReq)
-	svcRepo := v.InstantiateRepo("")
-	svcVideos := v.Instantiate(svcRepo, svcDownloads)
+	svcDownloads := ex.InstantiateDownload(params.DataIdReq)
+	svcRepo := ex.InstantiateRepo("")
+	svcVideos := ex.Instantiate(svcRepo, svcDownloads)
 
 	//Process Request
 	// No validations for URL/Playlist are needed.
