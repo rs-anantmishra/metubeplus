@@ -4,7 +4,7 @@ import e "github.com/rs-anantmishra/metubeplus/entities"
 
 type IService interface {
 	GetMetadata(verobse bool)
-	GetVideo(meta e.Metadata) bool
+	GetVideo(meta e.MediaInformation) bool
 }
 
 type service struct {
@@ -23,6 +23,6 @@ func (s *service) GetMetadata(verbose bool) {
 	s.download.GetMetadata(true)
 }
 
-func (s *service) GetVideo(m e.Metadata) bool {
+func (s *service) GetVideo(m e.MediaInformation) bool {
 	return false
 }

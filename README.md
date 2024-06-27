@@ -37,6 +37,7 @@
 - Only Show tags and categories on UI that have more than 1 videos attached to it.
 - Have option to disable APILogs & ActivityLogs
 - Parallel Downloads (4 videos at a time.)
+- Add and unwatched OR watched badge on Videos like wallhacen does.
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos

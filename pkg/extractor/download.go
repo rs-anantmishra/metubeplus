@@ -3,7 +3,6 @@ package extractor
 import (
 	"bytes"
 	"encoding/json"
-	_ "encoding/json"
 	"fmt"
 	"io"
 	"net/url"
@@ -16,7 +15,7 @@ import (
 )
 
 type IDownload interface {
-	GetMetadata(verbose bool) e.Metadata
+	GetMetadata(verbose bool) []e.MediaInformation
 	GetVideo()
 }
 
@@ -30,9 +29,9 @@ func InstantiateDownload(URL string) IDownload {
 	}
 }
 
-func (d *download) GetMetadata(verbose bool) e.Metadata {
+func (d *download) GetMetadata(verbose bool) []e.MediaInformation {
 
-	indicatorType := getIndicatorType(d.url)
+	indicatorType, itemCount := getIndicatorType(d.url)
 
 	//in case of errors just terminate the flow and return the error to UI
 	fmt.Println(indicatorType)
@@ -51,33 +50,33 @@ func (d *download) GetMetadata(verbose bool) e.Metadata {
 	handleErrors(err, "Metadata - Cmd.Start")
 
 	var pResult []string
-	var m e.Metadata
+	var mediaInfo []e.MediaInformation
 	if indicatorType == Video {
 		pResult = executeProcess(stdout)
-		video := parseResults(pResult, VideoMetadata)
+		video := parseResults(pResult, VideoMetadata, itemCount)
 
 		//dump data to db and return result from here
 		fmt.Println(video)
-		m = video
+		mediaInfo = video
 	}
 
 	if indicatorType == Playlist {
 		pResult = executeProcess(stdout)
-		playlist := parseResults(pResult, PlaylistMetadata)
+		playlist := parseResults(pResult, PlaylistMetadata, itemCount)
 
 		//dump data to db and return result from here
 		fmt.Println(playlist)
-		m = playlist
+		mediaInfo = playlist
 	}
 
-	return m
+	return mediaInfo
 }
 
 func (d *download) GetVideo() {
 
 }
 
-func getIndicatorType(url string) int {
+func getIndicatorType(url string) (int, int) {
 
 	arguments := "\"" + url + "\"" + Space + Title + Space + SkipDownload
 	cmd, stdout := buildProcess(arguments, GetCommandString())
@@ -90,11 +89,11 @@ func getIndicatorType(url string) int {
 
 	switch {
 	case len(results) == 1:
-		return Video
+		return Video, len(results)
 	case len(results) > 1:
-		return Playlist
+		return Playlist, len(results)
 	default:
-		return Generic
+		return Generic, len(results)
 	}
 }
 
@@ -170,25 +169,32 @@ func sanitizeResults(b bytes.Buffer) []string {
 	return results
 }
 
-func parseResults(pResult []string, metadataType int) e.Metadata {
+func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInformation {
 
-	m := e.Metadata{}
-
+	mediaInfo := e.MediaInformation{}
 	_, _, results := stripResultSections(pResult)
 
-	//Channel
-	json.Unmarshal([]byte(results[0]), &m)
-	fmt.Println("Channel Result is:", m.Channel)
+	metaItemsCount := 0
+	for _, elem := range BuilderOptions() {
+		if metadataType == VideoMetadata && elem.Group.Video.Metadata && elem.DataField {
+			metaItemsCount++
+		} else if metadataType == PlaylistMetadata && elem.Group.Playlist.Metadata && elem.DataField {
+			metaItemsCount++
+		}
+	}
 
-	//Title
-	json.Unmarshal([]byte(results[1]), &m)
-	fmt.Println("Title Result is:", m.Title)
+	var lstMediaInfo []e.MediaInformation
+	for k := 0; k < vCount; k++ {
+		for i := 0; i < metaItemsCount; i++ {
+			json.Unmarshal([]byte(results[i]), &mediaInfo)
+		}
+		lstMediaInfo = append(lstMediaInfo, mediaInfo)
+	}
 
-	//OriginalURL
-	json.Unmarshal([]byte(results[6]), &m)
-	fmt.Println("OriginalURL Result is:", m.OriginalURL)
+	//Print Properties that were bound
+	fmt.Println(lstMediaInfo)
 
-	return m
+	return lstMediaInfo
 }
 
 func stripResultSections(pResult []string) ([]string, []string, []string) {
