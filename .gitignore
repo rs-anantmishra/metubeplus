@@ -1,4 +1,3 @@
-cmd/docs
-cmd/docs/*
-utils/*
-media/*
+cmd/docs/
+utils/
+media/
