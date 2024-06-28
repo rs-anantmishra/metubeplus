@@ -34,10 +34,10 @@
 - Get Subtitles in a different language
 - Reasonable implementation of activity log is important.
 - Implement litestream instead of sqlite3
-- Only Show tags and categories on UI that have more than 1 videos attached to it.
+- Only Show those tags and categories on UI which have more than 1 videos attached to it.
 - Have option to disable APILogs & ActivityLogs
 - Parallel Downloads (4 videos at a time.)
-- Add and unwatched OR watched badge on Videos like wallhacen does.
+- Add and unwatched OR watched badge on Videos like wallhaven does.
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos
