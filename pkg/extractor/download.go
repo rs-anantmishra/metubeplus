@@ -11,12 +11,12 @@ import (
 	"syscall"
 
 	"github.com/gofiber/fiber/v2/log"
-	e "github.com/rs-anantmishra/metubeplus/entities"
+	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 )
 
 type IDownload interface {
-	GetMetadata(verbose bool) []e.MediaInformation
-	GetVideo()
+	ExtractMetadata(verbose bool) []e.MediaInformation
+	ExtractVideo()
 }
 
 type download struct {
@@ -29,7 +29,7 @@ func InstantiateDownload(URL string) IDownload {
 	}
 }
 
-func (d *download) GetMetadata(verbose bool) []e.MediaInformation {
+func (d *download) ExtractMetadata(verbose bool) []e.MediaInformation {
 
 	indicatorType, itemCount := getIndicatorType(d.url)
 
@@ -72,7 +72,7 @@ func (d *download) GetMetadata(verbose bool) []e.MediaInformation {
 	return mediaInfo
 }
 
-func (d *download) GetVideo() {
+func (d *download) ExtractVideo() {
 
 }
 
@@ -230,41 +230,3 @@ const (
 	PlaylistMetadata = iota
 	Download         = iota
 )
-
-// type Metadata struct {
-// 	InputURL    string
-// 	Progress    string
-// 	Filepath    string
-// 	Channel     string
-// 	Title       string
-// 	Description string
-// 	Extension   string
-// 	Duration    string
-// 	Domain      string
-// 	OriginalURL string
-// 	Playlist    PlaylistMeta //replace unrolled above
-// 	Thumbnail   string
-// 	Format      string
-// 	Tags        []string
-// 	Files       FilesMeta //replace unrolled above
-// 	Command     string
-
-// 	// PlaylistTitle string
-// 	// PlaylistCount string
-// 	// PlaylistIndex string
-// 	// VideoDir  string
-// 	// SubsDir   string
-// 	// ThumbsDir string
-// }
-
-// type PlaylistMeta struct {
-// 	PlaylistTitle string
-// 	PlaylistCount string
-// 	PlaylistIndex string
-// }
-
-// type FilesMeta struct {
-// 	VideoDir  string
-// 	SubsDir   string
-// 	ThumbsDir string
-// }

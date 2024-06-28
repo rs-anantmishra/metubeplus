@@ -1,10 +1,10 @@
 package extractor
 
-import e "github.com/rs-anantmishra/metubeplus/entities"
+import e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 
 type IService interface {
-	GetMetadata(verobse bool)
-	GetVideo(meta e.MediaInformation) bool
+	ExtractMetadata(verobse bool)
+	ExtractVideo(meta e.MediaInformation) bool
 }
 
 type service struct {
@@ -19,10 +19,10 @@ func Instantiate(r IRepository, d IDownload) IService {
 	}
 }
 
-func (s *service) GetMetadata(verbose bool) {
-	s.download.GetMetadata(true)
+func (s *service) ExtractMetadata(verbose bool) {
+	s.download.ExtractMetadata(true)
 }
 
-func (s *service) GetVideo(m e.MediaInformation) bool {
+func (s *service) ExtractVideo(m e.MediaInformation) bool {
 	return false
 }

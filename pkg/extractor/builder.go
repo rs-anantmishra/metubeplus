@@ -17,13 +17,11 @@ type CSwitch struct {
 type FxGroups struct {
 	Playlist Functions
 	Video    Functions
-	Audio    Functions
 	Generic  Functions
 }
 
 const (
 	Generic  = iota
-	Audio    = iota
 	Video    = iota
 	Playlist = iota
 )
@@ -38,188 +36,157 @@ type Functions struct {
 func BuilderOptions() []CSwitch {
 
 	//these true false patterns are talking about default download options
-	//this forms the basis of the exectue-custom-commands that may be implemented later on
+	//this forms the basis of the execute-custom-commands that may be implemented later on
 	//flexibility of cutom commands may still be a question mark
+	//ideally this should be moved to a db or read from a config file.
 	defaults := []CSwitch{
 		{Index: 1, Name: `Filepath`, Value: Filepath, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 2, Name: `Channel`, Value: Channel, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 3, Name: `Title`, Value: Title, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 4, Name: `Description`, Value: Description, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 5, Name: `Extension`, Value: Extension, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 6, Name: `Duration`, Value: Duration, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 7, Name: `URLDomain`, Value: URLDomain, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 8, Name: `OriginalURL`, Value: OriginalURL, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 9, Name: `PlaylistTitle`, Value: PlaylistTitle, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 10, Name: `PlaylistIndex`, Value: PlaylistIndex, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 11, Name: `PlaylistCount`, Value: PlaylistCount, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 12, Name: `Tags`, Value: Tags, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 13, Name: `YTFormatString`, Value: YTFormatString, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 1, Name: `FileSizeApprox`, Value: FileSizeApprox, DataField: true, Group: FxGroups{
+		{Index: 14, Name: `FileSizeApprox`, Value: FileSizeApprox, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 1, Name: `FormatNote`, Value: FormatNote, DataField: true, Group: FxGroups{
+		{Index: 15, Name: `FormatNote`, Value: FormatNote, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 1, Name: `Resolution`, Value: Resolution, DataField: true, Group: FxGroups{
+		{Index: 16, Name: `Resolution`, Value: Resolution, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 1, Name: `Categories`, Value: Categories, DataField: true, Group: FxGroups{
+		{Index: 17, Name: `Categories`, Value: Categories, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 14, Name: `ShowProgress`, Value: ShowProgress, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
-		},
-		{Index: 15, Name: `ProgressDelta`, Value: ProgressDelta, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
-		},
-		{Index: 16, Name: `QuietDownload`, Value: QuietDownload, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
-		},
-		{Index: 17, Name: `ProgressNewline`, Value: ProgressNewline, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
-		},
-		{Index: 18, Name: `SkipDownload`, Value: SkipDownload, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: true, Download: false, Subtitle: true, Thumbnail: true},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: true, Thumbnail: true},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: true, Thumbnail: true}},
-		},
-		{Index: 19, Name: `WriteSubtitles`, Value: WriteSubtitles, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: true, Thumbnail: false}},
-		},
-		{Index: 20, Name: `WriteThumbnail`, Value: WriteThumbnail, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true}},
-		},
-		{Index: 21, Name: `OutputPlaylistVideoFile`, Value: OutputPlaylistVideoFile, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
-		},
-		{Index: 22, Name: `OutputPlaylistSubtitleFile`, Value: OutputPlaylistSubtitleFile, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
-		},
-		{Index: 23, Name: `OutputPlaylistThumbnailFile`, Value: OutputPlaylistThumbnailFile, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
-		},
-		{Index: 24, Name: `OutputVideoFile`, Value: OutputVideoFile, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
-		},
-		{Index: 25, Name: `OutputSubtitleFile`, Value: OutputSubtitleFile, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
-		},
-		{Index: 26, Name: `OutputThumbnailFile`, Value: OutputThumbnailFile, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
-		},
-		{Index: 27, Name: `YoutubeVideoId`, Value: VideoId, DataField: true, Group: FxGroups{
+		{Index: 18, Name: `YoutubeVideoId`, Value: VideoId, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 28, Name: `Availability`, Value: Availability, DataField: true, Group: FxGroups{
+		{Index: 19, Name: `Availability`, Value: Availability, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 29, Name: `LiveStatus`, Value: LiveStatus, DataField: true, Group: FxGroups{
+		{Index: 20, Name: `LiveStatus`, Value: LiveStatus, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 30, Name: `ChannelId`, Value: ChannelId, DataField: true, Group: FxGroups{
+		{Index: 21, Name: `ChannelId`, Value: ChannelId, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 30, Name: `ChannelURL`, Value: ChannelURL, DataField: true, Group: FxGroups{
+		{Index: 22, Name: `ChannelURL`, Value: ChannelURL, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 30, Name: `PlaylistId`, Value: PlaylistId, DataField: true, Group: FxGroups{
+		{Index: 23, Name: `PlaylistId`, Value: PlaylistId, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Audio:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 24, Name: `ShowProgress`, Value: ShowProgress, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 25, Name: `ProgressDelta`, Value: ProgressDelta, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 26, Name: `QuietDownload`, Value: QuietDownload, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 27, Name: `ProgressNewline`, Value: ProgressNewline, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 28, Name: `SkipDownload`, Value: SkipDownload, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: true, Thumbnail: true},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: true, Thumbnail: true}},
+		},
+		{Index: 29, Name: `WriteSubtitles`, Value: WriteSubtitles, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: false}},
+		},
+		{Index: 30, Name: `WriteThumbnail`, Value: WriteThumbnail, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true}},
+		},
+		{Index: 31, Name: `MediaDirectory`, Value: GetMediaDirectory(), DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true}},
+		},
+		{Index: 32, Name: `OutputPlaylistVideoFile`, Value: OutputPlaylistVideoFile, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 33, Name: `OutputPlaylistSubtitleFile`, Value: OutputPlaylistSubtitleFile, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: false, Subtitle: true, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 34, Name: `OutputPlaylistThumbnailFile`, Value: OutputPlaylistThumbnailFile, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: true},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 35, Name: `OutputVideoFile`, Value: OutputVideoFile, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 36, Name: `OutputSubtitleFile`, Value: OutputSubtitleFile, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: true, Thumbnail: false}},
+		},
+		{Index: 37, Name: `OutputThumbnailFile`, Value: OutputThumbnailFile, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: true}},
 		},
 		//Audio only file options to be added later
 	}
@@ -247,6 +214,11 @@ func GetCommandString() string {
 	return cmdPath + "/" + CommandName
 }
 
+func appendBaseFolder(path *string) {
+	basePath := c.Config("MEDIA_PATH")
+	*path = basePath + *path
+}
+
 func cmdBuilderMetadata(url string, metadataType int, ao bool) (string, string) {
 
 	//fg := EvaluateFxGroup(url)
@@ -267,10 +239,8 @@ func cmdBuilderMetadata(url string, metadataType int, ao bool) (string, string) 
 			args = append(args, elem.Value)
 		}
 
-		//Handle Audio
-		if metadataType == Video && ao && elem.Group.Audio.Metadata {
-			args = append(args, elem.Value)
-		}
+		//Todo: Handle Audio
+		//Todo: Handle Audio Playlists
 	}
 
 	arguments := strings.Join(args, Space)
