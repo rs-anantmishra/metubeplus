@@ -108,7 +108,7 @@ func BuilderOptions() []CSwitch {
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 18, Name: `YoutubeVideoId`, Value: VideoId, DataField: true, Group: FxGroups{
+		{Index: 18, Name: `YoutubeVideoId`, Value: YoutubeVideoId, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false}},
 		},
@@ -133,32 +133,32 @@ func BuilderOptions() []CSwitch {
 			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 24, Name: `ShowProgress`, Value: ShowProgress, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true}},
 		},
 		{Index: 25, Name: `ProgressDelta`, Value: ProgressDelta, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true}},
 		},
 		{Index: 26, Name: `QuietDownload`, Value: QuietDownload, DataField: false, Group: FxGroups{
 			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 27, Name: `ProgressNewline`, Value: ProgressNewline, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
+			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true},
+			Video:    Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true}},
 		},
 		{Index: 28, Name: `SkipDownload`, Value: SkipDownload, DataField: false, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: true, Thumbnail: true},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: true, Thumbnail: true}},
 		},
 		{Index: 29, Name: `WriteSubtitles`, Value: WriteSubtitles, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: false}},
+			Playlist: Functions{Metadata: false, Download: false, Subtitle: true, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: true, Thumbnail: false}},
 		},
 		{Index: 30, Name: `WriteThumbnail`, Value: WriteThumbnail, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true}},
+			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: true},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: true}},
 		},
 		{Index: 31, Name: `MediaDirectory`, Value: GetMediaDirectory(), DataField: false, Group: FxGroups{
 			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true},
@@ -194,34 +194,12 @@ func BuilderOptions() []CSwitch {
 	return defaults
 }
 
-func cmdBuilderRequestValidation(url string) (string, string) {
-
-	var args []string
-	args = append(args, "\""+url+"\"")
-
-	args = append(args, Title)
-	args = append(args, SkipDownload)
-
-	arguments := strings.Join(args, Space)
-	cmdPath := c.Config("YTDLP_PATH")
-	cmd := cmdPath + "/" + CommandName
-
-	return arguments, cmd
-}
-
 func GetCommandString() string {
 	cmdPath := c.Config("YTDLP_PATH")
-	return cmdPath + "/" + CommandName
+	return cmdPath + CommandName
 }
 
-func appendBaseFolder(path *string) {
-	basePath := c.Config("MEDIA_PATH")
-	*path = basePath + *path
-}
-
-func cmdBuilderMetadata(url string, metadataType int, ao bool) (string, string) {
-
-	//fg := EvaluateFxGroup(url)
+func cmdBuilderMetadata(url string, indicatorType int) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
@@ -230,12 +208,12 @@ func cmdBuilderMetadata(url string, metadataType int, ao bool) (string, string) 
 	for _, elem := range bo {
 
 		//Handle Video
-		if metadataType == Video && elem.Group.Video.Metadata {
+		if indicatorType == Video && elem.Group.Video.Metadata {
 			args = append(args, elem.Value)
 		}
 
 		//Handle Playlist
-		if metadataType == Playlist && elem.Group.Playlist.Metadata {
+		if indicatorType == Playlist && elem.Group.Playlist.Metadata {
 			args = append(args, elem.Value)
 		}
 
@@ -255,12 +233,54 @@ func cmdBuilderDownload() (string, string) {
 	return "nil", "nil"
 }
 
-func cmdBuilderSubtitles() (string, string) {
+func cmdBuilderSubtitles(url string, indicatorType int) (string, string) {
 
-	return "nil", "nil"
+	var args []string
+	args = append(args, "\""+url+"\"")
+
+	bo := BuilderOptions()
+	for _, elem := range bo {
+
+		//Handle Video
+		if indicatorType == Video && elem.Group.Video.Subtitle {
+			args = append(args, elem.Value)
+		}
+
+		//Handle Playlist
+		if indicatorType == Playlist && elem.Group.Playlist.Subtitle {
+			args = append(args, elem.Value)
+		}
+	}
+
+	arguments := strings.Join(args, Space)
+	cmdPath := c.Config("YTDLP_PATH")
+	cmd := cmdPath + "/" + CommandName
+
+	return arguments, cmd
 }
 
-func cmdBuilderThumbnails() (string, string) {
+func cmdBuilderThumbnails(url string, indicatorType int) (string, string) {
 
-	return "nil", "nil"
+	var args []string
+	args = append(args, "\""+url+"\"")
+
+	bo := BuilderOptions()
+	for _, elem := range bo {
+
+		//Handle Video
+		if indicatorType == Video && elem.Group.Video.Thumbnail {
+			args = append(args, elem.Value)
+		}
+
+		//Handle Playlist
+		if indicatorType == Playlist && elem.Group.Playlist.Thumbnail {
+			args = append(args, elem.Value)
+		}
+	}
+
+	arguments := strings.Join(args, Space)
+	cmdPath := c.Config("YTDLP_PATH")
+	cmd := cmdPath + "/" + CommandName
+
+	return arguments, cmd
 }

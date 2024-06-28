@@ -7,7 +7,7 @@ import (
 	ex "github.com/rs-anantmishra/metubeplus/pkg/extractor"
 )
 
-func ExtractMetadata(c *fiber.Ctx) error {
+func NetworkIngestMetadata(c *fiber.Ctx) error {
 
 	//bind incoming data
 	params := new(en.IncomingRequest)
@@ -19,7 +19,7 @@ func ExtractMetadata(c *fiber.Ctx) error {
 	log.Info("Request Params:", params)
 
 	//Instantiate
-	svcDownloads := ex.InstantiateDownload(params.DataIdReq)
+	svcDownloads := ex.InstantiateDownload(*params)
 	svcRepo := ex.InstantiateRepo("")
 	svcVideos := ex.Instantiate(svcRepo, svcDownloads)
 
@@ -27,23 +27,20 @@ func ExtractMetadata(c *fiber.Ctx) error {
 	// No validations for URL/Playlist are needed.
 	// If Metadata is not fetched, and there is an error message from yt-dlp
 	// just show that error on the UI
-	// Get Metadata will be called from inside Get Video also.
-	// Separate API only for cases when the use wants to not download video, and play it rom yt
-	// but have it metadata downloaded.
-	svcVideos.ExtractMetadata(true)
+	svcVideos.ExtractIngestMetadata()
 
 	return nil
 }
 
-func ExtractMedia(c *fiber.Ctx) error {
+func NetworkIngestMedia(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
 }
 
-func ExtractAutoSubs(c *fiber.Ctx) error {
+func NetworkIngestAutoSubs(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
 }
 
-func ExtractThumbnail(c *fiber.Ctx) error {
+func NetworkIngestThumbnail(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
 }

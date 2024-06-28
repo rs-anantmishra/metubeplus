@@ -1,17 +1,17 @@
 package entities
 
 type Files struct {
-	Id              int
-	FileTypeId      int
-	SourceId        int
-	FilePath        string
-	FileName        string
-	Extension       string
-	FileSize        int
-	FileSizeUnit    string
-	ParentDirectory string
-	IsDeleted       int
-	CreatedDate     int
+	Id           int
+	FileTypeId   int
+	SourceId     int
+	FilePath     string
+	FileName     string
+	Extension    string
+	FileSize     int
+	FileSizeUnit string
+	NetworkPath  string
+	IsDeleted    int
+	CreatedDate  int64
 }
 
 // FileType Constants

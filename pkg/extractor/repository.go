@@ -1,6 +1,12 @@
 package extractor
 
-type IRepository interface{}
+import (
+	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
+)
+
+type IRepository interface {
+	SaveMetadata([]e.MediaInformation) bool
+}
 
 type repository struct {
 	//here we have the db connection object (or the connection string?) to execute queries
@@ -11,4 +17,9 @@ func InstantiateRepo(conn string) IRepository {
 	return &repository{
 		Connection: conn,
 	}
+}
+
+func (r *repository) SaveMetadata(metadata []e.MediaInformation) bool {
+
+	return true
 }

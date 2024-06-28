@@ -10,7 +10,7 @@ import (
 const Separator string = `*MeTube+*`
 const ShowProgress string = `--progress`
 const ProgressDelta string = `--progress-delta 1`              //seconds
-const VideoId string = `--print %(.{id})s`                     //`--print after_move:id`
+const YoutubeVideoId string = `--print %(.{id})s`              //`--print after_move:id`
 const Availability string = `--print %(.{availability})s`      //`--print after_move:availability`
 const LiveStatus string = `--print %(.{live_status})s`         //`--print after_move:live_status`
 const Filepath string = `--print %(.{filepath})s`              //`--print after_move:filepath`
@@ -46,7 +46,7 @@ const ProgressNewline string = `--newline`
 // Playlist: Videos, Subtitles, Thumbnails
 const OutputPlaylistVideoFile string = `-o "%(webpage_url_domain)s/%(channel)s/%(playlist)s/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
 const OutputPlaylistSubtitleFile string = `-o "subtitle:%(webpage_url_domain)s/%(channel)s/%(playlist)s/Subtitles/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
-const OutputPlaylistThumbnailFile string = `-o "thumbnail:%(webpage_url_domain)s/%(channel)s/%(playlist)s/Thumbnails/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
+const OutputPlaylistThumbnailFile string = `-o "%(webpage_url_domain)s/%(channel)s/%(playlist)s/Thumbnails/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
 
 // Videos: Videos, Subtitles, Thumbnails
 const OutputVideoFile string = `-o "%(webpage_url_domain)s/%(channel)s/Videos/%(title)s [%(id)s].%(ext)s"`

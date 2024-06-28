@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS tblVideos(
 	Description TEXT NOT NULL DEFAULT 'Unavailable',
 	DurationSeconds INTEGER,
 	WebpageURL TEXT NOT NULL,
+	PlaylistVideoIndex INTEGER,
 	IsFileDownloaded INTEGER NOT NULL DEFAULT 0,
 	IsDeleted INTEGER,
 	ChannelId INTEGER,
@@ -12,9 +13,6 @@ CREATE TABLE IF NOT EXISTS tblVideos(
 	DomainId INTEGER,
 	AvailabilityId INTEGER,
 	FormatId INTEGER,	
-	VideoFileId INTEGER,
-	ThumbnailFileId INTEGER,
-	SubtitlesFileId INTEGER,
 	YoutubeVideoId INTEGER,
 	CreatedDate INTEGER NOT NULL
 );
@@ -95,6 +93,7 @@ CREATE TABLE IF NOT EXISTS tblVideoFileCategories(
 
 CREATE TABLE IF NOT EXISTS tblFiles(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	VideoId INTEGER NOT NULL,
 	FileTypeId INTEGER,
 	SourceId INTEGER,
 	FilePath TEXT,
@@ -102,7 +101,7 @@ CREATE TABLE IF NOT EXISTS tblFiles(
 	Extension TEXT,
 	FileSize INTEGER,
 	FileSizeUnit TEXT,
-	ParentDirectory TEXT,	
+	NetworkPath TEXT,	
 	IsDeleted INTEGER,
 	CreatedDate INTEGER
 );

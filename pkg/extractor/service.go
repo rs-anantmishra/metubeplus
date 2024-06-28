@@ -3,8 +3,8 @@ package extractor
 import e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 
 type IService interface {
-	ExtractMetadata(verobse bool)
-	ExtractVideo(meta e.MediaInformation) bool
+	ExtractIngestMetadata() bool
+	ExtractIngestVideo(meta e.MediaInformation) bool
 }
 
 type service struct {
@@ -19,10 +19,18 @@ func Instantiate(r IRepository, d IDownload) IService {
 	}
 }
 
-func (s *service) ExtractMetadata(verbose bool) {
-	s.download.ExtractMetadata(true)
+func (s *service) ExtractIngestMetadata() bool {
+	metadata := s.download.ExtractMetadata()
+	saveMetaData := s.repository.SaveMetadata(metadata)
+
+	if saveMetaData {
+		s.download.ExtractThumbnail(metadata)
+		s.download.ExtractSubtitles()
+	}
+
+	return true
 }
 
-func (s *service) ExtractVideo(m e.MediaInformation) bool {
+func (s *service) ExtractIngestVideo(m e.MediaInformation) bool {
 	return false
 }
