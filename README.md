@@ -7,7 +7,7 @@
 - manually retry download
 - manually refresh metadata for videos
 - auto update yt-dlp
-- auto refresh media metadata 24hours (configurable)
+- auto refresh media metadata 24hours (configurable) // to have the database in sync with fs and ensure the Video is not manually deleted, and if it is then library will reflect the current state of files. Bottom Line, source of truth for application should be the fs and not the app-db.
 - file download and download with subtitle options
 - Change files location:
 	- change download location but keep current stuff as it is.
