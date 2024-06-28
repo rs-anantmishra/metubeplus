@@ -23,7 +23,7 @@
 - custom command
 - url extraction on page / page change pattern with start and end index
 - add extracted urls to a note and save it with a name 
-- the name is a required field to start extraction.
+- the name is a required field to Upload Video.
 - change db to litestream at a later point.
 - Save executed commands. log all failed commands and provide options to show it. (Implement a basic activity Viewer)
 - add videos through uploading a file with links
