@@ -122,15 +122,15 @@ func (d *download) ExtractThumbnail(m []e.MediaInformation) []e.Files {
 	}
 
 	f := e.Files{FileTypeId: e.Thumbnail,
-		SourceId:        e.Downloaded,
-		FilePath:        fp,
-		FileName:        fn,
-		Extension:       "",
-		FileSize:        0,
-		FileSizeUnit:    "bytes",
-		ParentDirectory: "",
-		IsDeleted:       0,
-		CreatedDate:     time.Now().Unix()}
+		SourceId:     e.Downloaded,
+		FilePath:     fp,
+		FileName:     fn,
+		Extension:    "",
+		FileSize:     0,
+		FileSizeUnit: "bytes",
+		NetworkPath:  "",
+		IsDeleted:    0,
+		CreatedDate:  time.Now().Unix()}
 
 	_ = f
 
