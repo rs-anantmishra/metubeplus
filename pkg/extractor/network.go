@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -18,9 +19,9 @@ import (
 
 type IDownload interface {
 	ExtractMetadata() []e.MediaInformation
-	ExtractMedia() bool
+	ExtractMediaContent() bool
 	ExtractThumbnail([]e.MediaInformation) []e.Files
-	ExtractSubtitles() bool
+	ExtractSubtitles() []e.Files
 }
 
 type download struct {
@@ -73,7 +74,7 @@ func (d *download) ExtractMetadata() []e.MediaInformation {
 	return mediaInfo
 }
 
-func (d *download) ExtractMedia() bool {
+func (d *download) ExtractMediaContent() bool {
 	return false
 }
 
@@ -92,7 +93,7 @@ func (d *download) ExtractThumbnail(m []e.MediaInformation) []e.Files {
 	pResult := executeProcess(stdout)
 	_, errors, results := stripResultSections(pResult)
 
-	//results are not really needed - except maybe checking for errors.
+	//results are not really needed - except maybe to check for errors.
 	_ = errors
 	_ = results
 
@@ -112,43 +113,65 @@ func (d *download) ExtractThumbnail(m []e.MediaInformation) []e.Files {
 			fp = strings.Join([]string{c.Config("MEDIA_PATH"), elem.Domain, elem.Channel, "Videos", "Thumbnails"}, "\\")
 		} else if d.indicatorType == Playlist {
 			if i == 0 {
-				fn = append(fn, string(elem.PlaylistIndex)+Space+"-"+Space+elem.PlaylistTitle+Space+"["+elem.PlaylistId+"]")
+				//add playlist details
+				fn = append(fn, strconv.FormatInt(int64(elem.PlaylistIndex)-1, 10)+Space+"-"+Space+elem.PlaylistTitle+Space+"["+elem.PlaylistId+"]")
 				fp = strings.Join([]string{c.Config("MEDIA_PATH"), elem.Domain, elem.Channel, elem.PlaylistTitle, "Thumbnails"}, "\\")
+
+				//add Video details at index 0
+				fn = append(fn, strconv.FormatInt(int64(elem.PlaylistIndex), 10)+Space+"-"+Space+elem.Title+Space+"["+elem.YoutubeVideoId+"]")
 			} else {
-				fn = append(fn, string(elem.PlaylistIndex)+Space+"-"+Space+elem.Title+Space+"["+elem.YoutubeVideoId+"]")
+				fn = append(fn, strconv.FormatInt(int64(elem.PlaylistIndex), 10)+Space+"-"+Space+elem.Title+Space+"["+elem.YoutubeVideoId+"]")
 			}
 		}
 	}
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractThumbnail")
 
-	for _, entry := range c {
-		info, _ := entry.Info()
-		info.Size()
-		info.Name()
+	var files []e.Files
+	files = append(files, e.Files{FileTypeId: e.Thumbnail,
+		SourceId:     e.Downloaded,
+		FilePath:     fp,
+		FileName:     fn[0],
+		Extension:    "",
+		FileSize:     0,
+		FileSizeUnit: "bytes",
+		NetworkPath:  "",
+		IsDeleted:    0,
+		CreatedDate:  time.Now().Unix()})
+
+	if d.indicatorType == Playlist {
+		for i := 1; i < len(c); i++ {
+			file := e.Files{FileTypeId: e.Thumbnail,
+				SourceId:     e.Downloaded,
+				FilePath:     fp,
+				FileName:     fn[i],
+				Extension:    "",
+				FileSize:     0,
+				FileSizeUnit: "bytes",
+				NetworkPath:  "",
+				IsDeleted:    0,
+				CreatedDate:  time.Now().Unix()}
+
+			files = append(files, file)
+		}
 	}
 
-	var files []e.Files
-	for i := range m {
-		file := e.Files{FileTypeId: e.Thumbnail,
-			SourceId:     e.Downloaded,
-			FilePath:     fp,    //placeholders
-			FileName:     fn[i], //placeholders
-			Extension:    "",
-			FileSize:     0,
-			FileSizeUnit: "bytes",
-			NetworkPath:  "",
-			IsDeleted:    0,
-			CreatedDate:  time.Now().Unix()}
-
-		files = append(files, file)
+	//Todo: re-write this to compare filenames after removing all special characters.
+	//if there is a match then do the assignment.
+	for k, entry := range c {
+		info, _ := entry.Info()
+		files[k].FileName = info.Name()
+		files[k].FileSize = int(info.Size())
+		files[k].CreatedDate = info.ModTime().Unix()
+		splits := strings.SplitN(info.Name(), ".", -1)
+		files[k].Extension = splits[len(splits)-1]
 	}
 
 	return files
 }
 
-func (d *download) ExtractSubtitles() bool {
-	return false
+func (d *download) ExtractSubtitles() []e.Files {
+	return []e.Files{}
 }
 
 func getIndicatorType(url string) (int, int) {
@@ -227,7 +250,6 @@ func sanitizeResults(b bytes.Buffer) []string {
 
 func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInformation {
 
-	mediaInfo := e.MediaInformation{}
 	_, _, results := stripResultSections(pResult)
 
 	metaItemsCount := 0
@@ -241,7 +263,8 @@ func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInfor
 
 	var lstMediaInfo []e.MediaInformation
 	for k := 0; k < vCount; k++ {
-		for i := 0; i < metaItemsCount; i++ {
+		mediaInfo := e.MediaInformation{}
+		for i := (0 + k*metaItemsCount); i < (k+1)*metaItemsCount; i++ {
 			json.Unmarshal([]byte(results[i]), &mediaInfo)
 		}
 		lstMediaInfo = append(lstMediaInfo, mediaInfo)

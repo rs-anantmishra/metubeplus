@@ -6,6 +6,9 @@ import (
 
 type IRepository interface {
 	SaveMetadata([]e.MediaInformation) bool
+	SaveThumbnail([]e.Files) bool
+	SaveSubtitles([]e.Files) bool
+	SaveMediaContent([]e.Files) bool
 }
 
 type repository struct {
@@ -21,5 +24,19 @@ func InstantiateRepo(conn string) IRepository {
 
 func (r *repository) SaveMetadata(metadata []e.MediaInformation) bool {
 
+	return true
+}
+
+func (r *repository) SaveThumbnail(file []e.Files) bool {
+
+	return true
+}
+
+func (r *repository) SaveSubtitles(file []e.Files) bool {
+
+	return true
+}
+
+func (r *repository) SaveMediaContent(file []e.Files) bool {
 	return true
 }
