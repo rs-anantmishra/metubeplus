@@ -3,7 +3,7 @@ package extractor
 import e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 
 type IService interface {
-	ExtractIngestMetadata() bool                     // here we have an option to dl subs as well, when the metadata is available.
+	ExtractIngestMetadata(p e.IncomingRequest) bool  // here we have an option to dl subs as well, when the metadata is available.
 	ExtractIngestVideo(meta e.MediaInformation) bool //in case it was a metadata only files, youre free to dl video at a later time.
 	ExtractSubtitlesOnly(string) bool                // here we are navigating to a Video and downloading subs for it.
 }
@@ -20,7 +20,7 @@ func Instantiate(r IRepository, d IDownload) IService {
 	}
 }
 
-func (s *service) ExtractIngestMetadata() bool {
+func (s *service) ExtractIngestMetadata(p e.IncomingRequest) bool {
 	metadata := s.download.ExtractMetadata()
 	saveMetaData := s.repository.SaveMetadata(metadata)
 
@@ -28,8 +28,10 @@ func (s *service) ExtractIngestMetadata() bool {
 		thumbnail := s.download.ExtractThumbnail(metadata)
 		s.repository.SaveThumbnail(thumbnail)
 
-		subtitles := s.download.ExtractSubtitles()
-		s.repository.SaveSubtitles(subtitles)
+		if p.SubtitlesReq {
+			subtitles := s.download.ExtractSubtitles()
+			s.repository.SaveSubtitles(subtitles)
+		}
 	}
 
 	return true
