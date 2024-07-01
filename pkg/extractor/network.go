@@ -83,17 +83,18 @@ func (d *download) ExtractThumbnail(m []e.MediaInformation) []e.Files {
 	logCommand := command + Space + args
 
 	//log executed command - in activity log later
-	fmt.Println(logCommand)
-
+	_ = logCommand
 	cmd, stdout := buildProcess(args, GetCommandString())
 
 	err := cmd.Start()
 	handleErrors(err, "Metadata - Cmd.Start")
 
 	pResult := executeProcess(stdout)
-
 	_, errors, results := stripResultSections(pResult)
-	fmt.Println(results)
+
+	//results are not really needed - except maybe checking for errors.
+	_ = errors
+	_ = results
 
 	if len(errors) > 0 {
 		//Show error on UI
@@ -102,16 +103,22 @@ func (d *download) ExtractThumbnail(m []e.MediaInformation) []e.Files {
 	}
 
 	var fp string
-	var fn string
-	if d.indicatorType == Video {
-		//%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
-		fn = m[0].Title + Space + "[" + m[0].YoutubeVideoId + "]" + "." + m[0].Extension
-		fp = strings.Join([]string{c.Config("MEDIA_PATH"), m[0].Domain, m[0].Channel, "Videos", "Thumbnails"}, "\\")
-	} else if d.indicatorType == Playlist {
-		fn = string(m[0].PlaylistIndex) + Space + "-" + Space + m[0].PlaylistTitle + Space + "[" + m[0].PlaylistId + "]" + "." + m[0].Extension
-		fp = strings.Join([]string{c.Config("MEDIA_PATH"), m[0].Domain, m[0].Channel, m[0].PlaylistTitle, "Thumbnails"}, "\\")
-	}
+	var fn []string
 
+	//names dont require extensions as they are only needed to match name with subtitle filename.
+	for i, elem := range m {
+		if d.indicatorType == Video {
+			fn = append(fn, elem.Title+Space+"["+elem.YoutubeVideoId+"]")
+			fp = strings.Join([]string{c.Config("MEDIA_PATH"), elem.Domain, elem.Channel, "Videos", "Thumbnails"}, "\\")
+		} else if d.indicatorType == Playlist {
+			if i == 0 {
+				fn = append(fn, string(elem.PlaylistIndex)+Space+"-"+Space+elem.PlaylistTitle+Space+"["+elem.PlaylistId+"]")
+				fp = strings.Join([]string{c.Config("MEDIA_PATH"), elem.Domain, elem.Channel, elem.PlaylistTitle, "Thumbnails"}, "\\")
+			} else {
+				fn = append(fn, string(elem.PlaylistIndex)+Space+"-"+Space+elem.Title+Space+"["+elem.YoutubeVideoId+"]")
+			}
+		}
+	}
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractThumbnail")
 
@@ -121,20 +128,23 @@ func (d *download) ExtractThumbnail(m []e.MediaInformation) []e.Files {
 		info.Name()
 	}
 
-	f := e.Files{FileTypeId: e.Thumbnail,
-		SourceId:     e.Downloaded,
-		FilePath:     fp,
-		FileName:     fn,
-		Extension:    "",
-		FileSize:     0,
-		FileSizeUnit: "bytes",
-		NetworkPath:  "",
-		IsDeleted:    0,
-		CreatedDate:  time.Now().Unix()}
+	var files []e.Files
+	for i := range m {
+		file := e.Files{FileTypeId: e.Thumbnail,
+			SourceId:     e.Downloaded,
+			FilePath:     fp,    //placeholders
+			FileName:     fn[i], //placeholders
+			Extension:    "",
+			FileSize:     0,
+			FileSizeUnit: "bytes",
+			NetworkPath:  "",
+			IsDeleted:    0,
+			CreatedDate:  time.Now().Unix()}
 
-	_ = f
+		files = append(files, file)
+	}
 
-	return []e.Files{}
+	return files
 }
 
 func (d *download) ExtractSubtitles() bool {
