@@ -7,9 +7,13 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/pprof"
 )
 
 func SetupMiddleware(app *fiber.App) {
+
+	//pprof
+	app.Use(pprof.New())
 
 	//logger
 	app.Use(logger.New())
@@ -19,7 +23,7 @@ func SetupMiddleware(app *fiber.App) {
 
 	//Rate-Limiter
 	app.Use(limiter.New(limiter.Config{
-		Max:               20,
+		Max:               200000,
 		Expiration:        30 * time.Second,
 		LimiterMiddleware: limiter.SlidingWindow{},
 	}))

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	c "github.com/rs-anantmishra/metubeplus/config"
+	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 )
 
 type CSwitch struct {
@@ -197,6 +198,27 @@ func BuilderOptions() []CSwitch {
 func GetCommandString() string {
 	cmdPath := c.Config("YTDLP_PATH")
 	return cmdPath + CommandName
+}
+
+func GetVideoFilepath(fp e.Filepath, fType int) string {
+	var result string
+	if fType == e.Thumbnail {
+		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, "Videos", "Thumbnails"}, "\\")
+	} else if fType == e.Subtitles {
+		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, "Videos", "Subtitles"}, "\\")
+	}
+	return result
+}
+
+func GetPlaylistFilepath(fp e.Filepath, fType int) string {
+
+	var result string
+	if fType == e.Thumbnail {
+		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, fp.PlaylistTitle, "Thumbnails"}, "\\")
+	} else if fType == e.Subtitles {
+		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, fp.PlaylistTitle, "Subtitles"}, "\\")
+	}
+	return result
 }
 
 func cmdBuilderMetadata(url string, indicatorType int) (string, string) {

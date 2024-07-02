@@ -5,10 +5,10 @@ import (
 )
 
 type IRepository interface {
-	SaveMetadata([]e.MediaInformation) bool
-	SaveThumbnail([]e.Files) bool
-	SaveSubtitles([]e.Files) bool
-	SaveMediaContent([]e.Files) bool
+	SaveMetadata([]e.MediaInformation) (bool, int)
+	SaveThumbnail([]e.Files) (bool, int)
+	SaveSubtitles([]e.Files) (bool, int)
+	SaveMediaContent([]e.Files) (bool, int)
 }
 
 type repository struct {
@@ -22,21 +22,25 @@ func InstantiateRepo(conn string) IRepository {
 	}
 }
 
-func (r *repository) SaveMetadata(metadata []e.MediaInformation) bool {
+func (r *repository) SaveMetadata(metadata []e.MediaInformation) (bool, int) {
 
-	return true
+	if len(metadata) < 1 {
+		return false, 0
+	}
+
+	return true, 1
 }
 
-func (r *repository) SaveThumbnail(file []e.Files) bool {
+func (r *repository) SaveThumbnail(file []e.Files) (bool, int) {
 
-	return true
+	return true, 1
 }
 
-func (r *repository) SaveSubtitles(file []e.Files) bool {
+func (r *repository) SaveSubtitles(file []e.Files) (bool, int) {
 
-	return true
+	return true, 1
 }
 
-func (r *repository) SaveMediaContent(file []e.Files) bool {
-	return true
+func (r *repository) SaveMediaContent(file []e.Files) (bool, int) {
+	return true, 1
 }

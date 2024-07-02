@@ -34,13 +34,13 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 
 func NetworkIngestMedia(c *fiber.Ctx) error {
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
+	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": "nil"})
 }
 
 func NetworkIngestAutoSubs(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
+	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": "nil"})
 }
 
 func NetworkIngestThumbnail(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
+	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": "nil"})
 }

@@ -2,6 +2,7 @@ package entities
 
 type Files struct {
 	Id           int
+	VideoId      int
 	FileTypeId   int
 	SourceId     int
 	FilePath     string
@@ -12,6 +13,12 @@ type Files struct {
 	NetworkPath  string
 	IsDeleted    int
 	CreatedDate  int64
+}
+
+type Filepath struct {
+	Domain        string
+	Channel       string
+	PlaylistTitle string
 }
 
 // FileType Constants
