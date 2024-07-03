@@ -250,6 +250,7 @@ func cmdBuilderMetadata(url string, indicatorType int) (string, string) {
 	return arguments, cmd
 }
 
+//Download Media Content
 func cmdBuilderDownload() (string, string) {
 
 	return "nil", "nil"
