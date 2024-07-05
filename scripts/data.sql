@@ -28,7 +28,7 @@ VALUES('Subtitles');
 
 --Take time to define these properly.
 --This should detail user actions that can be reviewed later.
-INSERT INTO tblActivityType (File), 1
+INSERT INTO tblActivityType (ActivityName, IsNetworkActivity, IsActive)
 VALUES('Get Metadata for Audio', 1, 1) UNION 
 VALUES('Get Metadata for Video', 1, 1) UNION 
 VALUES('Get Metadata for Playlist', 1, 1) UNION 
