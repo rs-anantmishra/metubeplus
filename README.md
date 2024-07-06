@@ -38,6 +38,8 @@
 - Have option to disable APILogs & ActivityLogs
 - Parallel Downloads (4 videos at a time.)
 - Add and unwatched OR watched badge on Videos like wallhaven does.
+- Add Functionality for NetworkPath for Files table later.
+- Write Code to download yt-dlp and check for the executable before running a download.
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos
