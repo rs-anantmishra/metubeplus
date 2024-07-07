@@ -40,6 +40,7 @@
 - Add and unwatched OR watched badge on Videos like wallhaven does.
 - Add Functionality for NetworkPath for Files table later.
 - Write Code to download yt-dlp and check for the executable before running a download.
+- Rules can be applied to have videos of certain domains moved to hidden folders directly.
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos
