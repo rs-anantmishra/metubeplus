@@ -1,16 +1,16 @@
 package database
 
 // This file to be replaced with .sql files for each query
-const InsertChannelCheck string = `Select YoutubeChannelId From tblChannels Where YoutubeChannelId = ?`
+const InsertChannelCheck string = `Select Id From tblChannels Where YoutubeChannelId = ?`
 const InsertChannel string = `INSERT INTO tblChannels Select NULL, ?, ?, ?, ?;`
 
-const InsertPlaylistCheck string = `Select YoutubePlaylistID From tblPlaylists WHERE YoutubePlaylistID = ?`
+const InsertPlaylistCheck string = `Select Id From tblPlaylists WHERE YoutubePlaylistID = ?`
 const InsertPlaylist string = `INSERT INTO tblPlaylists Select NULL, ?, ?, ?, ?, ?, ?, ?;`
 
 const InsertDomainCheck string = `Select Id From tblDomains Where Domain = ?`
 const InsertDomain string = `INSERT INTO tblDomains Select NULL, ?, ?;`
 
-const InsertFormatCheck string = `Select Id From tblFormats Where Format = ? AND FormatNote = ? AND Resolution = ? AND StreamType = ?`
+const InsertFormatCheck string = `Select Id From tblFormats Where Format = ?`
 const InsertFormat string = `INSERT INTO tblFormats Select NULL, ?, ?, ?, ?, ?;`
 
 const InsertMetadataCheck string = `Select Id From tblVideos Where YoutubeVideoId = ?`

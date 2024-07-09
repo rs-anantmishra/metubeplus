@@ -217,6 +217,8 @@ func GetPlaylistFilepath(fp e.Filepath, fType int) string {
 		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, fp.PlaylistTitle, "Thumbnails"}, "\\")
 	} else if fType == e.Subtitles {
 		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, fp.PlaylistTitle, "Subtitles"}, "\\")
+	} else {
+		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, fp.PlaylistTitle}, "\\")
 	}
 	return result
 }
@@ -250,7 +252,7 @@ func cmdBuilderMetadata(url string, indicatorType int) (string, string) {
 	return arguments, cmd
 }
 
-//Download Media Content
+// Download Media Content
 func cmdBuilderDownload() (string, string) {
 
 	return "nil", "nil"
