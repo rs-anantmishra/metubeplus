@@ -38,15 +38,15 @@ func ConnectDB() {
 	fmt.Println("Connected to database.")
 }
 
-func CloseDB(db *sql.DB) bool {
+func CloseDB() bool {
 
 	//Check if db isn't closed, then close db
-	if err := db.Ping(); err == nil {
-		db.Close()
+	if err := DB.Ping(); err == nil {
+		DB.Close()
 	}
 
 	// Check if the connection is successful
-	if err := db.Ping(); err != nil {
+	if err := DB.Ping(); err != nil {
 		fmt.Println("Database closed.")
 		return true
 	}

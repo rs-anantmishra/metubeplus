@@ -13,7 +13,7 @@ type service struct {
 	download   IDownload
 }
 
-func NewExtractionService(r IRepository, d IDownload) IService {
+func NewDownloadService(r IRepository, d IDownload) IService {
 	return &service{
 		repository: r,
 		download:   d,

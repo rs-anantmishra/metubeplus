@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
+	sql "github.com/rs-anantmishra/metubeplus/database"
 	en "github.com/rs-anantmishra/metubeplus/pkg/entities"
 	ex "github.com/rs-anantmishra/metubeplus/pkg/extractor"
 )
@@ -20,8 +21,8 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 
 	//Instantiate
 	svcDownloads := ex.NewDownload(*params)
-	svcRepo := ex.NewRepo("")
-	svcVideos := ex.NewExtractionService(svcRepo, svcDownloads)
+	svcRepo := ex.NewDownloadRepo(sql.DB)
+	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 
 	//Process Request
 	// No validations for URL/Playlist are needed.

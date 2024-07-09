@@ -7,6 +7,7 @@ import (
 	m "github.com/rs-anantmishra/metubeplus/api/middleware"
 	r "github.com/rs-anantmishra/metubeplus/api/routes"
 	c "github.com/rs-anantmishra/metubeplus/config"
+	"github.com/rs-anantmishra/metubeplus/database"
 )
 
 func main() {
@@ -22,6 +23,10 @@ func main() {
 
 	m.SetupMiddleware(app)
 	r.SetupRoutes(app)
+
+	database.ConnectDB()
+	
+	defer database.CloseDB()
 
 	log.Fatal(app.Listen(port))
 }

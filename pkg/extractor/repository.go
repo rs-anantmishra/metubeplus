@@ -1,6 +1,8 @@
 package extractor
 
 import (
+	"database/sql"
+
 	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 )
 
@@ -12,13 +14,12 @@ type IRepository interface {
 }
 
 type repository struct {
-	//here we have the db connection object (or the connection string?) to execute queries
-	Connection string
+	db *sql.DB
 }
 
-func NewRepo(conn string) IRepository {
+func NewDownloadRepo(Database *sql.DB) IRepository {
 	return &repository{
-		Connection: conn,
+		db: Database,
 	}
 }
 
