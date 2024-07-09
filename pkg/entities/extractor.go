@@ -27,5 +27,6 @@ type MediaInformation struct {
 
 type DownloadProgressIndicator struct {
 	Filepath string `json:"filepath"`
+	Title    string
 	Progress string
 }

@@ -1,5 +1,13 @@
 # metubeplus
 
+APPLICATION BEHAVIOR:
+If you have an entry for the video in SQLite and you are attempting to download the video again, it asks to save the video as - 
+1. A newer version and keep both the old and the new.
+2. Download again and overwrite the existing video file.
+3. Refresh metadata and keep the existing video file as it is.
+	a. Show a warning - If the video was part of an existing playlist that the Playlist binding will be removed - keep that binding?
+
+
 - hidden folders can be implemented.
 - Should be able to refresh video information
 - by default hide deleted Videos (option to show deleted Videos / faded / not-clickable)
@@ -41,6 +49,9 @@
 - Add Functionality for NetworkPath for Files table later.
 - Write Code to download yt-dlp and check for the executable before running a download.
 - Rules can be applied to have videos of certain domains moved to hidden folders directly.
+- Toralize connections through yt-dlp (bypass blocks)
+- Local playlists can have audios, videos or both from different sources - local, downloaded, metaOnly, online.
+- Download at a later time.
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos

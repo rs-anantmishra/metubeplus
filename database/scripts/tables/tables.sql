@@ -4,15 +4,16 @@ CREATE TABLE IF NOT EXISTS tblVideos(
 	Description TEXT NOT NULL DEFAULT 'Unavailable',
 	DurationSeconds INTEGER,
 	WebpageURL TEXT NOT NULL,
+	LiveStatus TEXT,
+	Availability TEXT,
 	PlaylistVideoIndex INTEGER,
 	IsFileDownloaded INTEGER NOT NULL DEFAULT 0,
 	ChannelId INTEGER,
 	PlayListId INTEGER,
-	LiveStatusId INTEGER,
 	DomainId INTEGER,
-	AvailabilityId INTEGER,
 	FormatId INTEGER,	
 	YoutubeVideoId INTEGER,
+	WatchCount INTEGER,
 	IsDeleted INTEGER,
 	CreatedDate INTEGER NOT NULL
 );
@@ -35,10 +36,10 @@ CREATE TABLE IF NOT EXISTS tblAvailabilityType(
 	Availability TEXT
 );
 
-CREATE TABLE IF NOT EXISTS tblPlaylist(
+CREATE TABLE IF NOT EXISTS tblPlaylists(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	Title TEXT NOT NULL DEFAULT 'Unavailable',
-	VideoCount INTEGER,
+	ItemCount INTEGER,
 	Directory TEXT,
 	ChannelId INTEGER,
 	ThumbnailFileId INTEGER,
@@ -94,8 +95,8 @@ CREATE TABLE IF NOT EXISTS tblVideoFileCategories(
 CREATE TABLE IF NOT EXISTS tblFiles(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	VideoId INTEGER NOT NULL,
-	FileTypeId INTEGER,
-	SourceId INTEGER,
+	FileType TEXT,
+	Source TEXT,
 	FilePath TEXT,
 	FileName TEXT,
 	Extension TEXT,
@@ -116,7 +117,7 @@ CREATE TABLE IF NOT EXISTS tblFileType(
 	File TEXT
 );
 
---this is for some history the user may want
+-- logs all yt-dlp commands here
 CREATE TABLE IF NOT EXISTS tblNetworkActivityLogs(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	ActivityTypeId INTEGER NOT NULL,	
@@ -126,6 +127,7 @@ CREATE TABLE IF NOT EXISTS tblNetworkActivityLogs(
 	CreatedDate INTEGER
 );
 
+-- logs all crud operations here
 CREATE TABLE IF NOT EXISTS tblLocalActivityLogs(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	ActivityTypeId INTEGER NOT NULL,	
@@ -142,7 +144,8 @@ CREATE TABLE IF NOT EXISTS tblActivityType(
 	IsActive INTEGER NOT NULL DEFAULT 1
 );
 
---this is for debugging perf/errors
+-- It helps debug perf and errors.
+-- It ties all activities performed(or not performed) and when.
 CREATE TABLE IF NOT EXISTS tblAPILogs(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	APIName TEXT,

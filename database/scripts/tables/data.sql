@@ -1,3 +1,6 @@
+-- Not using any List of Values tables except tblActivityType
+-- Reason: Simplifies sqlite queries considerably.
+-- Reason: Simplification is needed as SP, Fx, etc are not available.
 INSERT INTO tblLiveStatusType (LiveStatus)
 VALUES('not_live') UNION 
 VALUES('is_live') UNION 
@@ -24,7 +27,6 @@ VALUES('Audio') UNION
 VALUES('Video') UNION 
 VALUES('Thumbnail') UNION 
 VALUES('Subtitles');
-
 
 --Take time to define these properly.
 --This should detail user actions that can be reviewed later.
