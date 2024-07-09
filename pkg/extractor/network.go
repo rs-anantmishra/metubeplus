@@ -286,7 +286,10 @@ func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInfor
 	for k := 0; k < vCount; k++ {
 		mediaInfo := e.MediaInformation{}
 		for i := (0 + k*metaItemsCount); i < (k+1)*metaItemsCount; i++ {
-			json.Unmarshal([]byte(results[i]), &mediaInfo)
+			//additional check for stupid outputs by yt-dlp
+			if results[i][0] == '{' {
+				json.Unmarshal([]byte(results[i]), &mediaInfo)
+			}
 		}
 		lstMediaInfo = append(lstMediaInfo, mediaInfo)
 	}
@@ -302,16 +305,26 @@ func stripResultSections(pResult []string) ([]string, []string, []string) {
 	var warnings []string
 	var errors []string
 	var results []string
+	var previous string
 
-	for index, elem := range pResult {
+	for _, elem := range pResult {
 		if val := strings.Index(elem, WARNING); val == 0 {
 			warnings = append(warnings, elem)
+			previous = WARNING
 		} else if val := strings.Index(elem, ERROR); val == 0 {
 			errors = append(errors, elem)
+			previous = ERROR
+		} else if val := strings.Index(elem, ANSWER_START); val == 0 {
+			results = append(results, elem)
 		} else {
-			results = pResult[index:]
-			break
+			//append to previous entry if nothing matches -- most tested and stable solution
+			if previous == WARNING {
+				warnings = append(warnings, elem)
+			} else if previous == ERROR {
+				errors = append(errors, elem)
+			}
 		}
+
 	}
 
 	return warnings, errors, results

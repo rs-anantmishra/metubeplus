@@ -2,7 +2,9 @@ package extractor
 
 import (
 	"database/sql"
+	"time"
 
+	p "github.com/rs-anantmishra/metubeplus/database"
 	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 )
 
@@ -29,7 +31,19 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation) (bool, int) {
 		return false, 0
 	}
 
-	return true, 1
+	//save channel
+	result, err := r.db.Exec(p.InsertChannel, metadata[0].Channel, metadata[0].ChannelURL, metadata[0].ChannelId, time.Now().Unix())
+
+	if err != nil {
+		return false, 0
+	}
+
+	var id int64
+	if id, err = result.LastInsertId(); err != nil {
+		return false, 0
+	}
+	return true, int(id)
+
 }
 
 func (r *repository) SaveThumbnail(file []e.Files) (bool, int) {

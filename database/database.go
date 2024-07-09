@@ -21,7 +21,7 @@ func ConnectDB() {
 	file := c.Config("DB_NAME")
 	//if db name not provided, take default.
 	if len(file) == 0 {
-		file = `metubeplus.db`
+		file = `../database/db/metubeplus.db`
 	}
 
 	db, err := sql.Open("sqlite3", file)

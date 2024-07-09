@@ -56,6 +56,7 @@ const OutputThumbnailFile string = `-o "thumbnail:%(webpage_url_domain)s/%(chann
 // Output Parsing: Warnings & Errors
 const WARNING string = `WARNING:`
 const ERROR string = `ERROR:`
+const ANSWER_START string = `{`
 
 // --Testing----------------------------------------------------------------------------------------//
 const TestURL1 string = `https://www.youtube.com/watch?v=GW2g-5WALrc`
