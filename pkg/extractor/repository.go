@@ -16,7 +16,7 @@ type repository struct {
 	Connection string
 }
 
-func InstantiateRepo(conn string) IRepository {
+func NewRepo(conn string) IRepository {
 	return &repository{
 		Connection: conn,
 	}
@@ -27,8 +27,6 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation) (bool, int) {
 	if len(metadata) < 1 {
 		return false, 0
 	}
-
-	
 
 	return true, 1
 }

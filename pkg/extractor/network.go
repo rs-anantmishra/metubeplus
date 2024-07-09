@@ -26,7 +26,7 @@ type download struct {
 	indicatorType int
 }
 
-func InstantiateDownload(params e.IncomingRequest) IDownload {
+func NewDownload(params e.IncomingRequest) IDownload {
 	return &download{
 		p: params,
 	}

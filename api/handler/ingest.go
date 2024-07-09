@@ -19,9 +19,9 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 	log.Info("Request Params:", params)
 
 	//Instantiate
-	svcDownloads := ex.InstantiateDownload(*params)
-	svcRepo := ex.InstantiateRepo("")
-	svcVideos := ex.Instantiate(svcRepo, svcDownloads)
+	svcDownloads := ex.NewDownload(*params)
+	svcRepo := ex.NewRepo("")
+	svcVideos := ex.NewExtractionService(svcRepo, svcDownloads)
 
 	//Process Request
 	// No validations for URL/Playlist are needed.
