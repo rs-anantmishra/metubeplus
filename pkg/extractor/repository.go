@@ -88,6 +88,43 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 		_ = formatId
 	}
 
+	// ///////////////////////////////////////////////
+	// Insert tblVideo here //////////////////////////
+	// ///////////////////////////////////////////////
+
+	//Tags will NOT be same for all items in playlist.
+	var lstTagId []int
+	for _, elem := range metadata[0].Tags {
+		tagId := genericCheck(*r, elem, "Tag", p.InsertTagsCheck)
+		if tagId <= 0 {
+			var args []any
+			args = append(args, metadata[0].Domain)
+			args = append(args, time.Now().Unix())
+
+			tagId = genericSave(*r, args, p.InsertDomain)
+			_ = tagId
+			//here, we should have a map between tag Id, VideoId which should be used to populate VideoFileTags
+			lstTagId = append(lstTagId, tagId)
+		}
+	}
+
+	//Tags will NOT be same for all items in playlist.
+	var lstCategoryId []int
+	for _, elem := range metadata[0].Tags {
+		categoryId := genericCheck(*r, elem, "Tag", p.InsertCategoriesCheck)
+		if categoryId <= 0 {
+			var args []any
+			args = append(args, metadata[0].Domain)
+			args = append(args, time.Now().Unix())
+
+			categoryId = genericSave(*r, args, p.InsertDomain)
+			_ = categoryId
+			//here, we should have a map between categoryId Id,
+			//VideoId which should be used to populate VideoFileCategories
+			lstCategoryId = append(lstCategoryId, categoryId)
+		}
+	}
+
 	return resultId
 }
 
