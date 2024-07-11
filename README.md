@@ -52,6 +52,7 @@ If you have an entry for the video in SQLite and you are attempting to download 
 - Toralize connections through yt-dlp (bypass blocks)
 - Local playlists can have audios, videos or both from different sources - local, downloaded, metaOnly, online.
 - Download at a later time.
+- Bookmark favorites.
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos
