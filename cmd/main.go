@@ -25,7 +25,7 @@ func main() {
 	r.SetupRoutes(app)
 
 	database.ConnectDB()
-	
+
 	defer database.CloseDB()
 
 	log.Fatal(app.Listen(port))

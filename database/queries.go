@@ -15,7 +15,8 @@ const InsertFormat string = `INSERT INTO tblFormats Select NULL, ?, ?, ?, ?, ?;`
 
 const InsertMetadataCheck string = `Select Id From tblVideos Where YoutubeVideoId = ?`
 const InsertMetadata string = `INSERT INTO tblVideos (
-	Title
+	Id
+	,Title
 	,Description
 	,DurationSeconds
 	,WebpageURL
@@ -39,3 +40,9 @@ const InsertTags string = `INSERT INTO tblTags Select NULL, ?, ?, ?;`
 
 const InsertCategoriesCheck string = `Select Id From tblCategories Where Name = ?`
 const InsertCategories string = `INSERT INTO tblCategories Select NULL, ?, ?, ?;`
+
+const InsertVideoFileTagsCheck string = `SELECT Id From tblVideoFileTags Where TagId = ? AND VideoId = ?`
+const InsertVideoFileTags string = `INSERT INTO tblVideoFileTags SELECT NULL, ?, ?, ?, ?`
+
+const InsertVideoFileCategoriesCheck string = `SELECT Id From tblVideoFileCategories Where CategoryId = ? AND VideoId = ?`
+const InsertVideoFileCategories string = `INSERT INTO tblVideoFileCategories SELECT NULL, ?, ?, ?, ?`
