@@ -286,8 +286,13 @@ func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInfor
 	for k := 0; k < vCount; k++ {
 		mediaInfo := e.MediaInformation{}
 		for i := (0 + k*metaItemsCount); i < (k+1)*metaItemsCount; i++ {
-			//additional check for stupid outputs by yt-dlp
-			if results[i][0] == '{' {
+
+			//Unmarshall is unreliable since the json coming from yt-dlp is invalid.
+			//This will be patched - A Field-Fixer to be impl.
+			//which gets Values of individual fields in plain-text - one field at a time
+			//Slow operation, can be performed parallely with download.
+			//Option to perform manually at a later time - can be provided.
+			if results[i][0] == '{' && results[i][len(results[i])-1] == '}' {
 				json.Unmarshal([]byte(results[i]), &mediaInfo)
 			}
 		}
