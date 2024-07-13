@@ -258,15 +258,47 @@ func executeProcess(stdout io.ReadCloser) []string {
 
 func sanitizeResults(b bytes.Buffer) []string {
 
-	//sanitize json
-	result := strings.ReplaceAll(b.String(), "'", "\"")
+	result := b.String()
+	results := strings.Split(result, "\n")
+
+	for i, _ := range results {
+		results[i] = proximityQuoteReplacement(results[i])
+	}
+
+	//valid json require keys and values to be enclosed in double quotes, not single quotes
+	//result := strings.ReplaceAll(b.String(), "'", "\"")
 
 	//split by newlines and remove and from the end.
-	results := strings.Split(result, "\n")
+	//results := strings.Split(result, "\n")
 	if results[len(results)-1] == "" {
 		results = results[:len(results)-1]
 	}
 	return results
+}
+
+func proximityQuoteReplacement(data string) string {
+
+	dQ := []byte("\"")[0]
+	b := []byte(data)
+
+	if seq1 := strings.Index(data, "{'"); seq1 >= 0 {
+		b[seq1+1] = dQ
+	}
+
+	if seq2 := strings.Index(data, "':"); seq2 >= 0 {
+		b[seq2] = dQ
+	}
+
+	if seq3 := strings.Index(data, ": '"); seq3 >= 0 {
+		b[seq3+2] = dQ
+	}
+
+	if seq4 := strings.LastIndex(data, "'}"); seq4 >= 0 {
+		b[seq4] = dQ
+	}
+
+	data = string(b)
+	return data
 }
 
 func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInformation {
@@ -288,10 +320,6 @@ func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInfor
 		for i := (0 + k*metaItemsCount); i < (k+1)*metaItemsCount; i++ {
 
 			//Unmarshall is unreliable since the json coming from yt-dlp is invalid.
-			//This will be patched - A Field-Fixer to be impl.
-			//which gets Values of individual fields in plain-text - one field at a time
-			//Slow operation, can be performed parallely with download.
-			//Option to perform manually at a later time - can be provided.
 			if results[i][0] == '{' && results[i][len(results[i])-1] == '}' {
 				json.Unmarshal([]byte(results[i]), &mediaInfo)
 			}
@@ -339,6 +367,47 @@ func handleErrors(err error, methodName string) {
 	if err != nil {
 		fmt.Println("pkg dowonload", methodName, err)
 	}
+}
+
+// avoiding reflection here
+func patchDataField(mediaInfo e.MediaInformation) e.MediaInformation {
+
+	var queries []string
+	//Only checking for title description, Channel Name errors here.
+	switch {
+	case mediaInfo.Channel == "":
+		queries = append(queries, Plaintext_Channel)
+	case mediaInfo.Title == "":
+		queries = append(queries, Plaintext_Title)
+	case mediaInfo.Description == "":
+		queries = append(queries, Plaintext_Description)
+	default:
+		break
+	}
+
+	for _, elem := range queries {
+		var args []string
+		args = append(args, mediaInfo.OriginalURL)
+		args = append(args, SkipDownload)
+		args = append(args, elem)
+
+		options := strings.Join(args, Space)
+		cmd, stdout := buildProcess(options, GetCommandString())
+
+		err := cmd.Start()
+		handleErrors(err, "patchDataField - Cmd.Start")
+
+		procResult := executeProcess(stdout) //check and ok!
+
+		for i, _ := range procResult {
+			if idx := strings.Index(procResult[i], "Title:"); idx == 0 {
+
+			}
+		}
+	}
+
+	_ = queries
+	return mediaInfo
 }
 
 // Result Type for entity binding and result parsing
