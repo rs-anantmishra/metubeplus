@@ -47,7 +47,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 
 		//playlist info will be same for all in the playlist.
 		playlistId := genericCheck(*r, elem.PlaylistId, "Playlist", p.InsertPlaylistCheck)
-		if playlistId <= 0 {
+		if playlistId <= 0 && (elem.PlaylistTitle != "" && elem.PlaylistCount > 0) {
 			var args []any
 			args = append(args, elem.PlaylistTitle)
 			args = append(args, elem.PlaylistCount)
@@ -113,11 +113,11 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 
 		//Tags will NOT be same for all items in playlist.
 		var lstTagId []int
-		for _, elem := range elem.Tags {
-			tagId := genericCheck(*r, elem, "Tag", p.InsertTagsCheck)
+		for _, element := range elem.Tags {
+			tagId := genericCheck(*r, element, "Tag", p.InsertTagsCheck)
 			if tagId <= 0 {
 				var args []any
-				args = append(args, elem)
+				args = append(args, element)
 				args = append(args, 1) // IsUsed
 				args = append(args, time.Now().Unix())
 
@@ -142,11 +142,11 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 
 		//Categories will NOT be same for all items in playlist.
 		var lstCategoryId []int
-		for _, elem := range elem.Categories {
-			categoryId := genericCheck(*r, elem, "Category", p.InsertCategoriesCheck)
+		for _, element := range elem.Categories {
+			categoryId := genericCheck(*r, element, "Category", p.InsertCategoriesCheck)
 			if categoryId <= 0 {
 				var args []any
-				args = append(args, elem)
+				args = append(args, element)
 				args = append(args, 1) // IsUsed
 				args = append(args, time.Now().Unix())
 

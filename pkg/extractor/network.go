@@ -11,6 +11,7 @@ import (
 	"syscall"
 
 	"github.com/gofiber/fiber/v2/log"
+	c "github.com/rs-anantmishra/metubeplus/config"
 	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 )
 
@@ -258,28 +259,34 @@ func executeProcess(stdout io.ReadCloser) []string {
 
 func sanitizeResults(b bytes.Buffer) []string {
 
+	//split result by newlines
 	result := b.String()
 	results := strings.Split(result, "\n")
 
 	for i, _ := range results {
+		//valid json require keys and values to be enclosed in double quotes, not single quotes
 		results[i] = proximityQuoteReplacement(results[i])
 	}
 
-	//valid json require keys and values to be enclosed in double quotes, not single quotes
-	//result := strings.ReplaceAll(b.String(), "'", "\"")
-
-	//split by newlines and remove and from the end.
-	//results := strings.Split(result, "\n")
+	//remove newlines from the end
 	if results[len(results)-1] == "" {
 		results = results[:len(results)-1]
 	}
 	return results
 }
 
+// valid json require keys and values to be enclosed in double quotes, not single quotes
 func proximityQuoteReplacement(data string) string {
 
 	dQ := []byte("\"")[0]
 	b := []byte(data)
+
+	seqArraryCheck1 := strings.Index(data, ": ['")
+	seqArraryCheck2 := strings.LastIndex(data, "']")
+	if seqArraryCheck1 >= 0 && seqArraryCheck2 >= 0 {
+		data = strings.ReplaceAll(data, "'", "\"")
+		return data
+	}
 
 	if seq1 := strings.Index(data, "{'"); seq1 >= 0 {
 		b[seq1+1] = dQ
@@ -324,6 +331,11 @@ func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInfor
 				json.Unmarshal([]byte(results[i]), &mediaInfo)
 			}
 		}
+
+		if c.Config("PATCHING") == "enabled" {
+			mediaInfo = patchDataField(mediaInfo)
+		}
+
 		lstMediaInfo = append(lstMediaInfo, mediaInfo)
 	}
 
@@ -372,6 +384,12 @@ func handleErrors(err error, methodName string) {
 // avoiding reflection here
 func patchDataField(mediaInfo e.MediaInformation) e.MediaInformation {
 
+	const plainChannel string = "Channel: "
+	const plainTitle string = "Title: "
+	const plainDescription string = "Description: "
+	const plainTags string = "Tags: "
+	const plainCategories string = "Categories: "
+
 	var queries []string
 	//Only checking for title description, Channel Name errors here.
 	switch {
@@ -381,6 +399,10 @@ func patchDataField(mediaInfo e.MediaInformation) e.MediaInformation {
 		queries = append(queries, Plaintext_Title)
 	case mediaInfo.Description == "":
 		queries = append(queries, Plaintext_Description)
+	case len(mediaInfo.Tags) == 0:
+		queries = append(queries, Plaintext_Tags)
+	case len(mediaInfo.Categories) == 0:
+		queries = append(queries, Plaintext_Categories)
 	default:
 		break
 	}
@@ -397,16 +419,23 @@ func patchDataField(mediaInfo e.MediaInformation) e.MediaInformation {
 		err := cmd.Start()
 		handleErrors(err, "patchDataField - Cmd.Start")
 
-		procResult := executeProcess(stdout) //check and ok!
+		procResult := executeProcess(stdout)
 
 		for i, _ := range procResult {
-			if idx := strings.Index(procResult[i], "Title:"); idx == 0 {
-
+			if idx := strings.Index(procResult[i], plainChannel); idx == 0 {
+				mediaInfo.Channel = procResult[i][len(plainChannel):]
+			} else if idx := strings.Index(procResult[i], plainTitle); idx == 0 {
+				mediaInfo.Title = procResult[i][len(plainTitle):]
+			} else if idx := strings.Index(procResult[i], plainDescription); idx == 0 {
+				mediaInfo.Description = procResult[i][len(plainDescription):]
+			} else if idx := strings.Index(procResult[i], plainTags); idx == 0 {
+				mediaInfo.Description = procResult[i][len(plainTags):]
+			} else if idx := strings.Index(procResult[i], plainCategories); idx == 0 {
+				mediaInfo.Description = procResult[i][len(plainCategories):]
 			}
 		}
 	}
 
-	_ = queries
 	return mediaInfo
 }
 
