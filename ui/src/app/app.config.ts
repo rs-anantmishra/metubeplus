@@ -3,11 +3,13 @@ import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), 
-    importProvidersFrom(BrowserModule), importProvidersFrom(BrowserAnimationsModule), provideAnimations()]
+  providers: [provideAnimationsAsync(), provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), 
+    importProvidersFrom(BrowserModule), importProvidersFrom(BrowserAnimationsModule), provideAnimations()
+  ]
 };

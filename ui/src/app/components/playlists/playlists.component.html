@@ -1,1 +1,17 @@
-<p>playlists works!</p>
+
+<p-sidebar [(visible)]="sidebarVisible">
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-2">
+            <p-avatar 
+                image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" 
+                shape="circle" />
+            <span class="font-bold">
+                Amy Elsner
+            </span>
+        </div>
+    </ng-template>
+    <p>
+        Lorem ipsum dolor sit amet...
+    </p>
+</p-sidebar>
+<p-button (onClick)="sidebarVisible = true" icon="pi pi-plus" />
