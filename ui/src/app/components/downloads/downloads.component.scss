@@ -1,17 +1,12 @@
-.downloads-box {
+.home-box {
     display: flex;
-    align-items: center;
     justify-content: center;
-    align-items: stretch;
     height: calc(100vh - 64px);
-
-    flex: 1;
+    margin: auto;
+    
     flex-direction: column;
     align-items: center;
     
-    // margin-top:auto;
-    // margin-bottom: auto; 
-    margin: auto;
   }
 
   .url-container {
@@ -19,7 +14,17 @@
   }
   
   .me-container {
-    // margin-left: auto;
-    // margin-right: auto;
-    width: 100%;
+    font-family: "Nothing You Could Do", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 84px;
+
+    background-color: black;
+    color: white;
+    border-radius: 6px;
+    margin-bottom: 6px;
+
+    display: flex;
+    justify-content: center;
+    width: 800px
   }
