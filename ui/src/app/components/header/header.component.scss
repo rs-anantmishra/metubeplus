@@ -2,15 +2,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 24px;
 }
 
 :host ::ng-deep .p-breadcrumb {
     border: none;
+    padding-bottom: 0.75rem;
+    padding-top: 0.75rem;
+    // background-color: black;
+    background-color: #F8FAFC;
+
 }
 
 :host ::ng-deep .p-autocomplete-input {
     padding-bottom: 0.5rem;
-    padding-top: 0.5rem;
+    padding-top: 0.75rem;
 }
 
 

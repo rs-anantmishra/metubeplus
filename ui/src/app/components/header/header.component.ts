@@ -25,7 +25,7 @@ export class HeaderComponent implements OnInit {
 
 
   //search-bar
-  visible: string = 'hidden'
+  visible: string = 'visible'
 
   items: MenuItem[];
   selectedCity: any;

@@ -1,12 +1,20 @@
 <div class="home-box">
     <div class="me-container">
-        <span>Streamsphere</span>
+        <img src="smol-sphere.gif" />
+        <span class="name-box">Streamsphere</span>
     </div>
     <div class="url-container">
         <p-inputGroup>
-            <p-inputGroupAddon>www</p-inputGroupAddon>
+            <p-inputGroupAddon>http://</p-inputGroupAddon>
             <input type="text" pInputText [placeholder]="placeholder" />
             <button type="button" pButton label="Get"></button>
         </p-inputGroup>
+    </div>
+    <div class="options-container">
+        <div class="">
+            <div *ngFor="let category of categories" class="checkbox">
+                <p-checkbox [(ngModel)]="selectedCategories" [label]="category.name" name="group" [value]="category" />
+            </div>
+        </div>
     </div>
 </div>
