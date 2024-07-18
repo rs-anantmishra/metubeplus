@@ -1,16 +1,30 @@
-import { Component } from '@angular/core';
-import { SidebarModule } from 'primeng/sidebar';
-import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
-import { AvatarModule } from 'primeng/avatar';
+import { Component } from '@angular/core';
+import { PaginatorModule } from 'primeng/paginator';
+
+interface PageEvent {
+  first: number;
+  rows: number;
+  page: number;
+  pageCount: number;
+}
 
 @Component({
   selector: 'app-playlists',
   standalone: true,
-  imports: [SidebarModule, ButtonModule, CommonModule, AvatarModule],
+  imports: [CommonModule, PaginatorModule],
   templateUrl: './playlists.component.html',
   styleUrl: './playlists.component.scss'
 })
 export class PlaylistsComponent {
-  sidebarVisible: boolean = false;
+
+  visibility = 'visible'
+  first: number = 0;
+  rows: number = 10;
+
+  onPageChange(event: any) {
+    this.first = event.first;
+    this.rows = event.rows;
+  }
+
 }

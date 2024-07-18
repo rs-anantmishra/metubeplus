@@ -1,0 +1,28 @@
+<div class="header-box">
+    <!-- <div style="position: fixed; top: 0px;"> -->
+    <div class="crumbs-box">
+        <p-breadcrumb class="max-w-full" [model]="crumbs" [home]="home" />
+    </div>
+
+    <!-- <div style="position: fixed; top: 24px; left: 168px;"> -->
+    <div class="search-box" [ngStyle]="{visibility: visible}">
+        <span class="p-fluid">
+            <p-autoComplete [(ngModel)]="selectedCity" [group]="true" [suggestions]="filteredGroups"
+                (completeMethod)="filterGroupedCity($event)" placeholder="Search" variant="filled">
+                <ng-template let-group pTemplate="group">
+                    <div class="flex align-items-center">
+                        <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                            [class]="'mr-2 flag flag-' + group.value" style="width: 20px" />
+                        <span>{{ group.label }}</span>
+                    </div>
+                </ng-template>
+            </p-autoComplete>
+        </span>
+    </div>
+    <!-- <div style="position: fixed; top: 22px; right: 8px;"> -->
+    <div class="nav-box">
+        <p-toast />
+        <p-splitButton size="small" label="Navigation" (onClick)="save('info')" [model]="items" severity="primary"
+            raised />
+    </div>
+</div>

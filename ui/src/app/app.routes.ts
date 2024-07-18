@@ -15,4 +15,6 @@ export const routes: Routes = [
     { path: 'categories', component: CategoriesComponent, title: 'Categories+' },
     { path: 'video-details', component: VideoDetailsComponent, title: 'Metube+' },
     { path: 'playlist-details', component: PlaylistDetailsComponent, title: 'Metube+' },
+    { path: '', redirectTo: '/home', pathMatch: 'full' },
+    { path: '**', redirectTo: 'home'}
 ];
