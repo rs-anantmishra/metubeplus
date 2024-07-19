@@ -1,4 +1,4 @@
-<div class="home-box">
+<div class="home-box" [ngClass]="homeBoxActive">
     <div class="me-container">
         <img src="smol-sphere.gif" />
         <span class="name-box">Streamsphere</span>
@@ -7,14 +7,35 @@
         <p-inputGroup>
             <p-inputGroupAddon>http://</p-inputGroupAddon>
             <input type="text" pInputText [placeholder]="placeholder" />
-            <button type="button" pButton label="Get"></button>
+            <button type="button" pButton label="Get" (click)="GetMedia()"></button>
         </p-inputGroup>
     </div>
     <div class="options-container">
-        <div class="">
-            <div *ngFor="let category of categories" class="checkbox">
-                <p-checkbox [(ngModel)]="selectedCategories" [label]="category.name" name="group" [value]="category" />
-            </div>
+        <p-checkbox [(ngModel)]="options.GetAudioOnly" label="Get Audio Only" name="options"
+            [value]="options.GetAudioOnly" class="checkbox-first" (onChange)="flipCheckbox($event, 'GetAudioOnly')" />
+        <p-checkbox [(ngModel)]="options.GetSubs" label="Get Subtitles (Auto Generated - English)" name="options"
+            [value]="options.GetSubs" class="checkbox-last" (onChange)="flipCheckbox($event,'GetSubs')" />
+    </div>
+    <div class="panel-box" [ngClass]="panelBoxActive">
+        <div class="downloads-box">
+            <p-panel header="Downloading" [toggleable]="false" [collapsed]="false" class="downloading-box">
+                    This is
+                    meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.
+            </p-panel>
+            <p-panel header="Queued" [toggleable]="false" [collapsed]="false" class="queued-box">
+                This is
+                meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.
+            </p-panel>
         </div>
+    </div>
+</div>
+
+<div class="footer">
+    <div>
+        <a href="http://github.com/rs-anantmishra/metubeplus" target="_blank">
+            <p-button icon="pi pi-github" label="Star us on Github" size="small" severity="success"
+                [ngStyle]="{'margin-right': '16px'}" />
+            <!-- <span class="pi pi-github"> Star Streamsphere on Github.</span> -->
+        </a>
     </div>
 </div>
