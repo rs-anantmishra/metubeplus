@@ -49,7 +49,7 @@ If you have an entry for the video in SQLite and you are attempting to download 
 - Add Functionality for NetworkPath for Files table later.
 - Write Code to download yt-dlp and check for the executable before running a download.
 - Rules can be applied to have videos of certain domains moved to hidden folders directly.
-- Toralize connections through yt-dlp (bypass blocks)
+- Toralize connections through yt-dlp (bypass blocks) (use torsocks)
 - Local playlists can have audios, videos or both from different sources - local, downloaded, metaOnly, online.
 - Download at a later time.
 - Bookmark favorites.
