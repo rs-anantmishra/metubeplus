@@ -8,6 +8,8 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { CheckboxModule } from 'primeng/checkbox';
 import { PanelModule } from 'primeng/panel';
+import { CardModule } from 'primeng/card';
+import { SidebarModule } from 'primeng/sidebar';
 
 interface ExtractionOptions {
   Identifier: string;
@@ -19,14 +21,16 @@ interface ExtractionOptions {
 @Component({
   selector: 'app-downloads',
   standalone: true,
-  imports: [FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule],
+  imports: [SidebarModule, CardModule, FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule],
   templateUrl: './downloads.component.html',
   styleUrl: './downloads.component.scss'
 })
 export class DownloadsComponent implements OnInit {
   homeBoxActive = 'home-box'
   panelBoxActive = 'panel-box'
+  contentBoxActive = 'content-box'
 
+  sidebarVisible: boolean = false;
   options :ExtractionOptions = { Identifier: '', GetAudioOnly: false, GetSubs: false}
 
   flipCheckbox(event: any, option: string): void {
@@ -44,9 +48,10 @@ export class DownloadsComponent implements OnInit {
 
   GetMedia(): void {
     this.homeBoxActive = 'home-box-queued'
+    this.contentBoxActive = 'content-box-queued'
     setTimeout(()=>{
       this.panelBoxActive = 'panel-box-queued'
-    },100);
+    },1500);
   }
 }
 

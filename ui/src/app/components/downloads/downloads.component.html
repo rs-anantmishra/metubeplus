@@ -1,33 +1,56 @@
-<div class="home-box" [ngClass]="homeBoxActive">
-    <div class="me-container">
-        <img src="smol-sphere.gif" />
-        <span class="name-box">Streamsphere</span>
-    </div>
-    <div class="url-container">
-        <p-inputGroup>
-            <p-inputGroupAddon>http://</p-inputGroupAddon>
-            <input type="text" pInputText [placeholder]="placeholder" />
-            <button type="button" pButton label="Get" (click)="GetMedia()"></button>
-        </p-inputGroup>
-    </div>
-    <div class="options-container">
-        <p-checkbox [(ngModel)]="options.GetAudioOnly" label="Get Audio Only" name="options"
-            [value]="options.GetAudioOnly" class="checkbox-first" (onChange)="flipCheckbox($event, 'GetAudioOnly')" />
-        <p-checkbox [(ngModel)]="options.GetSubs" label="Get Subtitles (Auto Generated - English)" name="options"
-            [value]="options.GetSubs" class="checkbox-last" (onChange)="flipCheckbox($event,'GetSubs')" />
-    </div>
-    <div class="panel-box" [ngClass]="panelBoxActive">
-        <div class="downloads-box">
-            <p-panel header="Downloading" [toggleable]="false" [collapsed]="false" class="downloading-box">
-                    This is
-                    meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.
-            </p-panel>
-            <p-panel header="Queued" [toggleable]="false" [collapsed]="false" class="queued-box">
-                This is
-                meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.
-            </p-panel>
+<div [ngClass]="homeBoxActive">
+    <div [ngClass]="contentBoxActive">
+        <div class="slide-up-content">
+            <div class="me-container">
+                <img src="smol-sphere.gif" />
+                <span class="name-box">Streamsphere</span>
+            </div>
+            <div class="url-container">
+                <p-inputGroup>
+                    <p-inputGroupAddon>http://</p-inputGroupAddon>
+                    <input type="text" pInputText [placeholder]="placeholder" />
+                    <button type="button" pButton label="Get" (click)="GetMedia()"></button>
+                </p-inputGroup>
+            </div>
+            <div class="options-container">
+                <p-checkbox [(ngModel)]="options.GetAudioOnly" label="Get Audio Only" name="options"
+                    [value]="options.GetAudioOnly" class="checkbox-first"
+                    (onChange)="flipCheckbox($event, 'GetAudioOnly')" />
+                <p-checkbox [(ngModel)]="options.GetSubs" label="Get Subtitles (Auto Generated - English)"
+                    name="options" [value]="options.GetSubs" class="checkbox-last"
+                    (onChange)="flipCheckbox($event,'GetSubs')" />
+            </div>
+        </div>
+        <div [ngClass]="panelBoxActive">
+            <!-- <div class="downloads-box"> -->
+            <p-card header="Title" subheader="Downloading Metadata" [style]="{ width: '800px' }">
+                <ng-template pTemplate="header">
+                    <img alt="Card" src="https://primefaces.org/cdn/primeng/images/card-ng.jpg" />
+                </ng-template>
+                <!-- <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error
+                        repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam
+                        perferendis esse, cupiditate neque
+                        quas!
+                    </p> -->
+                <ng-template pTemplate="footer">
+                    <p-button icon="pi pi-list" label="Queued Items" size="small" (onClick)="sidebarVisible = true" />
+                </ng-template>
+            </p-card>
+            <!-- </div> -->
         </div>
     </div>
+</div>
+
+<div>
+    <p-sidebar [(visible)]="sidebarVisible" styleClass="queued-box">
+        <h3>Sidebar</h3>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </p>
+    </p-sidebar>
 </div>
 
 <div class="footer">
@@ -35,7 +58,6 @@
         <a href="http://github.com/rs-anantmishra/metubeplus" target="_blank">
             <p-button icon="pi pi-github" label="Star us on Github" size="small" severity="success"
                 [ngStyle]="{'margin-right': '16px'}" />
-            <!-- <span class="pi pi-github"> Star Streamsphere on Github.</span> -->
         </a>
     </div>
 </div>
