@@ -7,6 +7,7 @@ import { ToastModule } from 'primeng/toast';
 import { FilterService, SelectItemGroup } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 interface AutoCompleteCompleteEvent {
   originalEvent: Event;
@@ -17,7 +18,7 @@ interface AutoCompleteCompleteEvent {
   selector: 'app-header',
   standalone: true,
   imports: [CommonModule, SplitButtonModule, ToastModule, BreadcrumbModule, AutoCompleteModule, FormsModule],
-  providers: [MessageService],
+  providers: [MessageService, Router],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -27,12 +28,12 @@ export class HeaderComponent implements OnInit {
   //search-bar
   visible: string = 'hidden'
 
-  items: MenuItem[];
+  navigationItems: MenuItem[];
   selectedCity: any;
   filteredGroups!: any[];
   groupedCities!: SelectItemGroup[];
 
-  constructor(private messageService: MessageService,private filterService: FilterService) {
+  constructor(private router: Router, private messageService: MessageService,private filterService: FilterService) {
     this.groupedCities = [
       {
         label: 'Germany', value: 'de',
@@ -63,27 +64,44 @@ export class HeaderComponent implements OnInit {
       }
     ];
 
-    this.items = [
-      {
-        label: 'Update',
-        command: () => {
-          this.update();
-        }
-      },
-      {
-        label: 'Delete',
-        command: () => {
-          this.delete();
-        }
-      },
-      { label: 'Angular Website', url: 'http://angular.io' },
-      { separator: true },
-      { label: 'Upload', routerLink: ['/fileupload'] }
-    ];
-  }
+  //   this.items = [
+  //     {
+  //       label: 'Update',
+  //       command: () => {
+  //         this.update();
+  //       }
+  //     },
+  //     {
+  //       label: 'Delete',
+  //       command: () => {
+  //         this.delete();
+  //       }
+  //     },
+  //     { label: 'Angular Website', url: 'http://angular.io' },
+  //     { separator: true },
+  //     { label: 'Upload', routerLink: ['/fileupload'] }
+  //   ];
+  // }
 
-  save(severity: string) {
-    this.messageService.add({ severity: severity, summary: 'Success', detail: 'Data Saved' });
+  this.navigationItems = [
+    { label: 'Home', routerLink: ['/home'] },
+    { separator: true },
+    { label: 'Videos', routerLink: ['/videos'] },
+    { label: 'Playlists', routerLink: ['/playlists'] },
+    { label: 'Tags', routerLink: ['/tags'] },
+    { label: 'Categories', routerLink: ['/categories'] },
+    // { separator: true },
+    // { label: 'Pattern Matching', routerLink: ['/recursive'] },
+    // { label: 'Saved Patterns', routerLink: ['/notes'] },
+    // { label: 'Source RegEx', routerLink: ['/source'] },
+    { separator: true },
+    { label: 'Activity Logs', routerLink: ['/activity-logs'] },
+
+  ];
+}
+
+  navigateToHome() {
+    this.router.navigateByUrl('/home')
   }
 
   update() {

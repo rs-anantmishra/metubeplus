@@ -23,16 +23,18 @@
         </div>
         <div [ngClass]="panelBoxActive">
             <!-- <div class="downloads-box"> -->
-            <p-card header="Title" subheader="Downloading Metadata" [style]="{ width: '800px' }">
+            <p-card [header]="this.dl.Title" [subheader]="this.dl.Channel" [style]="{ width: '800px' }">
                 <ng-template pTemplate="header">
                     <img alt="Card" src="https://primefaces.org/cdn/primeng/images/card-ng.jpg" />
                 </ng-template>
-                <!-- <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error
-                        repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam
-                        perferendis esse, cupiditate neque
-                        quas!
-                    </p> -->
+                <p>
+                    <p-toast />
+                    <p-progressBar [value]="dlProgress">
+                        <ng-template pTemplate="content" let-value>
+                            <span style="font-size: 10px;">{{value}}%</span>
+                        </ng-template>
+                    </p-progressBar>
+                </p>
                 <ng-template pTemplate="footer">
                     <p-button icon="pi pi-list" label="Queued Items" size="small" (onClick)="sidebarVisible = true" />
                 </ng-template>
