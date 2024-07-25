@@ -16,10 +16,10 @@ import (
 )
 
 type IDownload interface {
-	ExtractMetadata() []e.MediaInformation
+	ExtractMetadata() ([]e.MediaInformation, e.Filepath)
 	ExtractMediaContent() bool
-	ExtractThumbnail(fp e.Filepath) []e.Files
-	ExtractSubtitles(fp e.Filepath) []e.Files
+	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
+	ExtractSubtitles(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 }
 
 type download struct {
@@ -33,7 +33,7 @@ func NewDownload(params e.IncomingRequest) IDownload {
 	}
 }
 
-func (d *download) ExtractMetadata() []e.MediaInformation {
+func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
 	indicatorType, itemCount := getIndicatorType(d.p.Indicator)
 	d.indicatorType = indicatorType
@@ -69,14 +69,16 @@ func (d *download) ExtractMetadata() []e.MediaInformation {
 		mediaInfo = playlist
 	}
 
-	return mediaInfo
+	fp := e.Filepath{Domain: mediaInfo[0].Domain, Channel: mediaInfo[0].Channel, PlaylistTitle: mediaInfo[0].PlaylistTitle}
+
+	return mediaInfo, fp
 }
 
 func (d *download) ExtractMediaContent() bool {
 	return false
 }
 
-func (d *download) ExtractThumbnail(fPath e.Filepath) []e.Files {
+func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files {
 
 	args, command := cmdBuilderThumbnails(d.p.Indicator, d.indicatorType)
 	logCommand := command + Space + args
@@ -108,6 +110,7 @@ func (d *download) ExtractThumbnail(fPath e.Filepath) []e.Files {
 	} else if d.indicatorType == Playlist {
 		fp = GetPlaylistFilepath(fPath, e.Thumbnail)
 	}
+	fp = strings.ReplaceAll(fp, "../media/", "..\\media")
 
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractThumbnail")
@@ -115,28 +118,66 @@ func (d *download) ExtractThumbnail(fPath e.Filepath) []e.Files {
 	var files []e.Files
 	//Todo: re-write this to compare filenames after removing all special characters.
 	//if there is a match then do the assignment.
-	for _, entry := range c {
+	for i, entry := range c {
+
 		info, _ := entry.Info()
 		splits := strings.SplitN(info.Name(), ".", -1)
+		fs_filename := info.Name()
 
-		f := e.Files{
-			FileTypeId:   e.Thumbnail,
-			SourceId:     e.Downloaded,
-			FilePath:     fp,
-			FileName:     info.Name(),
-			Extension:    splits[len(splits)-1],
-			FileSize:     int(info.Size()),
-			FileSizeUnit: "bytes",
-			NetworkPath:  "",
-			IsDeleted:    0,
-			CreatedDate:  info.ModTime().Unix(),
+		thumbnailVideoId := -1
+		//for playlists, 1st Video Id should be -1
+		if d.indicatorType == Playlist {
+			if i > 0 {
+				thumbnailVideoId = lstSMI[i-1].VideoId
+			}
+			//if VideoId doesn't exist for this thumbnail
+			//can include logic to remove thumbnail too?
+			if i > 0 && lstSMI[i-1].VideoId < 0 {
+				continue
+			}
+
+			f := e.Files{
+				VideoId:      thumbnailVideoId,
+				FileType:     "Thumbnail",
+				SourceId:     e.Downloaded,
+				FilePath:     fp,
+				FileName:     info.Name(),
+				Extension:    splits[len(splits)-1],
+				FileSize:     int(info.Size()),
+				FileSizeUnit: "bytes",
+				NetworkPath:  "",
+				IsDeleted:    0,
+				CreatedDate:  info.ModTime().Unix(),
+			}
+
+			files = append(files, f)
+		} else if d.indicatorType == Video {
+			smiIndex := 0
+			thumbnailVideoId = lstSMI[smiIndex].VideoId
+			for _, saved := range lstSMI {
+				if strings.Contains(fs_filename, saved.YoutubeVideoId) {
+					f := e.Files{
+						VideoId:      thumbnailVideoId,
+						FileType:     "Thumbnail",
+						SourceId:     e.Downloaded,
+						FilePath:     fp,
+						FileName:     info.Name(),
+						Extension:    splits[len(splits)-1],
+						FileSize:     int(info.Size()),
+						FileSizeUnit: "bytes",
+						NetworkPath:  "",
+						IsDeleted:    0,
+						CreatedDate:  info.ModTime().Unix(),
+					}
+					files = append(files, f)
+				}
+			}
 		}
-		files = append(files, f)
 	}
 	return files
 }
 
-func (d *download) ExtractSubtitles(fPath e.Filepath) []e.Files {
+func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files {
 
 	args, command := cmdBuilderSubtitles(d.p.Indicator, d.indicatorType)
 	logCommand := command + Space + args
@@ -168,30 +209,39 @@ func (d *download) ExtractSubtitles(fPath e.Filepath) []e.Files {
 	} else if d.indicatorType == Playlist {
 		fp = GetPlaylistFilepath(fPath, e.Subtitles)
 	}
+	fp = strings.ReplaceAll(fp, "../media/", "..\\media")
 
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractSubtitles")
 
+	smiIndex := 0
 	var files []e.Files
 	//Todo: re-write this to compare filenames after removing all special characters.
 	//if there is a match then do the assignment.
 	for _, entry := range c {
 		info, _ := entry.Info()
 		splits := strings.SplitN(info.Name(), ".", -1)
+		fs_filename := info.Name()
 
-		f := e.Files{
-			FileTypeId:   e.Subtitles,
-			SourceId:     e.Downloaded,
-			FilePath:     fp,
-			FileName:     info.Name(),
-			Extension:    splits[len(splits)-1],
-			FileSize:     int(info.Size()),
-			FileSizeUnit: "bytes",
-			NetworkPath:  "",
-			IsDeleted:    0,
-			CreatedDate:  info.ModTime().Unix(),
+		for _, saved := range lstSMI {
+			if strings.Contains(fs_filename, saved.YoutubeVideoId) {
+				f := e.Files{
+					VideoId:      lstSMI[smiIndex].VideoId,
+					FileType:     "Subtitles",
+					SourceId:     e.Downloaded,
+					FilePath:     fp,
+					FileName:     info.Name(),
+					Extension:    splits[len(splits)-1],
+					FileSize:     int(info.Size()),
+					FileSizeUnit: "bytes",
+					NetworkPath:  "",
+					IsDeleted:    0,
+					CreatedDate:  info.ModTime().Unix(),
+				}
+				files = append(files, f)
+				smiIndex++
+			}
 		}
-		files = append(files, f)
 	}
 	return files
 }
@@ -263,7 +313,7 @@ func sanitizeResults(b bytes.Buffer) []string {
 	result := b.String()
 	results := strings.Split(result, "\n")
 
-	for i, _ := range results {
+	for i := range results {
 		//valid json require keys and values to be enclosed in double quotes, not single quotes
 		results[i] = proximityQuoteReplacement(results[i])
 	}
@@ -421,7 +471,7 @@ func patchDataField(mediaInfo e.MediaInformation) e.MediaInformation {
 
 		procResult := executeProcess(stdout)
 
-		for i, _ := range procResult {
+		for i := range procResult {
 			if idx := strings.Index(procResult[i], plainChannel); idx == 0 {
 				mediaInfo.Channel = procResult[i][len(plainChannel):]
 			} else if idx := strings.Index(procResult[i], plainTitle); idx == 0 {

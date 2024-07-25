@@ -21,25 +21,17 @@ func NewDownloadService(r IRepository, d IDownload) IService {
 }
 
 func (s *service) ExtractIngestMetadata(p e.IncomingRequest) bool {
-	metadata := s.download.ExtractMetadata()
-	fp := e.Filepath{Domain: metadata[0].Domain, Channel: metadata[0].Channel, PlaylistTitle: metadata[0].PlaylistTitle}
-	
-	VideoId := s.repository.SaveMetadata(metadata, fp)
-	_ = VideoId //Pass to other methods to save in tblFiles
+	metadata, fp := s.download.ExtractMetadata()
+	sequencedVideoIds, lstSMI := s.repository.SaveMetadata(metadata, fp)
+	//error check here before continuing exec for thumbs and subs
 
-	//save thumbnails to disk, then - read files from disk and populate metadata into db
-	//save subtitles to disk, then - read files from disk and populate metadata into db
-	//If video is also downloaded - then, write Video file path else use network paths.
-	if VideoId > 0 {
-		thumbnail := s.download.ExtractThumbnail(fp)
-		s.repository.SaveThumbnail(thumbnail)
+	thumbnail := s.download.ExtractThumbnail(fp, sequencedVideoIds, lstSMI)
+	s.repository.SaveThumbnail(thumbnail)
 
-		if p.SubtitlesReq {
-			subtitles := s.download.ExtractSubtitles(fp)
-			s.repository.SaveSubtitles(subtitles)
-		}
+	if p.SubtitlesReq {
+		subtitles := s.download.ExtractSubtitles(fp, sequencedVideoIds, lstSMI)
+		s.repository.SaveSubtitles(subtitles)
 	}
-
 	return true
 }
 

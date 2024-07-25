@@ -30,3 +30,9 @@ type DownloadProgressIndicator struct {
 	Title    string
 	Progress string
 }
+
+type SavedMediaInformation struct {
+	VideoId        int
+	Title          string
+	YoutubeVideoId string
+}

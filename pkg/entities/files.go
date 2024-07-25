@@ -3,7 +3,7 @@ package entities
 type Files struct {
 	Id           int
 	VideoId      int
-	FileTypeId   int
+	FileType     string
 	SourceId     int
 	FilePath     string
 	FileName     string

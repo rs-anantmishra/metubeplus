@@ -10,10 +10,10 @@ import (
 )
 
 type IRepository interface {
-	SaveMetadata([]e.MediaInformation, e.Filepath) int
-	SaveThumbnail([]e.Files) int
-	SaveSubtitles([]e.Files) int
-	SaveMediaContent([]e.Files) int
+	SaveMetadata([]e.MediaInformation, e.Filepath) ([]int, []e.SavedMediaInformation)
+	SaveThumbnail([]e.Files) []int
+	SaveSubtitles([]e.Files) []int
+	SaveMediaContent([]e.Files) []int
 }
 
 type repository struct {
@@ -26,12 +26,14 @@ func NewDownloadRepo(Database *sql.DB) IRepository {
 	}
 }
 
-func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) int {
+func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) ([]int, []e.SavedMediaInformation) {
 
-	resultId := -1
-
-	for _, elem := range metadata {
-
+	var lstSMI []e.SavedMediaInformation
+	sequencedVideoIds := make([]int, len(metadata))
+	for i := range metadata {
+		sequencedVideoIds[i] = -1
+	}
+	for k, elem := range metadata {
 		//Channel will be same for all items in playlist.
 		channelId := genericCheck(*r, elem.ChannelId, "Channel", p.InsertChannelCheck)
 		if channelId <= 0 {
@@ -87,6 +89,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 		}
 
 		ytVideoId := genericCheck(*r, elem.YoutubeVideoId, "Metadata", p.InsertMetadataCheck)
+		sequencedVideoIds[k] = ytVideoId
 		if ytVideoId < 0 {
 			var args []any
 
@@ -108,7 +111,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 			args = append(args, time.Now().Unix()) //CreatedDate
 
 			ytVideoId = genericSave(*r, args, p.InsertMetadata)
-			_ = ytVideoId
+			sequencedVideoIds[k] = ytVideoId
 		}
 
 		//Tags will NOT be same for all items in playlist.
@@ -125,10 +128,12 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 				_ = tagId
 				//here, we should have a map between tag Id,
 				//VideoId which should be used to populate VideoFileTags
+				//So this would be like a User Defined Type in MSSQL which can
+				//be sent at once to SQLite
 				lstTagId = append(lstTagId, tagId)
 			}
 
-			videoFileTagId := checkTagsOrCategories(*r, tagId, "VideoFileTag", p.InsertVideoFileTagsCheck, ytVideoId)
+			videoFileTagId := tagsOrCategoriesCheck(*r, tagId, "VideoFileTag", p.InsertVideoFileTagsCheck, ytVideoId)
 			if videoFileTagId < 0 {
 				var args []any
 				args = append(args, tagId)
@@ -154,10 +159,12 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 				_ = categoryId
 				//here, we should have a map between categoryId Id,
 				//VideoId which should be used to populate VideoFileCategories
+				//So this would be like a User Defined Type in MSSQL which can
+				//be sent at once to SQLite
 				lstCategoryId = append(lstCategoryId, categoryId)
 			}
 
-			videoFileCategoryId := checkTagsOrCategories(*r, categoryId, "VideoFileCategory", p.InsertVideoFileCategoriesCheck, ytVideoId)
+			videoFileCategoryId := tagsOrCategoriesCheck(*r, categoryId, "VideoFileCategory", p.InsertVideoFileCategoriesCheck, ytVideoId)
 			if videoFileCategoryId < 0 {
 				var args []any
 				args = append(args, categoryId)
@@ -168,27 +175,101 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 				_ = videoFileCategoryId
 			}
 		}
+
+		lstSMI = append(lstSMI, e.SavedMediaInformation{VideoId: ytVideoId, Title: elem.Title, YoutubeVideoId: elem.YoutubeVideoId})
 	}
-	return resultId
+	return sequencedVideoIds, lstSMI
 }
 
-func (r *repository) SaveThumbnail(file []e.Files) int {
+func (r *repository) SaveThumbnail(file []e.Files) []int {
 
-	return 1
+	var lstFileIds []int
+	for _, elem := range file {
+		thumbnailFileId := filesCheck(*r, elem.FileType, elem.VideoId, p.InsertThumbnailFileCheck)
+		if thumbnailFileId <= 0 {
+			var args []any
+			args = append(args, elem.VideoId)
+			args = append(args, elem.FileType)
+			args = append(args, elem.SourceId)
+			args = append(args, elem.FilePath)
+			args = append(args, elem.FileName)
+			args = append(args, elem.Extension)
+			args = append(args, elem.FileSize)
+			args = append(args, elem.FileSizeUnit)
+			args = append(args, elem.NetworkPath)
+			args = append(args, elem.IsDeleted)
+			args = append(args, time.Now().Unix())
+
+			thumbnailFileId = genericSave(*r, args, p.InsertFile)
+			lstFileIds = append(lstFileIds, thumbnailFileId)
+			_ = thumbnailFileId
+		}
+	}
+
+	return lstFileIds
 }
 
-func (r *repository) SaveSubtitles(file []e.Files) int {
+func (r *repository) SaveSubtitles(file []e.Files) []int {
 
-	return 1
+	var lstFileIds []int
+	for _, elem := range file {
+		//Check is such that app can support multiple lang subs file for 1 video file.
+		subsFileId := subsFilesCheck(*r, elem.FileType, elem.VideoId, elem.FileName, p.InsertSubsFileCheck)
+		if subsFileId <= 0 {
+			var args []any
+			args = append(args, elem.VideoId)
+			args = append(args, elem.FileType)
+			args = append(args, elem.SourceId)
+			args = append(args, elem.FilePath)
+			args = append(args, elem.FileName)
+			args = append(args, elem.Extension)
+			args = append(args, elem.FileSize)
+			args = append(args, elem.FileSizeUnit)
+			args = append(args, elem.NetworkPath)
+			args = append(args, elem.IsDeleted)
+			args = append(args, time.Now().Unix())
+
+			subsFileId = genericSave(*r, args, p.InsertFile)
+			lstFileIds = append(lstFileIds, subsFileId)
+			_ = subsFileId
+		}
+	}
+
+	return lstFileIds
 }
 
-func (r *repository) SaveMediaContent(file []e.Files) int {
-	return 1
+func (r *repository) SaveMediaContent(file []e.Files) []int {
+	lstFileIds := make([]int, len(file))
+	for i := range file {
+		lstFileIds[i] = -1
+	}
+
+	for _, elem := range file {
+		mediaFileId := filesCheck(*r, elem.FileType, elem.VideoId, p.InsertThumbnailFileCheck)
+		if mediaFileId <= 0 {
+			var args []any
+			args = append(args, elem.VideoId)
+			args = append(args, elem.FileType)
+			args = append(args, elem.SourceId)
+			args = append(args, elem.FilePath)
+			args = append(args, elem.FileName)
+			args = append(args, elem.Extension)
+			args = append(args, elem.FileSize)
+			args = append(args, elem.FileSizeUnit)
+			args = append(args, elem.NetworkPath)
+			args = append(args, elem.IsDeleted)
+			args = append(args, time.Now().Unix())
+
+			mediaFileId = genericSave(*r, args, p.InsertFile)
+			lstFileIds = append(lstFileIds, mediaFileId)
+			_ = mediaFileId
+		}
+	}
+
+	return lstFileIds
 }
 
-// ////////////////////////////////////////////////////////////////////
 // Private Methods ////////////////////////////////////////////////////
-// ////////////////////////////////////////////////////////////////////
 
 func genericSave(r repository, args []any, genericQuery string) int {
 	resultId := -1
@@ -227,13 +308,37 @@ func genericCheck(r repository, Id any, idContext string, genericQuery string) i
 	return resultId
 }
 
-func checkTagsOrCategories(r repository, Id any, idContext string, genericQuery string, videoId int) int {
+func tagsOrCategoriesCheck(r repository, Id any, idContext string, genericQuery string, videoId int) int {
 	resultId := -1
 
 	//Check if entry for Id exists?
 	chk := r.db.QueryRow(genericQuery, Id, videoId)
 	if err := chk.Scan(&resultId); err == sql.ErrNoRows {
 		fmt.Println("No Rows found for", idContext, "Id", Id)
+	}
+
+	return resultId
+}
+
+func filesCheck(r repository, fileType string, videoId int, filesCheckQuery string) int {
+	resultId := -1
+
+	//Check if entry for Id exists?
+	chk := r.db.QueryRow(filesCheckQuery, fileType, videoId)
+	if err := chk.Scan(&resultId); err == sql.ErrNoRows {
+		fmt.Println("No Rows found for FileType:", fileType, "VideoId:", videoId)
+	}
+
+	return resultId
+}
+
+func subsFilesCheck(r repository, fileType string, videoId int, filename string, filesCheckQuery string) int {
+	resultId := -1
+
+	//Check if entry for Id exists?
+	chk := r.db.QueryRow(filesCheckQuery, fileType, videoId, filename)
+	if err := chk.Scan(&resultId); err == sql.ErrNoRows {
+		fmt.Println("No Rows found for FileType:", fileType, "VideoId:", videoId, "FileName:", filename)
 	}
 
 	return resultId
