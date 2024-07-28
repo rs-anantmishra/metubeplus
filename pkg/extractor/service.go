@@ -3,9 +3,9 @@ package extractor
 import e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 
 type IService interface {
-	ExtractIngestMetadata(p e.IncomingRequest) bool  // here we have an option to dl subs as well, when the metadata is available.
-	ExtractIngestVideo(meta e.MediaInformation) bool //in case it was a metadata only files, youre free to dl video at a later time.
-	ExtractSubtitlesOnly(string) bool                // here we are navigating to a Video and downloading subs for it.
+	ExtractIngestMetadata(p e.IncomingRequest) bool // here we have an option to dl subs as well, when the metadata is available.
+	ExtractIngestMedia(lstVideoId []string) bool    //in case it was a metadata only files, youre free to dl video at a later time.
+	ExtractSubtitlesOnly(string) bool               // here we are navigating to a Video and downloading subs for it.
 }
 
 type service struct {
@@ -35,8 +35,14 @@ func (s *service) ExtractIngestMetadata(p e.IncomingRequest) bool {
 	return true
 }
 
-func (s *service) ExtractIngestVideo(m e.MediaInformation) bool {
-	return false
+func (s *service) ExtractIngestMedia(lstVideoId []string) bool {
+	//download file
+	result := s.download.ExtractMediaContent(e.Filepath{}, lstVideoId[0])
+	_ = result //save file details in DB
+	//something := s.repository.SaveMediaContent(result)
+
+	//return result
+	return true
 }
 
 func (s *service) ExtractSubtitlesOnly(videoId string) bool {

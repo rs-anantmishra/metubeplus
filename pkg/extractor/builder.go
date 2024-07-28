@@ -42,8 +42,8 @@ func BuilderOptions() []CSwitch {
 	//ideally this should be moved to a db or read from a config file.
 	defaults := []CSwitch{
 		{Index: 1, Name: `Filepath`, Value: Filepath, DataField: true, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: true, Subtitle: false, Thumbnail: false}},
+			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 2, Name: `Channel`, Value: Channel, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
@@ -110,8 +110,8 @@ func BuilderOptions() []CSwitch {
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 18, Name: `YoutubeVideoId`, Value: YoutubeVideoId, DataField: true, Group: FxGroups{
-			Playlist: Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false}},
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 19, Name: `Availability`, Value: Availability, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
@@ -253,9 +253,30 @@ func cmdBuilderMetadata(url string, indicatorType int) (string, string) {
 }
 
 // Download Media Content
-func cmdBuilderDownload() (string, string) {
+func cmdBuilderDownload(url string, indicatorType int) (string, string) {
 
-	return "nil", "nil"
+	var args []string
+	args = append(args, "\""+url+"\"")
+
+	bo := BuilderOptions()
+	for _, elem := range bo {
+
+		//Handle Video
+		if indicatorType == Video && elem.Group.Video.Download {
+			args = append(args, elem.Value)
+		}
+
+		//Handle Playlist
+		if indicatorType == Playlist && elem.Group.Playlist.Download {
+			args = append(args, elem.Value)
+		}
+	}
+
+	arguments := strings.Join(args, Space)
+	cmdPath := c.Config("YTDLP_PATH")
+	cmd := cmdPath + "/" + CommandName
+
+	return arguments, cmd
 }
 
 func cmdBuilderSubtitles(url string, indicatorType int) (string, string) {

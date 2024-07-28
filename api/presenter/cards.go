@@ -1,6 +1,7 @@
 package presenter
 
 type CardsInfo struct {
+	VideoId            int    `json:"video_id"`
 	Title              string `json:"title"`
 	Description        string `json:"description"`
 	Duration           int    `json:"duration"`

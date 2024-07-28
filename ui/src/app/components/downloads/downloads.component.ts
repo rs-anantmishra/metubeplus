@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
@@ -13,10 +13,11 @@ import { SidebarModule } from 'primeng/sidebar';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { webSocket } from 'rxjs/webSocket'
 
 //Services & Classes
 import { VideoData } from '../../classes/video-data';
-import { CurrentDownloadService } from '../../services/current-download.service';
+import { CardsService } from '../../services/cards.service';
 
 interface ExtractionOptions {
   Identifier: string;
@@ -29,13 +30,29 @@ interface ExtractionOptions {
   selector: 'app-downloads',
   standalone: true,
   imports: [ToastModule, ProgressBarModule, SidebarModule, CardModule, FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule],
-  providers: [CurrentDownloadService, MessageService],
+  providers: [CardsService, MessageService],
   templateUrl: './downloads.component.html',
   styleUrl: './downloads.component.scss'
 })
 export class DownloadsComponent implements OnInit {
 
-  constructor(private messageService: MessageService, private currentDL: CurrentDownloadService) { }
+  sock = webSocket('ws://localhost:3000/ws/test')
+  msg = 'hello'
+  sendRequest() {
+    this.sock.subscribe();
+    this.sock.next(this.msg);
+    // this.sock.complete();
+    this.sock.subscribe({
+      next: msg => console.log(JSON.stringify(msg)), 
+      error: err => console.log('gooooooooooooooooot an error', err), 
+      // complete: () => console.log('complete') 
+     });
+  }
+
+
+  constructor(private messageService: MessageService,
+    private currentDL: CardsService) { }
+
   interval: any;
   dlProgress: number = 98
   dl: VideoData = new VideoData()
@@ -56,12 +73,13 @@ export class DownloadsComponent implements OnInit {
 
   placeholder = 'Video or Playlist URL'
   ngOnInit() {
-
+    this.sendRequest();
   }
 
   ngOnDestroy() {
-
   }
+
+
 
   GetMedia(): void {
 

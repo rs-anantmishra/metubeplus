@@ -6,3 +6,7 @@ type IncomingRequest struct {
 	SubtitlesReq bool   `json:"SubtitlesReq"`
 	IsAudioOnly  bool   `json:"IsAudioOnly"`
 }
+
+type QueueDownloads struct {
+	DownloadVideos []string `json:"DownloadVideos"`
+}

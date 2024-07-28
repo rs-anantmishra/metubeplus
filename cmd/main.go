@@ -25,8 +25,9 @@ func main() {
 	r.SetupRoutes(app)
 
 	database.ConnectDB()
-
 	defer database.CloseDB()
 
 	log.Fatal(app.Listen(port))
+	// ws://localhost:3000/ws
+	log.Fatal(app.Listen(":3000"))
 }

@@ -17,19 +17,28 @@ import (
 
 type IDownload interface {
 	ExtractMetadata() ([]e.MediaInformation, e.Filepath)
-	ExtractMediaContent() bool
+	ExtractMediaContent(fp e.Filepath, uri string) []e.Files
 	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	ExtractSubtitles(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 }
 
 type download struct {
 	p             e.IncomingRequest
+	arrVideoId    []string
 	indicatorType int
+	message       *string
 }
 
 func NewDownload(params e.IncomingRequest) IDownload {
 	return &download{
 		p: params,
+	}
+}
+
+func NewMediaDownload(lstVideoId []string, m *string) IDownload {
+	return &download{
+		arrVideoId: lstVideoId,
+		message:    m,
 	}
 }
 
@@ -74,8 +83,45 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 	return mediaInfo, fp
 }
 
-func (d *download) ExtractMediaContent() bool {
-	return false
+func (d *download) ExtractMediaContent(fPath e.Filepath, uri string) []e.Files {
+	args, command := cmdBuilderDownload(uri, 1)
+	logCommand := command + Space + args
+
+	//log executed command - in activity log later
+	_ = logCommand
+	cmd, stdout := buildProcess(args, GetCommandString())
+
+	err := cmd.Start()
+	handleErrors(err, "Download - Cmd.Start")
+
+	pResult := executeDownloadProcess(stdout, d.message)
+	_, errors, results := stripResultSections(pResult)
+
+	//results are not really needed - except maybe to check for errors.
+	_ = errors
+	_ = results
+
+	if len(errors) > 0 {
+		//Show error on UI
+		log.Error(errors)
+		return []e.Files{}
+	}
+
+	var fp string
+	//Get FilePaths
+	if d.indicatorType == Video {
+		fp = GetVideoFilepath(fPath, e.Subtitles)
+	} else if d.indicatorType == Playlist {
+		fp = GetPlaylistFilepath(fPath, e.Subtitles)
+	}
+	fp = strings.ReplaceAll(fp, "../media/", "..\\media")
+
+	c, err := os.ReadDir(fp)
+	handleErrors(err, "network - ExtractSubtitles")
+
+	_ = c //handle later
+
+	return nil
 }
 
 func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files {
@@ -304,6 +350,38 @@ func executeProcess(stdout io.ReadCloser) []string {
 
 	//sanitize and return
 	results := sanitizeResults(b)
+	return results
+}
+
+func executeDownloadProcess(stdout io.ReadCloser, m *string) []string {
+	// var result string
+	var b bytes.Buffer
+	for {
+		//Read data from pipe into temp
+		temp := make([]byte, 2048)
+		n, err := stdout.Read(temp)
+
+		//handle verbosity - it will always be there (similar to dpkg)
+		verbose := true
+		if verbose {
+			b.WriteString(string(temp[:n]))
+			result := b.String()
+			results := strings.Split(result, "\n")
+
+			*m = results[len(results)-2]
+			// log.Info("messages value", m)
+		}
+
+		//terminate loop at eof
+		if err != nil {
+			log.Info("Error Reading:", err)
+			break
+		}
+	}
+
+	result := b.String()
+	results := strings.Split(result, "\n")
+
 	return results
 }
 

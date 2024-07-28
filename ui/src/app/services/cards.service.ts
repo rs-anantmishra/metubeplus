@@ -4,7 +4,7 @@ import { VideoData } from '../classes/video-data';
 @Injectable({
   providedIn: 'root'
 })
-export class CurrentDownloadService {
+export class CardsService {
 
   protected videoData: VideoData[] = [
     {
