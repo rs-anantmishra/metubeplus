@@ -369,7 +369,7 @@ func executeDownloadProcess(stdout io.ReadCloser, m *string) []string {
 			results := strings.Split(result, "\n")
 
 			*m = results[len(results)-2]
-			// log.Info("messages value", m)
+			log.Info("messages value:", *m)
 		}
 
 		//terminate loop at eof

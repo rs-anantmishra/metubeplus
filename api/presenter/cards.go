@@ -1,6 +1,9 @@
 package presenter
 
-type CardsInfo struct {
+type PlaylistsResponse struct {
+}
+
+type CardsInfoResponse struct {
 	VideoId            int    `json:"video_id"`
 	Title              string `json:"title"`
 	Description        string `json:"description"`
@@ -18,4 +21,8 @@ type CardsInfo struct {
 	WatchCount         int    `json:"watch_count"`
 	IsDeleted          bool   `json:"is_deleted"`
 	CreatedDate        int    `json:"created_date"`
+}
+
+type DownloadStatusResponse struct {
+	Message string `json:"download"`
 }

@@ -36,7 +36,7 @@ interface ExtractionOptions {
 })
 export class DownloadsComponent implements OnInit {
 
-  sock = webSocket('ws://localhost:3000/ws/test')
+  sock = webSocket('ws://localhost:3000/ws/downloadstatus')
   msg = 'hello'
   sendRequest() {
     this.sock.subscribe();
@@ -83,7 +83,7 @@ export class DownloadsComponent implements OnInit {
 
   GetMedia(): void {
 
-    this.dl = this.currentDL.getDownloaingVideo()
+    this.dl = this.currentDL.getDownloadingVideo()
     console.log(this.dl)
 
     this.homeBoxActive = 'home-box-queued'

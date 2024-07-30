@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 
+	res "github.com/rs-anantmishra/metubeplus/api/presenter"
 	sql "github.com/rs-anantmishra/metubeplus/database"
 	en "github.com/rs-anantmishra/metubeplus/pkg/entities"
 	ex "github.com/rs-anantmishra/metubeplus/pkg/extractor"
@@ -42,6 +44,7 @@ func NetworkIngestMedia(c *fiber.Ctx) error {
 
 	//bind incoming data
 	params := new(en.QueueDownloads)
+
 	if err := c.BodyParser(params); err != nil {
 		return err
 	}
@@ -57,12 +60,12 @@ func NetworkIngestMedia(c *fiber.Ctx) error {
 	svcRepo := ex.NewDownloadRepo(sql.DB)
 	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 
-	svcVideos.ExtractIngestMedia(params.DownloadVideos)
+	go svcVideos.ExtractIngestMedia(params.DownloadVideos)
 
 	return nil
 }
 
-func WSTest(c *websocket.Conn) {
+func DownloadStatus(c *websocket.Conn) {
 	var (
 		mt  int
 		msg []byte
@@ -70,12 +73,18 @@ func WSTest(c *websocket.Conn) {
 	)
 	//global MPI
 	messages := g.NewMessage()
+	mt = websocket.TextMessage
 
 	for {
 		log.Info("msg:", messages[0])
+		//msg = []byte(`{"download":"` + messages[0] + `"}`)
 
-		msg = []byte(`{"download":"` + messages[0] + `"}`)
-		mt = websocket.TextMessage
+		dsr := res.DownloadStatusResponse{Message: messages[0]}
+		jsonData, e := json.Marshal(dsr)
+		if e != nil {
+			log.Info(e)
+		}
+		msg = []byte(jsonData)
 
 		if err = c.WriteMessage(mt, msg); err != nil {
 			log.Info("write:", err)
@@ -84,19 +93,6 @@ func WSTest(c *websocket.Conn) {
 		duration := time.Second
 		time.Sleep(duration)
 	}
-
-	// for {
-	// 	if mt, msg, err = c.ReadMessage(); err != nil {
-	// 		log.Info("read:", err)
-	// 		break
-	// 	}
-	// 	log.Info("recv: %s", string(msg))
-
-	// 	if err = c.WriteMessage(mt, msg); err != nil {
-	// 		log.Info("write:", err)
-	// 		break
-	// 	}
-	// }
 }
 
 func NetworkIngestAutoSubs(c *fiber.Ctx) error {

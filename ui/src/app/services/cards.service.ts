@@ -41,7 +41,7 @@ export class CardsService {
   ]; 
   constructor() { }
 
-  getDownloaingVideo(): VideoData {
+  getDownloadingVideo(): VideoData {
     let data = this.videoData.find((x) => x.Title === 'Test Title')
     return data!;
   }

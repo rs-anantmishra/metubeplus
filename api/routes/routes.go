@@ -23,7 +23,7 @@ func SetupRoutes(app *fiber.App) {
 	download.Post("/thumbnail", handler.NetworkIngestThumbnail) //Download thumbnail for a video that exists in library [Videos]
 
 	//Web-Sockets
-	app.Get("/ws/test", websocket.New(handler.WSTest))
+	app.Get("/ws/downloadstatus", websocket.New(handler.DownloadStatus))
 
 	//Todo: Homepage
 	//Todo: Tags & Categories

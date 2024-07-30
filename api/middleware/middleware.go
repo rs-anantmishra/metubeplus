@@ -29,6 +29,7 @@ func SetupMiddleware(app *fiber.App) {
 		LimiterMiddleware: limiter.SlidingWindow{},
 	}))
 
+	//Web-Sockets Request
 	app.Use("/ws", func(c *fiber.Ctx) error {
 		// IsWebSocketUpgrade returns true if the client
 		// requested upgrade to the WebSocket protocol.
