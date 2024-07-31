@@ -13,20 +13,20 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 	c "github.com/rs-anantmishra/metubeplus/config"
 	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
+	g "github.com/rs-anantmishra/metubeplus/pkg/global"
 )
 
 type IDownload interface {
 	ExtractMetadata() ([]e.MediaInformation, e.Filepath)
-	ExtractMediaContent(fp e.Filepath, uri string) []e.Files
+	ExtractMediaContent(lstDownloads []*g.DownloadStatus) []e.Files
 	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	ExtractSubtitles(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
+	// Cleanup()
 }
 
 type download struct {
 	p             e.IncomingRequest
-	arrVideoId    []string
 	indicatorType int
-	message       *string
 }
 
 func NewDownload(params e.IncomingRequest) IDownload {
@@ -35,12 +35,22 @@ func NewDownload(params e.IncomingRequest) IDownload {
 	}
 }
 
-func NewMediaDownload(lstVideoId []string, m *string) IDownload {
-	return &download{
-		arrVideoId: lstVideoId,
-		message:    m,
-	}
-}
+// func NewMediaDownload(dsIncoming *[]g.DownloadStatus) IDownload {
+// 	return &download{
+// 		ds: dsIncoming,
+// 	}
+// }
+
+// func (d *download) Cleanup() {
+// 	var updated []g.DownloadStatus
+// 	for i := 0; i < len(*d.ds); i++ {
+// 		ds := *d.ds
+// 		if ds[i].State != g.Completed {
+// 			updated = append(updated, ds[i])
+// 		}
+// 	}
+// 	*d.ds = updated
+// }
 
 func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
@@ -83,44 +93,56 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 	return mediaInfo, fp
 }
 
-func (d *download) ExtractMediaContent(fPath e.Filepath, uri string) []e.Files {
-	args, command := cmdBuilderDownload(uri, 1)
-	logCommand := command + Space + args
+func (d *download) ExtractMediaContent(lstDownloads []*g.DownloadStatus) []e.Files {
 
-	//log executed command - in activity log later
-	_ = logCommand
-	cmd, stdout := buildProcess(args, GetCommandString())
-
-	err := cmd.Start()
-	handleErrors(err, "Download - Cmd.Start")
-
-	pResult := executeDownloadProcess(stdout, d.message)
-	_, errors, results := stripResultSections(pResult)
-
-	//results are not really needed - except maybe to check for errors.
-	_ = errors
-	_ = results
-
-	if len(errors) > 0 {
-		//Show error on UI
-		log.Error(errors)
-		return []e.Files{}
+	if len(lstDownloads) < 1 {
+		return nil
 	}
 
-	var fp string
-	//Get FilePaths
-	if d.indicatorType == Video {
-		fp = GetVideoFilepath(fPath, e.Subtitles)
-	} else if d.indicatorType == Playlist {
-		fp = GetPlaylistFilepath(fPath, e.Subtitles)
+	for i := 0; i < len(lstDownloads); i++ {
+
+		if lstDownloads[i].State == g.Completed {
+			continue
+		}
+
+		args, command := cmdBuilderDownload(lstDownloads[i].VideoURL, 1)
+		logCommand := command + Space + args
+
+		//log executed command - in activity log later
+		_ = logCommand
+		cmd, stdout := buildProcess(args, GetCommandString())
+
+		err := cmd.Start()
+		handleErrors(err, "Download - Cmd.Start")
+
+		pResult := executeDownloadProcess(stdout, lstDownloads[i])
+		_, errors, results := stripResultSections(pResult)
+
+		//results are not really needed - except maybe to check for errors.
+		_ = errors
+		_ = results
+
+		if len(errors) > 0 {
+			//Show error on UI
+			log.Error(errors)
+			return []e.Files{}
+		}
+
+		var fp string
+		fPath := e.Filepath{Domain: "", Channel: "", PlaylistTitle: ""}
+		//Get FilePaths
+		if d.indicatorType == Video {
+			fp = GetVideoFilepath(fPath, e.Subtitles)
+		} else if d.indicatorType == Playlist {
+			fp = GetPlaylistFilepath(fPath, e.Subtitles)
+		}
+		fp = strings.ReplaceAll(fp, "../media/", "..\\media")
+
+		c, err := os.ReadDir(fp)
+		handleErrors(err, "network - ExtractSubtitles")
+
+		_ = c //handle later
 	}
-	fp = strings.ReplaceAll(fp, "../media/", "..\\media")
-
-	c, err := os.ReadDir(fp)
-	handleErrors(err, "network - ExtractSubtitles")
-
-	_ = c //handle later
-
 	return nil
 }
 
@@ -353,7 +375,12 @@ func executeProcess(stdout io.ReadCloser) []string {
 	return results
 }
 
-func executeDownloadProcess(stdout io.ReadCloser, m *string) []string {
+// func executeDownloadProcess(stdout io.ReadCloser, ds *g.DownloadStatus) []string {
+func executeDownloadProcess(stdout io.ReadCloser, downloadStatus *g.DownloadStatus) []string {
+
+	//Update State
+	downloadStatus.State = g.Downloading
+
 	// var result string
 	var b bytes.Buffer
 	for {
@@ -368,8 +395,8 @@ func executeDownloadProcess(stdout io.ReadCloser, m *string) []string {
 			result := b.String()
 			results := strings.Split(result, "\n")
 
-			*m = results[len(results)-2]
-			log.Info("messages value:", *m)
+			downloadStatus.StatusMessage = results[len(results)-2]
+			log.Info("MESSAGE VALUE: ", downloadStatus.StatusMessage)
 		}
 
 		//terminate loop at eof
@@ -378,6 +405,8 @@ func executeDownloadProcess(stdout io.ReadCloser, m *string) []string {
 			break
 		}
 	}
+	//change state to stop reprocessing.
+	downloadStatus.State = g.Completed
 
 	result := b.String()
 	results := strings.Split(result, "\n")

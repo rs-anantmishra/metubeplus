@@ -8,5 +8,10 @@ type IncomingRequest struct {
 }
 
 type QueueDownloads struct {
-	DownloadVideos []string `json:"DownloadVideos"`
+	DownloadVideos []DownloadMedia `json:"DownloadMedia"` //Since metadata will always download first, then UI will send local VideoId and VideoURL
+}
+
+type DownloadMedia struct {
+	VideoId  int    `json:"VideoId"`
+	VideoURL string `json:"VideoURL"`
 }

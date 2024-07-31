@@ -53,14 +53,18 @@ func NetworkIngestMedia(c *fiber.Ctx) error {
 	log.Info("Request Params:", params)
 
 	//global MPI
-	messages := g.NewMessage()
+	lstDownloads := g.NewDownloadStatus()
+
+	for idx := range params.DownloadVideos {
+		lstDownloads = append(lstDownloads, &g.DownloadStatus{VideoId: params.DownloadVideos[idx].VideoId, VideoURL: params.DownloadVideos[idx].VideoURL, StatusMessage: "", State: g.Queued})
+	}
 
 	//Instantiate
-	svcDownloads := ex.NewMediaDownload(params.DownloadVideos, &messages[0])
+	svcDownloads := ex.NewDownload(en.IncomingRequest{}) // this is just a placeholder
 	svcRepo := ex.NewDownloadRepo(sql.DB)
 	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 
-	go svcVideos.ExtractIngestMedia(params.DownloadVideos)
+	go svcVideos.ExtractIngestMedia(lstDownloads)
 
 	return nil
 }
@@ -72,14 +76,12 @@ func DownloadStatus(c *websocket.Conn) {
 		err error
 	)
 	//global MPI
-	messages := g.NewMessage()
+	lstDownloads := g.NewDownloadStatus()
 	mt = websocket.TextMessage
 
 	for {
-		log.Info("msg:", messages[0])
-		//msg = []byte(`{"download":"` + messages[0] + `"}`)
 
-		dsr := res.DownloadStatusResponse{Message: messages[0]}
+		dsr := res.DownloadStatusResponse{Message: lstDownloads[0].StatusMessage}
 		jsonData, e := json.Marshal(dsr)
 		if e != nil {
 			log.Info(e)

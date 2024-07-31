@@ -53,3 +53,5 @@ const InsertFile string = `INSERT INTO tblFiles SELECT NULL, ?, ?, ?, ?, ?, ?, ?
 
 //Files with duplicate names to be overwritten or renamed(Choice thru UI).
 const InsertMediaFileCheck string = `SELECT Id From tblFiles WHERE FileType = ? AND VideoId = ? AND FileName = ?`
+
+const GetNetworkVideoIdByVideoId string = `Select WebpageURL from tblVideos Where Id = ?`

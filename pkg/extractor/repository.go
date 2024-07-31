@@ -14,6 +14,7 @@ type IRepository interface {
 	SaveThumbnail([]e.Files) []int
 	SaveSubtitles([]e.Files) []int
 	SaveMediaContent([]e.Files) []int
+	GetVideoNetworkURL(videoId int) (string, error)
 }
 
 type repository struct {
@@ -267,6 +268,20 @@ func (r *repository) SaveMediaContent(file []e.Files) []int {
 	}
 
 	return lstFileIds
+}
+
+func (r *repository) GetVideoNetworkURL(videoId int) (string, error) {
+	// An album to hold data from the returned row.
+	var networkVideoId string
+
+	row := r.db.QueryRow(p.GetNetworkVideoIdByVideoId, videoId)
+	if err := row.Scan(&networkVideoId); err != nil {
+		if err == sql.ErrNoRows {
+			return networkVideoId, fmt.Errorf("albumsById %d: no such album", videoId)
+		}
+		return networkVideoId, fmt.Errorf("albumsById %d: %v", videoId, err)
+	}
+	return networkVideoId, nil
 }
 
 // Private Methods ////////////////////////////////////////////////////

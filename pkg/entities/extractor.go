@@ -25,11 +25,11 @@ type MediaInformation struct {
 	LiveStatus     string   `json:"live_status"`
 }
 
-type DownloadProgressIndicator struct {
-	Filepath string `json:"filepath"`
-	Title    string
-	Progress string
-}
+// type DownloadProgressIndicator struct {
+// 	Filepath string `json:"filepath"`
+// 	Title    string
+// 	Progress string
+// }
 
 type SavedMediaInformation struct {
 	VideoId        int

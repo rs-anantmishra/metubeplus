@@ -1,11 +1,17 @@
 package extractor
 
-import e "github.com/rs-anantmishra/metubeplus/pkg/entities"
+import (
+	"time"
+
+	"github.com/gofiber/fiber/v2/log"
+	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
+	g "github.com/rs-anantmishra/metubeplus/pkg/global"
+)
 
 type IService interface {
-	ExtractIngestMetadata(p e.IncomingRequest) bool // here we have an option to dl subs as well, when the metadata is available.
-	ExtractIngestMedia(lstVideoId []string) bool    //in case it was a metadata only files, youre free to dl video at a later time.
-	ExtractSubtitlesOnly(string) bool               // here we are navigating to a Video and downloading subs for it.
+	ExtractIngestMetadata(p e.IncomingRequest) bool      // here we have an option to dl subs as well, when the metadata is available.
+	ExtractIngestMedia(lstDownloads []*g.DownloadStatus) //in case it was a metadata only files, youre free to dl video at a later time.
+	ExtractSubtitlesOnly(string) bool                    // here we are navigating to a Video and downloading subs for it.
 }
 
 type service struct {
@@ -35,14 +41,25 @@ func (s *service) ExtractIngestMetadata(p e.IncomingRequest) bool {
 	return true
 }
 
-func (s *service) ExtractIngestMedia(lstVideoId []string) bool {
-	//download file
-	result := s.download.ExtractMediaContent(e.Filepath{}, lstVideoId[0])
-	_ = result //save file details in DB
-	//something := s.repository.SaveMediaContent(result)
+func (s *service) ExtractIngestMedia(lstDownloads []*g.DownloadStatus) {
 
-	//return result
-	return true
+	i := 0
+	for {
+		//cleanup of processed
+		// s.download.Cleanup()
+
+		//download file
+		result := s.download.ExtractMediaContent(lstDownloads)
+		_ = result //save file details in DB
+		//something := s.repository.SaveMediaContent(result)
+
+		if i%10 == 0 {
+			log.Info(i, " seconds have passed")
+		}
+		i++
+		duration := time.Second
+		time.Sleep(duration)
+	}
 }
 
 func (s *service) ExtractSubtitlesOnly(videoId string) bool {
