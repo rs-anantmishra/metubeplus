@@ -6,8 +6,6 @@ If you have an entry for the video in SQLite and you are attempting to download 
 2. Download again and overwrite the existing video file.
 3. Refresh metadata and keep the existing video file as it is.
 	a. Show a warning - If the video was part of an existing playlist that the Playlist binding will be removed - keep that binding?
-
-
 - hidden folders can be implemented.
 - Should be able to refresh video information
 - by default hide deleted Videos (option to show deleted Videos / faded / not-clickable)
