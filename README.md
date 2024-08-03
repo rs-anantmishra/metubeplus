@@ -52,6 +52,7 @@ If you have an entry for the video in SQLite and you are attempting to download 
 - Download at a later time.
 - Bookmark favorites.
 - Fetch title for queued downloads.
+- Queue Playlist videos
 
 [UI layout is similar to briefkasten]
 - landing page shows all Videos
