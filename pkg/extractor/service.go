@@ -5,13 +5,12 @@ import (
 
 	"github.com/gofiber/fiber/v2/log"
 	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
-	g "github.com/rs-anantmishra/metubeplus/pkg/global"
 )
 
 type IService interface {
-	ExtractIngestMetadata(p e.IncomingRequest) bool      // here we have an option to dl subs as well, when the metadata is available.
-	ExtractIngestMedia(lstDownloads []*g.DownloadStatus) //in case it was a metadata only files, youre free to dl video at a later time.
-	ExtractSubtitlesOnly(string) bool                    // here we are navigating to a Video and downloading subs for it.
+	ExtractIngestMetadata(p e.IncomingRequest) bool // here we have an option to dl subs as well, when the metadata is available.
+	ExtractIngestMedia()                            //in case it was a metadata only files, youre free to dl video at a later time.
+	ExtractSubtitlesOnly(string) bool               // here we are navigating to a Video and downloading subs for it.
 }
 
 type service struct {
@@ -41,7 +40,7 @@ func (s *service) ExtractIngestMetadata(p e.IncomingRequest) bool {
 	return true
 }
 
-func (s *service) ExtractIngestMedia(lstDownloads []*g.DownloadStatus) {
+func (s *service) ExtractIngestMedia() {
 
 	i := 0
 	for {
@@ -49,7 +48,7 @@ func (s *service) ExtractIngestMedia(lstDownloads []*g.DownloadStatus) {
 		// s.download.Cleanup()
 
 		//download file
-		result := s.download.ExtractMediaContent(lstDownloads)
+		result := s.download.ExtractMediaContent()
 		_ = result //save file details in DB
 		//something := s.repository.SaveMediaContent(result)
 

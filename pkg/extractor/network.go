@@ -18,7 +18,7 @@ import (
 
 type IDownload interface {
 	ExtractMetadata() ([]e.MediaInformation, e.Filepath)
-	ExtractMediaContent(lstDownloads []*g.DownloadStatus) []e.Files
+	ExtractMediaContent() []e.Files
 	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	ExtractSubtitles(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	// Cleanup()
@@ -27,11 +27,15 @@ type IDownload interface {
 type download struct {
 	p             e.IncomingRequest
 	indicatorType int
+	lstDownloads  *g.DownloadStatus
+	activeItem    *g.DownloadStatus
 }
 
-func NewDownload(params e.IncomingRequest) IDownload {
+func NewDownload(params e.IncomingRequest, lstDownloadsIncoming *g.DownloadStatus, activeItemIncoming *g.DownloadStatus) IDownload {
 	return &download{
-		p: params,
+		p:            params,
+		lstDownloads: lstDownloadsIncoming,
+		activeItem:   activeItemIncoming,
 	}
 }
 
@@ -93,19 +97,19 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 	return mediaInfo, fp
 }
 
-func (d *download) ExtractMediaContent(lstDownloads []*g.DownloadStatus) []e.Files {
-
-	if len(lstDownloads) < 1 {
+func (d *download) ExtractMediaContent() []e.Files {
+``
+	if len(d.lstDownloads) < 1 {
 		return nil
 	}
 
-	for i := 0; i < len(lstDownloads); i++ {
+	for i := 0; i < len(d.lstDownloads); i++ {
 
-		if lstDownloads[i].State == g.Completed {
+		if d.lstDownloads[i].State == g.Completed {
 			continue
 		}
 
-		args, command := cmdBuilderDownload(lstDownloads[i].VideoURL, 1)
+		args, command := cmdBuilderDownload(d.lstDownloads[i].VideoURL, 1)
 		logCommand := command + Space + args
 
 		//log executed command - in activity log later
@@ -115,7 +119,14 @@ func (d *download) ExtractMediaContent(lstDownloads []*g.DownloadStatus) []e.Fil
 		err := cmd.Start()
 		handleErrors(err, "Download - Cmd.Start")
 
-		pResult := executeDownloadProcess(stdout, lstDownloads[i])
+		//copy
+		if len(d.activeItem) == 0 {
+			d.activeItem = append(d.activeItem, d.lstDownloads[i])
+		} else {
+			d.activeItem[0] = d.lstDownloads[i]
+		}
+
+		pResult := executeDownloadProcess(stdout, d.activeItem)
 		_, errors, results := stripResultSections(pResult)
 
 		//results are not really needed - except maybe to check for errors.
@@ -375,11 +386,10 @@ func executeProcess(stdout io.ReadCloser) []string {
 	return results
 }
 
-// func executeDownloadProcess(stdout io.ReadCloser, ds *g.DownloadStatus) []string {
-func executeDownloadProcess(stdout io.ReadCloser, downloadStatus *g.DownloadStatus) []string {
+func executeDownloadProcess(stdout io.ReadCloser, activeItem []*g.DownloadStatus) []string {
 
 	//Update State
-	downloadStatus.State = g.Downloading
+	activeItem[0].State = g.Downloading
 
 	// var result string
 	var b bytes.Buffer
@@ -395,8 +405,8 @@ func executeDownloadProcess(stdout io.ReadCloser, downloadStatus *g.DownloadStat
 			result := b.String()
 			results := strings.Split(result, "\n")
 
-			downloadStatus.StatusMessage = results[len(results)-2]
-			log.Info("MESSAGE VALUE: ", downloadStatus.StatusMessage)
+			activeItem[0].StatusMessage = results[len(results)-2]
+			log.Info("MESSAGE VALUE: ", activeItem[0].StatusMessage)
 		}
 
 		//terminate loop at eof
@@ -406,7 +416,7 @@ func executeDownloadProcess(stdout io.ReadCloser, downloadStatus *g.DownloadStat
 		}
 	}
 	//change state to stop reprocessing.
-	downloadStatus.State = g.Completed
+	activeItem[0].State = g.Completed
 
 	result := b.String()
 	results := strings.Split(result, "\n")

@@ -27,7 +27,7 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 	log.Info("Request Params:", params)
 
 	//Instantiate
-	svcDownloads := ex.NewDownload(*params)
+	svcDownloads := ex.NewDownload(*params, []*g.DownloadStatus{}, []*g.DownloadStatus{})
 	svcRepo := ex.NewDownloadRepo(sql.DB)
 	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 
@@ -54,17 +54,18 @@ func NetworkIngestMedia(c *fiber.Ctx) error {
 
 	//global MPI
 	lstDownloads := g.NewDownloadStatus()
+	activeItem := g.NewActiveItem()
 
 	for idx := range params.DownloadVideos {
 		lstDownloads = append(lstDownloads, &g.DownloadStatus{VideoId: params.DownloadVideos[idx].VideoId, VideoURL: params.DownloadVideos[idx].VideoURL, StatusMessage: "", State: g.Queued})
 	}
 
 	//Instantiate
-	svcDownloads := ex.NewDownload(en.IncomingRequest{}) // this is just a placeholder
+	svcDownloads := ex.NewDownload(en.IncomingRequest{}, lstDownloads, activeItem)
 	svcRepo := ex.NewDownloadRepo(sql.DB)
 	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 
-	go svcVideos.ExtractIngestMedia(lstDownloads)
+	go svcVideos.ExtractIngestMedia()
 
 	return nil
 }
@@ -76,21 +77,25 @@ func DownloadStatus(c *websocket.Conn) {
 		err error
 	)
 	//global MPI
-	lstDownloads := g.NewDownloadStatus()
+	activeItem := g.NewActiveItem()
 	mt = websocket.TextMessage
 
 	for {
+		if len(activeItem) > 0 {
 
-		dsr := res.DownloadStatusResponse{Message: lstDownloads[0].StatusMessage}
-		jsonData, e := json.Marshal(dsr)
-		if e != nil {
-			log.Info(e)
-		}
-		msg = []byte(jsonData)
+			dsr := res.DownloadStatusResponse{Message: activeItem[0].StatusMessage}
+			jsonData, e := json.Marshal(dsr)
+			if e != nil {
+				log.Info(e)
+			}
+			msg = []byte(jsonData)
 
-		if err = c.WriteMessage(mt, msg); err != nil {
-			log.Info("write:", err)
-			break
+			if err = c.WriteMessage(mt, msg); err != nil {
+				log.Info("write:", err)
+				break
+			}
+		} else {
+			c.Close()
 		}
 		duration := time.Second
 		time.Sleep(duration)
