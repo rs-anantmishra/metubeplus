@@ -24,5 +24,6 @@ type CardsInfoResponse struct {
 }
 
 type DownloadStatusResponse struct {
-	Message string `json:"download"`
+	Message  string `json:"download"`
+	VideoURL string `json:"video_url"`
 }

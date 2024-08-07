@@ -6,8 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 )
 
-var onceDS sync.Once
-var onceAI sync.Once
+var onceDownloadStatus sync.Once
+var onceActiveItem sync.Once
 
 // -- todo --------------------------------------------------
 // handle case where Video is already added - Skip download.
@@ -30,20 +30,18 @@ var (
 )
 
 func NewActiveItem() []DownloadStatus {
-	onceAI.Do(func() { // <-- atomic, does not allow repeating
-		log.Info("DURING ONCE 1", activeItem)
-		activeItem = make([]DownloadStatus, 0) // <-- thread safe
-		log.Info("DURING ONCE 2", activeItem)
+	onceActiveItem.Do(func() { // <-- atomic, does not allow repeating
+		activeItem = make([]DownloadStatus, 1) // <-- thread safe
+		log.Info("During ActiveItem", activeItem)
 	})
 
 	return activeItem
 }
 
 func NewDownloadStatus() []DownloadStatus {
-	onceDS.Do(func() { // <-- atomic, does not allow repeating
-		log.Info("DURING ONCE 1 Active ITEM", dsQueue)
+	onceDownloadStatus.Do(func() { // <-- atomic, does not allow repeating
 		dsQueue = make([]DownloadStatus, 0) // <-- thread safe
-		log.Info("DURING ONCE 2 Active ITEM", dsQueue)
+		log.Info("During DownloadStatus", dsQueue)
 	})
 
 	return dsQueue

@@ -27,15 +27,15 @@ type IDownload interface {
 type download struct {
 	p             e.IncomingRequest
 	indicatorType int
-	lstDownloads  *g.DownloadStatus
-	activeItem    *g.DownloadStatus
+	lstDownloads  []g.DownloadStatus
+	activeItem    []g.DownloadStatus
 }
 
-func NewDownload(params e.IncomingRequest, lstDownloadsIncoming *g.DownloadStatus, activeItemIncoming *g.DownloadStatus) IDownload {
+func NewDownload(params e.IncomingRequest, lstDownloadsIncoming *[]g.DownloadStatus, activeItemIncoming *[]g.DownloadStatus) IDownload {
 	return &download{
 		p:            params,
-		lstDownloads: lstDownloadsIncoming,
-		activeItem:   activeItemIncoming,
+		lstDownloads: *lstDownloadsIncoming,
+		activeItem:   *activeItemIncoming,
 	}
 }
 
@@ -98,7 +98,7 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 }
 
 func (d *download) ExtractMediaContent() []e.Files {
-``
+
 	if len(d.lstDownloads) < 1 {
 		return nil
 	}
@@ -386,7 +386,7 @@ func executeProcess(stdout io.ReadCloser) []string {
 	return results
 }
 
-func executeDownloadProcess(stdout io.ReadCloser, activeItem []*g.DownloadStatus) []string {
+func executeDownloadProcess(stdout io.ReadCloser, activeItem []g.DownloadStatus) []string {
 
 	//Update State
 	activeItem[0].State = g.Downloading

@@ -27,7 +27,7 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 	log.Info("Request Params:", params)
 
 	//Instantiate
-	svcDownloads := ex.NewDownload(*params, []*g.DownloadStatus{}, []*g.DownloadStatus{})
+	svcDownloads := ex.NewDownload(*params, &[]g.DownloadStatus{}, &[]g.DownloadStatus{})
 	svcRepo := ex.NewDownloadRepo(sql.DB)
 	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 
@@ -57,11 +57,11 @@ func NetworkIngestMedia(c *fiber.Ctx) error {
 	activeItem := g.NewActiveItem()
 
 	for idx := range params.DownloadVideos {
-		lstDownloads = append(lstDownloads, &g.DownloadStatus{VideoId: params.DownloadVideos[idx].VideoId, VideoURL: params.DownloadVideos[idx].VideoURL, StatusMessage: "", State: g.Queued})
+		lstDownloads = append(lstDownloads, g.DownloadStatus{VideoId: params.DownloadVideos[idx].VideoId, VideoURL: params.DownloadVideos[idx].VideoURL, StatusMessage: "", State: g.Queued})
 	}
 
 	//Instantiate
-	svcDownloads := ex.NewDownload(en.IncomingRequest{}, lstDownloads, activeItem)
+	svcDownloads := ex.NewDownload(en.IncomingRequest{}, &lstDownloads, &activeItem)
 	svcRepo := ex.NewDownloadRepo(sql.DB)
 	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 
@@ -83,7 +83,7 @@ func DownloadStatus(c *websocket.Conn) {
 	for {
 		if len(activeItem) > 0 {
 
-			dsr := res.DownloadStatusResponse{Message: activeItem[0].StatusMessage}
+			dsr := res.DownloadStatusResponse{Message: activeItem[0].StatusMessage, VideoURL: activeItem[0].VideoURL}
 			jsonData, e := json.Marshal(dsr)
 			if e != nil {
 				log.Info(e)
@@ -96,6 +96,7 @@ func DownloadStatus(c *websocket.Conn) {
 			}
 		} else {
 			c.Close()
+			break
 		}
 		duration := time.Second
 		time.Sleep(duration)
