@@ -54,6 +54,8 @@ If you have an entry for the video in SQLite and you are attempting to download 
 - Fetch title for queued downloads.
 - Queue Playlist videos
 
+Priority wise distribution of work items to be done asap.
+
 [UI layout is similar to briefkasten]
 - landing page shows all Videos
 	- Downloader
