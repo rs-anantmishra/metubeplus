@@ -28,6 +28,4 @@ func main() {
 	defer database.CloseDB()
 
 	log.Fatal(app.Listen(port))
-	// ws://localhost:3000/ws
-	log.Fatal(app.Listen(port))
 }

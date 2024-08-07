@@ -21,7 +21,7 @@ type IDownload interface {
 	ExtractMediaContent() []e.Files
 	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	ExtractSubtitles(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
-	// Cleanup()
+	Cleanup()
 }
 
 type download struct {
@@ -39,22 +39,16 @@ func NewDownload(params e.IncomingRequest, lstDownloadsIncoming *[]g.DownloadSta
 	}
 }
 
-// func NewMediaDownload(dsIncoming *[]g.DownloadStatus) IDownload {
-// 	return &download{
-// 		ds: dsIncoming,
-// 	}
-// }
-
-// func (d *download) Cleanup() {
-// 	var updated []g.DownloadStatus
-// 	for i := 0; i < len(*d.ds); i++ {
-// 		ds := *d.ds
-// 		if ds[i].State != g.Completed {
-// 			updated = append(updated, ds[i])
-// 		}
-// 	}
-// 	*d.ds = updated
-// }
+func (d *download) Cleanup() {
+	var updated []g.DownloadStatus
+	for i := 0; i < len(d.lstDownloads); i++ {
+		ds := d.lstDownloads
+		if ds[i].State != g.Completed {
+			updated = append(updated, ds[i])
+		}
+	}
+	d.lstDownloads = updated
+}
 
 func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
@@ -109,7 +103,7 @@ func (d *download) ExtractMediaContent() []e.Files {
 			continue
 		}
 
-		args, command := cmdBuilderDownload(d.lstDownloads[i].VideoURL, 1)
+		args, command := cmdBuilderDownload(d.lstDownloads[i].VideoURL, Video)
 		logCommand := command + Space + args
 
 		//log executed command - in activity log later
@@ -119,15 +113,14 @@ func (d *download) ExtractMediaContent() []e.Files {
 		err := cmd.Start()
 		handleErrors(err, "Download - Cmd.Start")
 
-		//copy
-		if len(d.activeItem) == 0 {
-			d.activeItem = append(d.activeItem, d.lstDownloads[i])
-		} else {
-			d.activeItem[0] = d.lstDownloads[i]
-		}
+		//copy to ActiveItem
+		d.activeItem[0] = d.lstDownloads[i]
 
 		pResult := executeDownloadProcess(stdout, d.activeItem)
 		_, errors, results := stripResultSections(pResult)
+
+		//update from ActiveItem
+		d.lstDownloads[i].State = d.activeItem[0].State
 
 		//results are not really needed - except maybe to check for errors.
 		_ = errors

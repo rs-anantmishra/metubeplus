@@ -55,6 +55,7 @@ func NetworkIngestMedia(c *fiber.Ctx) error {
 	//global MPI
 	lstDownloads := g.NewDownloadStatus()
 	activeItem := g.NewActiveItem()
+	qAlive := g.NewQueueAlive()
 
 	for idx := range params.DownloadVideos {
 		lstDownloads = append(lstDownloads, g.DownloadStatus{VideoId: params.DownloadVideos[idx].VideoId, VideoURL: params.DownloadVideos[idx].VideoURL, StatusMessage: "", State: g.Queued})
@@ -65,7 +66,10 @@ func NetworkIngestMedia(c *fiber.Ctx) error {
 	svcRepo := ex.NewDownloadRepo(sql.DB)
 	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 
-	go svcVideos.ExtractIngestMedia()
+	if qAlive[0] != 1 {
+		qAlive[0] = 1
+		go svcVideos.ExtractIngestMedia()
+	}
 
 	return nil
 }

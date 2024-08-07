@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2/log"
 	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
+	g "github.com/rs-anantmishra/metubeplus/pkg/global"
 )
 
 type IService interface {
@@ -41,11 +42,12 @@ func (s *service) ExtractIngestMetadata(p e.IncomingRequest) bool {
 }
 
 func (s *service) ExtractIngestMedia() {
+	defer falsifyQueueAlive()
 
 	i := 0
 	for {
 		//cleanup of processed
-		// s.download.Cleanup()
+		s.download.Cleanup()
 
 		//download file
 		result := s.download.ExtractMediaContent()
@@ -63,4 +65,9 @@ func (s *service) ExtractIngestMedia() {
 
 func (s *service) ExtractSubtitlesOnly(videoId string) bool {
 	return false
+}
+
+func falsifyQueueAlive() {
+	qa := g.NewQueueAlive()
+	qa[0] = 0
 }
