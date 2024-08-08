@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/contrib/websocket"
@@ -9,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 
 	res "github.com/rs-anantmishra/metubeplus/api/presenter"
+	cfg "github.com/rs-anantmishra/metubeplus/config"
 	sql "github.com/rs-anantmishra/metubeplus/database"
 	en "github.com/rs-anantmishra/metubeplus/pkg/entities"
 	ex "github.com/rs-anantmishra/metubeplus/pkg/extractor"
@@ -27,7 +29,7 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 	log.Info("Request Params:", params)
 
 	//Instantiate
-	svcDownloads := ex.NewDownload(*params, &[]g.DownloadStatus{}, &[]g.DownloadStatus{})
+	svcDownloads := ex.NewDownload(*params)
 	svcRepo := ex.NewDownloadRepo(sql.DB)
 	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 
@@ -42,6 +44,7 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 
 func NetworkIngestMedia(c *fiber.Ctx) error {
 
+	maxQueueLength, _ := strconv.Atoi((cfg.Config("MAX_QUEUE")))
 	//bind incoming data
 	params := new(en.QueueDownloads)
 
@@ -54,15 +57,20 @@ func NetworkIngestMedia(c *fiber.Ctx) error {
 
 	//global MPI
 	lstDownloads := g.NewDownloadStatus()
-	activeItem := g.NewActiveItem()
 	qAlive := g.NewQueueAlive()
+	currentQueueIndex := g.NewCurrentQueueIndex()
 
-	for idx := range params.DownloadVideos {
-		lstDownloads = append(lstDownloads, g.DownloadStatus{VideoId: params.DownloadVideos[idx].VideoId, VideoURL: params.DownloadVideos[idx].VideoURL, StatusMessage: "", State: g.Queued})
+	if maxQueueLength-currentQueueIndex[0]-len(params.DownloadVideos) >= 0 {
+		for idx := range params.DownloadVideos {
+			lstDownloads[currentQueueIndex[0]] = g.DownloadStatus{VideoId: params.DownloadVideos[idx].VideoId, VideoURL: params.DownloadVideos[idx].VideoURL, StatusMessage: "", State: g.Queued}
+			currentQueueIndex[0]++
+		}
+	} else {
+		//send error response that queue is full. Please wait for existing downloads to complete.
 	}
 
 	//Instantiate
-	svcDownloads := ex.NewDownload(en.IncomingRequest{}, &lstDownloads, &activeItem)
+	svcDownloads := ex.NewDownload(en.IncomingRequest{})
 	svcRepo := ex.NewDownloadRepo(sql.DB)
 	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 

@@ -18,9 +18,10 @@ import (
 
 type IDownload interface {
 	ExtractMetadata() ([]e.MediaInformation, e.Filepath)
-	ExtractMediaContent() []e.Files
+	ExtractMediaContent() int
 	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	ExtractSubtitles(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
+	GetDownloadedMediaFileInfo(videoTitle string, playlistId int) []e.Files
 	Cleanup()
 }
 
@@ -28,14 +29,11 @@ type download struct {
 	p             e.IncomingRequest
 	indicatorType int
 	lstDownloads  []g.DownloadStatus
-	activeItem    []g.DownloadStatus
 }
 
-func NewDownload(params e.IncomingRequest, lstDownloadsIncoming *[]g.DownloadStatus, activeItemIncoming *[]g.DownloadStatus) IDownload {
+func NewDownload(params e.IncomingRequest) IDownload {
 	return &download{
-		p:            params,
-		lstDownloads: *lstDownloadsIncoming,
-		activeItem:   *activeItemIncoming,
+		p: params,
 	}
 }
 
@@ -91,63 +89,29 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 	return mediaInfo, fp
 }
 
-func (d *download) ExtractMediaContent() []e.Files {
+func (d *download) ExtractMediaContent() int {
 
-	if len(d.lstDownloads) < 1 {
-		return nil
-	}
+	activeItem := g.NewActiveItem()
 
-	for i := 0; i < len(d.lstDownloads); i++ {
+	args, command := cmdBuilderDownload(activeItem[0].VideoURL, Video)
+	logCommand := command + Space + args
 
-		if d.lstDownloads[i].State == g.Completed {
-			continue
-		}
+	//log executed command - in activity log later
+	_ = logCommand
+	cmd, stdout := buildProcess(args, GetCommandString())
 
-		args, command := cmdBuilderDownload(d.lstDownloads[i].VideoURL, Video)
-		logCommand := command + Space + args
+	err := cmd.Start()
+	handleErrors(err, "Download - Cmd.Start")
 
-		//log executed command - in activity log later
-		_ = logCommand
-		cmd, stdout := buildProcess(args, GetCommandString())
+	pResult := executeDownloadProcess(stdout, activeItem)
+	_, errors, results := stripResultSections(pResult)
 
-		err := cmd.Start()
-		handleErrors(err, "Download - Cmd.Start")
+	//results are not really needed - except maybe to check for errors.
+	_ = errors
+	_ = results
 
-		//copy to ActiveItem
-		d.activeItem[0] = d.lstDownloads[i]
+	return activeItem[0].State
 
-		pResult := executeDownloadProcess(stdout, d.activeItem)
-		_, errors, results := stripResultSections(pResult)
-
-		//update from ActiveItem
-		d.lstDownloads[i].State = d.activeItem[0].State
-
-		//results are not really needed - except maybe to check for errors.
-		_ = errors
-		_ = results
-
-		if len(errors) > 0 {
-			//Show error on UI
-			log.Error(errors)
-			return []e.Files{}
-		}
-
-		var fp string
-		fPath := e.Filepath{Domain: "", Channel: "", PlaylistTitle: ""}
-		//Get FilePaths
-		if d.indicatorType == Video {
-			fp = GetVideoFilepath(fPath, e.Subtitles)
-		} else if d.indicatorType == Playlist {
-			fp = GetPlaylistFilepath(fPath, e.Subtitles)
-		}
-		fp = strings.ReplaceAll(fp, "../media/", "..\\media")
-
-		c, err := os.ReadDir(fp)
-		handleErrors(err, "network - ExtractSubtitles")
-
-		_ = c //handle later
-	}
-	return nil
 }
 
 func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files {
@@ -316,6 +280,54 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.
 		}
 	}
 	return files
+}
+
+func (d *download) GetDownloadedMediaFileInfo(videoTitle string, playlistId int) []e.Files {
+
+	var fp string
+	fPath := e.Filepath{Domain: "", Channel: "", PlaylistTitle: ""}
+	//Get FilePaths
+	if d.indicatorType == Video {
+		fp = GetVideoFilepath(fPath, e.Subtitles)
+	} else if d.indicatorType == Playlist {
+		fp = GetPlaylistFilepath(fPath, e.Subtitles)
+	}
+	fp = strings.ReplaceAll(fp, "../media/", "..\\media")
+
+	c, err := os.ReadDir(fp)
+	handleErrors(err, "network - ExtractMediaContent")
+
+	smiIndex := 0
+	var files []e.Files
+	//Todo: re-write this to compare filenames after removing all special characters.
+	//if there is a match then do the assignment.
+	for _, entry := range c {
+		info, _ := entry.Info()
+		splits := strings.SplitN(info.Name(), ".", -1)
+		fs_filename := info.Name()
+
+		for _, saved := range lstSMI {
+			if strings.Contains(fs_filename, saved.YoutubeVideoId) {
+				f := e.Files{
+					VideoId:      lstSMI[smiIndex].VideoId,
+					FileType:     "Video",
+					SourceId:     e.Downloaded,
+					FilePath:     fp,
+					FileName:     info.Name(),
+					Extension:    splits[len(splits)-1],
+					FileSize:     int(info.Size()),
+					FileSizeUnit: "bytes",
+					NetworkPath:  "",
+					IsDeleted:    0,
+					CreatedDate:  info.ModTime().Unix(),
+				}
+				files = append(files, f)
+				smiIndex++
+			}
+		}
+	}
+
+	return nil
 }
 
 func getIndicatorType(url string) (int, int) {

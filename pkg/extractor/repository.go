@@ -14,7 +14,7 @@ type IRepository interface {
 	SaveThumbnail([]e.Files) []int
 	SaveSubtitles([]e.Files) []int
 	SaveMediaContent([]e.Files) []int
-	GetVideoNetworkURL(videoId int) (string, error)
+	GetVideoFileInfo(videoId int) (string, int, error)
 }
 
 type repository struct {
@@ -270,18 +270,19 @@ func (r *repository) SaveMediaContent(file []e.Files) []int {
 	return lstFileIds
 }
 
-func (r *repository) GetVideoNetworkURL(videoId int) (string, error) {
-	// An album to hold data from the returned row.
-	var networkVideoId string
+func (r *repository) GetVideoFileInfo(videoId int) (string, int, error) {
 
-	row := r.db.QueryRow(p.GetNetworkVideoIdByVideoId, videoId)
-	if err := row.Scan(&networkVideoId); err != nil {
+	var videoTitle string
+	var playlistId int
+
+	row := r.db.QueryRow(p.GetVideoInformationById, videoId)
+	if err := row.Scan(&videoTitle, &playlistId); err != nil {
 		if err == sql.ErrNoRows {
-			return networkVideoId, fmt.Errorf("albumsById %d: no such album", videoId)
+			return videoTitle, playlistId, fmt.Errorf("VideoId %d: no such video", videoId)
 		}
-		return networkVideoId, fmt.Errorf("albumsById %d: %v", videoId, err)
+		return videoTitle, playlistId, fmt.Errorf("VideoById %d: %v", videoId, err)
 	}
-	return networkVideoId, nil
+	return videoTitle, playlistId, nil
 }
 
 // Private Methods ////////////////////////////////////////////////////

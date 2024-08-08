@@ -1,8 +1,6 @@
 package extractor
 
 import (
-	"time"
-
 	"github.com/gofiber/fiber/v2/log"
 	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 	g "github.com/rs-anantmishra/metubeplus/pkg/global"
@@ -44,22 +42,36 @@ func (s *service) ExtractIngestMetadata(p e.IncomingRequest) bool {
 func (s *service) ExtractIngestMedia() {
 	defer falsifyQueueAlive()
 
-	i := 0
-	for {
-		//cleanup of processed
-		s.download.Cleanup()
+	//cleanup of processed
+	s.download.Cleanup()
 
-		//download file
-		result := s.download.ExtractMediaContent()
-		_ = result //save file details in DB
-		//something := s.repository.SaveMediaContent(result)
+	lstDownloads := g.NewDownloadStatus()
+	activeItem := g.NewActiveItem()
 
-		if i%10 == 0 {
-			log.Info(i, " seconds have passed")
+	if len(lstDownloads) > 0 {
+		for i := 0; i < len(lstDownloads); i++ {
+
+			//skip empties
+			if lstDownloads[i].State == g.Completed || lstDownloads[i].VideoURL == "" {
+				continue
+			}
+
+			//copy to active-item
+			activeItem[0] = lstDownloads[i]
+
+			//download file
+			lstDownloads[i].State = s.download.ExtractMediaContent()
+			videoTitle, playlistId, err := s.repository.GetVideoFileInfo(activeItem[0].VideoId)
+
+			if err != nil {
+				log.Info(err)
+			}
+
+			fileInfo := s.download.GetDownloadedMediaFileInfo(videoTitle, playlistId)
+			dbResult := s.repository.SaveMediaContent(fileInfo)
+
+			_ = dbResult
 		}
-		i++
-		duration := time.Second
-		time.Sleep(duration)
 	}
 }
 
