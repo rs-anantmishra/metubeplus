@@ -1,15 +1,13 @@
 package presenter
 
-type PlaylistsResponse struct {
-}
-
 type CardsInfoResponse struct {
 	VideoId            int    `json:"video_id"`
 	Title              string `json:"title"`
 	Description        string `json:"description"`
 	Duration           int    `json:"duration"`
 	OriginalURL        string `json:"original_url"`
-	ThumbnailURL       string `json:"thumbnail_url"`
+	Thumbnail          string `json:"thumbnail"`
+	PlaylistThumbnail  string `json:"pl_thumbnail"`
 	SubtitlesURL       string `json:"subs_url"`
 	MediaURL           string `json:"media_url"`
 	IsFileDownloaded   bool   `json:"is_file_downloaded"`

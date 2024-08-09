@@ -33,6 +33,7 @@ type MediaInformation struct {
 
 type SavedMediaInformation struct {
 	VideoId        int
+	PlaylistId     int
 	Title          string
 	YoutubeVideoId string
 }

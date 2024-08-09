@@ -22,7 +22,7 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 	//bind incoming data
 	params := new(en.IncomingRequest)
 	if err := c.BodyParser(params); err != nil {
-		return err
+		return nil
 	}
 
 	//log incoming data
@@ -37,9 +37,9 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 	// No validations for URL/Playlist are needed.
 	// If Metadata is not fetched, and there is an error message from yt-dlp
 	// just show that error on the UI
-	svcVideos.ExtractIngestMetadata(*params)
+	result := svcVideos.ExtractIngestMetadata(*params)
 
-	return nil
+	return c.JSON(result)
 }
 
 func NetworkIngestMedia(c *fiber.Ctx) error {
@@ -79,7 +79,8 @@ func NetworkIngestMedia(c *fiber.Ctx) error {
 		go svcVideos.ExtractIngestMedia()
 	}
 
-	return nil
+	result := res.QueueResponse{Result: "Item added to download queue successfully."}
+	return c.JSON(result)
 }
 
 func DownloadStatus(c *websocket.Conn) {
@@ -89,11 +90,12 @@ func DownloadStatus(c *websocket.Conn) {
 		err error
 	)
 	//global MPI
+	const _blank string = ""
 	activeItem := g.NewActiveItem()
 	mt = websocket.TextMessage
 
 	for {
-		if len(activeItem) > 0 {
+		if len(activeItem) > 0 && activeItem[0].VideoURL != _blank {
 
 			dsr := res.DownloadStatusResponse{Message: activeItem[0].StatusMessage, VideoURL: activeItem[0].VideoURL}
 			jsonData, e := json.Marshal(dsr)
@@ -107,11 +109,14 @@ func DownloadStatus(c *websocket.Conn) {
 				break
 			}
 		} else {
-			c.Close()
+			c.Conn.Close()
 			break
 		}
+
+		//transmit data once per second
 		duration := time.Second
 		time.Sleep(duration)
+
 	}
 }
 

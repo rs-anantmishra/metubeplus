@@ -1,8 +1,8 @@
 <div [ngClass]="homeBoxActive">
     <div [ngClass]="contentBoxActive">
-        <div class="slide-up-content">
+        <div>
             <div class="me-container">
-                <img src="smol-sphere.gif" />
+                <img class="streamsphere" src="smol-sphere.gif" />
                 <span class="name-box">Streamsphere</span>
             </div>
             <div class="url-container">
@@ -19,27 +19,18 @@
                 <p-checkbox [(ngModel)]="options.GetSubs" label="Get Subtitles (Auto Generated - English)"
                     name="options" [value]="options.GetSubs" class="checkbox-last"
                     (onChange)="flipCheckbox($event,'GetSubs')" />
+                <p-button label="Queued" [text]="true" class="queued-items" (onClick)="sidebarVisible = true"
+                    size="small" severity="help" />
             </div>
         </div>
         <div [ngClass]="panelBoxActive">
-            <!-- <div class="downloads-box"> -->
-            <p-card [header]="this.dl.Title" [subheader]="this.dl.Channel" [style]="{ width: '800px' }">
-                <ng-template pTemplate="header">
-                    <img alt="Card" src="https://primefaces.org/cdn/primeng/images/card-ng.jpg" />
-                </ng-template>
-                <p>
-                    <p-toast />
-                    <p-progressBar [value]="dlProgress">
-                        <ng-template pTemplate="content" let-value>
-                            <span style="font-size: 10px;">{{value}}%</span>
-                        </ng-template>
-                    </p-progressBar>
-                </p>
-                <ng-template pTemplate="footer">
-                    <p-button icon="pi pi-list" label="Queued Items" size="small" (onClick)="sidebarVisible = true" />
-                </ng-template>
-            </p-card>
-            <!-- </div> -->
+            <div class="server-logs cutive-mono-regular">
+                <div class="download-details">
+                    <span>{{downloadingTitle}}</span>
+                    <span style="margin-left: auto;">{{downloadingChannel}}</span>
+                </div>
+                <span>server-logs: {{logs}}</span>
+            </div>
         </div>
     </div>
 </div>
@@ -48,9 +39,9 @@
     <p-sidebar [(visible)]="sidebarVisible" styleClass="queued-box">
         <h3>Sidebar</h3>
         <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            <app-simplecard></app-simplecard>
+            <br />
+            <app-simplecard></app-simplecard>
         </p>
     </p-sidebar>
 </div>

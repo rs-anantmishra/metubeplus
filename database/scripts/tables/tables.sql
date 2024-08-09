@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS tblVideos(
 	Availability TEXT,
 	PlaylistVideoIndex INTEGER,
 	IsFileDownloaded INTEGER NOT NULL DEFAULT 0,
+	FileId INTEGER NOT NULL DEFAULT 0,
 	ChannelId INTEGER,
 	PlayListId INTEGER,
 	DomainId INTEGER,
@@ -95,6 +96,7 @@ CREATE TABLE IF NOT EXISTS tblVideoFileCategories(
 CREATE TABLE IF NOT EXISTS tblFiles(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	VideoId INTEGER NOT NULL,
+	PlaylistId INTEGER NOT NULL DEFAULT -1, --(-1) for Videos Only files
 	FileType TEXT,
 	Source TEXT,
 	FilePath TEXT,

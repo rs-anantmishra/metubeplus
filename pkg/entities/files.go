@@ -3,6 +3,7 @@ package entities
 type Files struct {
 	Id           int
 	VideoId      int
+	PlaylistId   int
 	FileType     string
 	SourceId     int
 	FilePath     string

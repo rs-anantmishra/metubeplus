@@ -24,6 +24,7 @@ const InsertMetadata string = `INSERT INTO tblVideos (
 	,Availability
 	,PlaylistVideoIndex
 	,IsFileDownloaded
+	,FileId
 	,ChannelId
 	,PlayListId
 	,DomainId
@@ -33,7 +34,7 @@ const InsertMetadata string = `INSERT INTO tblVideos (
 	,IsDeleted
 	,CreatedDate
 )
-VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
+VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
 
 const InsertTagsCheck string = `Select Id From tblTags Where Name = ?`
 const InsertTags string = `INSERT INTO tblTags Select NULL, ?, ?, ?;`
@@ -49,15 +50,17 @@ const InsertVideoFileCategories string = `INSERT INTO tblVideoFileCategories SEL
 
 const InsertThumbnailFileCheck string = `SELECT Id From tblFiles WHERE FileType = ? AND VideoId = ?`
 const InsertSubsFileCheck string = `SELECT Id From tblFiles WHERE FileType = ? AND VideoId = ? AND FileName = ?`
-const InsertFile string = `INSERT INTO tblFiles SELECT NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?`
+const InsertFile string = `INSERT INTO tblFiles SELECT NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?`
 
 //Files with duplicate names to be overwritten or renamed(Choice thru UI).
 const InsertMediaFileCheck string = `SELECT Id From tblFiles WHERE FileType = ? AND VideoId = ? AND FileName = ?`
 
 const GetNetworkVideoURLById string = `Select WebpageURL from tblVideos Where Id = ?`
-const GetVideoInformationById string = `Select V.Title, V.PlayListId, C.Name, D.Domain, P.Title  as 'PlaylistTitle'
+const GetVideoInformationById string = `Select V.Title, V.PlayListId, C.Name as 'Channel', D.Domain, P.Title as 'PlaylistTitle', YoutubeVideoId
 										FROM tblVideos V 
 										INNER JOIN tblChannels C ON C.Id = V.ChannelId 
 										INNER JOIN tblDomains D ON D.Id = V.DomainId
 										INNER JOIN tblPlaylists P ON P.Id = V.PlayListId
 										WHERE V.Id = ?;`
+
+const UpdateVideoFileFields string = `UPDATE tblVideos SET IsFileDownloaded = ?, FileId = ? WHERE Id = ?;`

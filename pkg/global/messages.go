@@ -11,7 +11,6 @@ var onceDownloadStatus sync.Once
 var onceActiveItem sync.Once
 var onceCurrentQueueIndex sync.Once
 var onceQueueAlive sync.Once
-var onceIsDownloadInProgress sync.Once
 
 // -- todo --------------------------------------------------
 // handle case where Video is already added - Skip download.
@@ -26,7 +25,8 @@ type DownloadStatus struct {
 	VideoURL      string //Network Video Id
 	StatusMessage string //completion percentage is in here
 	State         int    //0 = downloading, 1 = queued, 2 = Downloaded
-	// VideoTitle      string //VideoTitle
+	VideoTitle    string //VideoTitle
+	Channel       string //Channel
 	// PlaylistOrVideo string // Possible Values: "Playlist" or "Video"
 	// PlaylistId      int    // Playlist Id from db
 }

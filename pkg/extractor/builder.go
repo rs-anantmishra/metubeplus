@@ -206,6 +206,8 @@ func GetVideoFilepath(fp e.Filepath, fType int) string {
 		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, "Videos", "Thumbnails"}, "\\")
 	} else if fType == e.Subtitles {
 		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, "Videos", "Subtitles"}, "\\")
+	} else {
+		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, "Videos"}, "\\")
 	}
 	return result
 }

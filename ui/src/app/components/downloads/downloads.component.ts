@@ -18,6 +18,7 @@ import { webSocket } from 'rxjs/webSocket'
 //Services & Classes
 import { VideoData } from '../../classes/video-data';
 import { CardsService } from '../../services/cards.service';
+import { SimplecardComponent } from "../simplecard/simplecard.component";
 
 interface ExtractionOptions {
   Identifier: string;
@@ -29,7 +30,7 @@ interface ExtractionOptions {
 @Component({
   selector: 'app-downloads',
   standalone: true,
-  imports: [ToastModule, ProgressBarModule, SidebarModule, CardModule, FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule],
+  imports: [ToastModule, ProgressBarModule, SidebarModule, CardModule, FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule, SimplecardComponent],
   providers: [CardsService, MessageService],
   templateUrl: './downloads.component.html',
   styleUrl: './downloads.component.scss'
@@ -37,16 +38,30 @@ interface ExtractionOptions {
 export class DownloadsComponent implements OnInit {
 
   sock = webSocket('ws://localhost:3000/ws/downloadstatus')
-  msg = 'hello'
+  msg = 'No active downloads'
+  logs = ''
+  downloadingChannel = 'test channel'
+  downloadingTitle = 'test title'
   sendRequest() {
     this.sock.subscribe();
     this.sock.next(this.msg);
     // this.sock.complete();
     this.sock.subscribe({
-      next: msg => console.log(JSON.stringify(msg)), 
-      error: err => console.log('gooooooooooooooooot an error', err), 
+      next: msg => this.updateLogs(JSON.stringify(msg)), 
+      error: err => {console.log('error in ws connection', err), this.updateLogs('{"download": "ws connection closed"}')}, 
       // complete: () => console.log('complete') 
      });
+  }
+
+  updateLogs(message: string) {
+    this.logs = message
+    const serverlog = JSON.parse(message)
+    this.logs = serverlog.download
+
+    //these below will be set from metadata only
+    //
+    // this.downloadingChannel = serverlog.channel
+    // this.downloadingTitle = serverlog.title
   }
 
 
@@ -85,12 +100,6 @@ export class DownloadsComponent implements OnInit {
 
     this.dl = this.currentDL.getDownloadingVideo()
     console.log(this.dl)
-
-    this.homeBoxActive = 'home-box-queued'
-    this.contentBoxActive = 'content-box-queued'
-    setTimeout(() => {
-      this.panelBoxActive = 'panel-box-queued'
-    }, 1500);
   }
 }
 

@@ -21,7 +21,7 @@ type IDownload interface {
 	ExtractMediaContent() int
 	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	ExtractSubtitles(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
-	GetDownloadedMediaFileInfo(videoTitle string, playlistId int) []e.Files
+	GetDownloadedMediaFileInfo(smi e.SavedMediaInformation, fp e.Filepath) []e.Files
 	Cleanup()
 }
 
@@ -161,6 +161,7 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 		fs_filename := info.Name()
 
 		thumbnailVideoId := -1
+		thumbnailPlaylistId := lstSMI[0].PlaylistId
 		//for playlists, 1st Video Id should be -1
 		if d.indicatorType == Playlist {
 			if i > 0 {
@@ -174,6 +175,7 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 
 			f := e.Files{
 				VideoId:      thumbnailVideoId,
+				PlaylistId:   thumbnailPlaylistId,
 				FileType:     "Thumbnail",
 				SourceId:     e.Downloaded,
 				FilePath:     fp,
@@ -194,6 +196,7 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 				if strings.Contains(fs_filename, saved.YoutubeVideoId) {
 					f := e.Files{
 						VideoId:      thumbnailVideoId,
+						PlaylistId:   thumbnailPlaylistId,
 						FileType:     "Thumbnail",
 						SourceId:     e.Downloaded,
 						FilePath:     fp,
@@ -263,6 +266,7 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.
 			if strings.Contains(fs_filename, saved.YoutubeVideoId) {
 				f := e.Files{
 					VideoId:      lstSMI[smiIndex].VideoId,
+					PlaylistId:   lstSMI[smiIndex].PlaylistId,
 					FileType:     "Subtitles",
 					SourceId:     e.Downloaded,
 					FilePath:     fp,
@@ -282,15 +286,14 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.
 	return files
 }
 
-func (d *download) GetDownloadedMediaFileInfo(videoTitle string, playlistId int) []e.Files {
+func (d *download) GetDownloadedMediaFileInfo(smi e.SavedMediaInformation, fPath e.Filepath) []e.Files {
 
 	var fp string
-	fPath := e.Filepath{Domain: "", Channel: "", PlaylistTitle: ""}
 	//Get FilePaths
-	if d.indicatorType == Video {
-		fp = GetVideoFilepath(fPath, e.Subtitles)
-	} else if d.indicatorType == Playlist {
-		fp = GetPlaylistFilepath(fPath, e.Subtitles)
+	if smi.PlaylistId == -1 {
+		fp = GetVideoFilepath(fPath, e.Video)
+	} else if smi.PlaylistId > -1 {
+		fp = GetPlaylistFilepath(fPath, e.Video)
 	}
 	fp = strings.ReplaceAll(fp, "../media/", "..\\media")
 
@@ -306,28 +309,27 @@ func (d *download) GetDownloadedMediaFileInfo(videoTitle string, playlistId int)
 		splits := strings.SplitN(info.Name(), ".", -1)
 		fs_filename := info.Name()
 
-		for _, saved := range lstSMI {
-			if strings.Contains(fs_filename, saved.YoutubeVideoId) {
-				f := e.Files{
-					VideoId:      lstSMI[smiIndex].VideoId,
-					FileType:     "Video",
-					SourceId:     e.Downloaded,
-					FilePath:     fp,
-					FileName:     info.Name(),
-					Extension:    splits[len(splits)-1],
-					FileSize:     int(info.Size()),
-					FileSizeUnit: "bytes",
-					NetworkPath:  "",
-					IsDeleted:    0,
-					CreatedDate:  info.ModTime().Unix(),
-				}
-				files = append(files, f)
-				smiIndex++
+		if strings.Contains(fs_filename, smi.YoutubeVideoId) {
+			f := e.Files{
+				VideoId:      smi.VideoId,
+				PlaylistId:   smi.PlaylistId,
+				FileType:     "Video",
+				SourceId:     e.Downloaded,
+				FilePath:     fp,
+				FileName:     info.Name(),
+				Extension:    splits[len(splits)-1],
+				FileSize:     int(info.Size()),
+				FileSizeUnit: "bytes",
+				NetworkPath:  "",
+				IsDeleted:    0,
+				CreatedDate:  info.ModTime().Unix(),
 			}
+			files = append(files, f)
+			smiIndex++
 		}
 	}
 
-	return nil
+	return files
 }
 
 func getIndicatorType(url string) (int, int) {

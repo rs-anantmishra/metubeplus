@@ -14,7 +14,7 @@ type IRepository interface {
 	SaveThumbnail([]e.Files) []int
 	SaveSubtitles([]e.Files) []int
 	SaveMediaContent([]e.Files) []int
-	GetVideoFileInfo(videoId int) (string, int, error)
+	GetVideoFileInfo(videoId int) (e.SavedMediaInformation, e.Filepath, error)
 }
 
 type repository struct {
@@ -102,6 +102,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 			args = append(args, elem.Availability)
 			args = append(args, elem.PlaylistIndex)
 			args = append(args, 0) //IsFileDownloaded
+			args = append(args, 0) //FileId
 			args = append(args, channelId)
 			args = append(args, playlistId)
 			args = append(args, domainId)
@@ -177,7 +178,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 			}
 		}
 
-		lstSMI = append(lstSMI, e.SavedMediaInformation{VideoId: ytVideoId, Title: elem.Title, YoutubeVideoId: elem.YoutubeVideoId})
+		lstSMI = append(lstSMI, e.SavedMediaInformation{VideoId: ytVideoId, PlaylistId: playlistId, Title: elem.Title, YoutubeVideoId: elem.YoutubeVideoId})
 	}
 	return sequencedVideoIds, lstSMI
 }
@@ -190,6 +191,7 @@ func (r *repository) SaveThumbnail(file []e.Files) []int {
 		if thumbnailFileId <= 0 {
 			var args []any
 			args = append(args, elem.VideoId)
+			args = append(args, elem.PlaylistId)
 			args = append(args, elem.FileType)
 			args = append(args, elem.SourceId)
 			args = append(args, elem.FilePath)
@@ -219,6 +221,7 @@ func (r *repository) SaveSubtitles(file []e.Files) []int {
 		if subsFileId <= 0 {
 			var args []any
 			args = append(args, elem.VideoId)
+			args = append(args, elem.PlaylistId)
 			args = append(args, elem.FileType)
 			args = append(args, elem.SourceId)
 			args = append(args, elem.FilePath)
@@ -240,16 +243,14 @@ func (r *repository) SaveSubtitles(file []e.Files) []int {
 }
 
 func (r *repository) SaveMediaContent(file []e.Files) []int {
-	lstFileIds := make([]int, len(file))
-	for i := range file {
-		lstFileIds[i] = -1
-	}
 
+	var lstFileIds []int
 	for _, elem := range file {
 		mediaFileId := filesCheck(*r, elem.FileType, elem.VideoId, p.InsertThumbnailFileCheck)
 		if mediaFileId <= 0 {
 			var args []any
 			args = append(args, elem.VideoId)
+			args = append(args, elem.PlaylistId)
 			args = append(args, elem.FileType)
 			args = append(args, elem.SourceId)
 			args = append(args, elem.FilePath)
@@ -264,25 +265,35 @@ func (r *repository) SaveMediaContent(file []e.Files) []int {
 			mediaFileId = genericSave(*r, args, p.InsertFile)
 			lstFileIds = append(lstFileIds, mediaFileId)
 			_ = mediaFileId
+
+			//update bindings in tblVideos -- order of arguments is important.
+			var argsUpdate []any
+			argsUpdate = append(argsUpdate, 1)
+			argsUpdate = append(argsUpdate, mediaFileId)
+			argsUpdate = append(argsUpdate, elem.VideoId)
+			rowsAffected := genericUpdate(*r, argsUpdate, p.UpdateVideoFileFields)
+			_ = rowsAffected // can do something with it?
 		}
+
 	}
 
 	return lstFileIds
 }
 
-func (r *repository) GetVideoFileInfo(videoId int) (string, int, error) {
+func (r *repository) GetVideoFileInfo(videoId int) (e.SavedMediaInformation, e.Filepath, error) {
 
-	var videoTitle string
-	var playlistId int
+	var smi e.SavedMediaInformation
+	var fPath e.Filepath
 
+	smi.VideoId = videoId
 	row := r.db.QueryRow(p.GetVideoInformationById, videoId)
-	if err := row.Scan(&videoTitle, &playlistId); err != nil {
+	if err := row.Scan(&smi.Title, &smi.PlaylistId, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId); err != nil {
 		if err == sql.ErrNoRows {
-			return videoTitle, playlistId, fmt.Errorf("VideoId %d: no such video", videoId)
+			return smi, fPath, fmt.Errorf("VideoId %d: no such video", videoId)
 		}
-		return videoTitle, playlistId, fmt.Errorf("VideoById %d: %v", videoId, err)
+		return smi, fPath, fmt.Errorf("VideoById %d: %v", videoId, err)
 	}
-	return videoTitle, playlistId, nil
+	return smi, fPath, nil
 }
 
 // Private Methods ////////////////////////////////////////////////////
@@ -310,6 +321,31 @@ func genericSave(r repository, args []any, genericQuery string) int {
 	}
 
 	return resultId
+}
+
+func genericUpdate(r repository, args []any, genericQuery string) int {
+	rowsAffected := -1
+
+	if rowsAffected < 0 {
+
+		//generic save
+		result, err := r.db.Exec(genericQuery, args...)
+
+		//check for errors
+		if err != nil {
+			fmt.Println("error:", err)
+			return rowsAffected
+		}
+
+		//get the inserted records Id
+		var id int64
+		if id, err = result.RowsAffected(); err != nil {
+			return rowsAffected
+		}
+		rowsAffected = int(id)
+	}
+
+	return rowsAffected
 }
 
 func genericCheck(r repository, Id any, idContext string, genericQuery string) int {
