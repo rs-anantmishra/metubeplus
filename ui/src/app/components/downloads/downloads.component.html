@@ -19,8 +19,8 @@
                 <p-checkbox [(ngModel)]="options.GetSubs" label="Get Subtitles (Auto Generated - English)"
                     name="options" [value]="options.GetSubs" class="checkbox-last"
                     (onChange)="flipCheckbox($event,'GetSubs')" />
-                <p-button label="Queued" [text]="true" class="queued-items" (onClick)="sidebarVisible = true"
-                    size="small" severity="help" />
+                <p-button label="Queued" [outlined]="true" class="queued-items" (onClick)="sidebarVisible = true"
+                    size="small" />
             </div>
         </div>
         <div [ngClass]="panelBoxActive">
