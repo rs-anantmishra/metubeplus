@@ -26,7 +26,7 @@ If you have an entry for the video in SQLite and you are attempting to download 
 - backup db
 - option to download db so that its manually backed up and restorable.
 - custom names
-- custom command
+- custom command // deferred
 - url extraction on page / page change pattern with start and end index
 - add extracted urls to a note and save it with a name 
 - the name is a required field to Upload Video.
