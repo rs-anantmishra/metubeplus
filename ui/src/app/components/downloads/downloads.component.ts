@@ -16,8 +16,8 @@ import { MessageService } from 'primeng/api';
 import { webSocket } from 'rxjs/webSocket'
 
 //Services & Classes
-import { VideoData } from '../../classes/video-data';
-import { CardsService } from '../../services/cards.service';
+import { VideoData, VideoDataRequest } from '../../classes/video-data';
+import { DownloadService } from '../../services/download.service';
 import { SimplecardComponent } from "../simplecard/simplecard.component";
 
 interface ExtractionOptions {
@@ -31,7 +31,7 @@ interface ExtractionOptions {
   selector: 'app-downloads',
   standalone: true,
   imports: [ToastModule, ProgressBarModule, SidebarModule, CardModule, FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule, SimplecardComponent],
-  providers: [CardsService, MessageService],
+  providers: [DownloadService, MessageService],
   templateUrl: './downloads.component.html',
   styleUrl: './downloads.component.scss'
 })
@@ -47,10 +47,10 @@ export class DownloadsComponent implements OnInit {
     this.sock.next(this.msg);
     // this.sock.complete();
     this.sock.subscribe({
-      next: msg => this.updateLogs(JSON.stringify(msg)), 
-      error: err => {console.log('error in ws connection', err), this.updateLogs('{"download": "ws connection closed"}')}, 
+      next: msg => this.updateLogs(JSON.stringify(msg)),
+      error: err => { console.log('error in ws connection', err), this.updateLogs('{"download": "ws connection closed"}') },
       // complete: () => console.log('complete') 
-     });
+    });
   }
 
   updateLogs(message: string) {
@@ -66,7 +66,7 @@ export class DownloadsComponent implements OnInit {
 
 
   constructor(private messageService: MessageService,
-    private currentDL: CardsService) { }
+    private currentDL: DownloadService) { }
 
   interval: any;
   dlProgress: number = 98
@@ -97,9 +97,18 @@ export class DownloadsComponent implements OnInit {
 
 
   GetMedia(): void {
+    console.log(11)
+    debugger;
+    let req: VideoDataRequest = new VideoDataRequest()
+    debugger
+    req.Indicator = "UMBEkWFMacc"
+    req.SubtitlesReq = false
+    req.IsAudioOnly = false
 
-    this.dl = this.currentDL.getDownloadingVideo()
-    console.log(this.dl)
+    this.dl = this.currentDL.getMetadata(req)
+
+    //this.dl = this.currentDL.getDownloadingVideo()
+    //console.log(this.dl)
   }
 }
 

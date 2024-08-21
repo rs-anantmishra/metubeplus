@@ -16,3 +16,8 @@ export class VideoData {
     CreatedDate: number = -1
 }
 
+export class VideoDataRequest {
+    Indicator: string = ''
+    SubtitlesReq: boolean = false
+    IsAudioOnly: boolean = false
+}
