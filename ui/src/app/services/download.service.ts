@@ -15,8 +15,7 @@ export class DownloadService {
     return '';
   }
 
-  // meta!: any
-  getMetadata(request: VideoDataRequest): any {
+  async getMetadata(request: VideoDataRequest): Promise<any> {
     let url = '/download/metadata'
 
     return fetch(apiUrl + url, {
@@ -25,8 +24,6 @@ export class DownloadService {
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then(response => {
-      return response.json();
-    });
+    }).then(response => { return response.json(); });
   }
 }

@@ -96,16 +96,16 @@ export class DownloadsComponent implements OnInit {
 
 
 
-  GetMedia(): void {
-    console.log(11)
-    debugger;
-    let req: VideoDataRequest = new VideoDataRequest()
-    debugger
-    req.Indicator = "UMBEkWFMacc"
-    req.SubtitlesReq = false
-    req.IsAudioOnly = false
+  async GetMedia(): Promise<void> {
 
-    this.dl = this.currentDL.getMetadata(req)
+    let request: VideoDataRequest = new VideoDataRequest()
+
+    request.Indicator = "UMBEkWFMacc"
+    request.SubtitlesReq = false
+    request.IsAudioOnly = false
+
+    this.dl = await this.currentDL.getMetadata(request)
+    console.log(this.dl)
 
     //this.dl = this.currentDL.getDownloadingVideo()
     //console.log(this.dl)
