@@ -8,8 +8,8 @@
             <div class="url-container">
                 <p-inputGroup>
                     <p-inputGroupAddon>http://</p-inputGroupAddon>
-                    <input type="text" pInputText [placeholder]="placeholder" />
-                    <button type="button" pButton label="Get" (click)="GetMedia()"></button>
+                    <input type="text" pInputText [placeholder]="placeholder" [(ngModel)]="options.Identifier" />
+                    <button type="button" pButton label="Get" [loading]="loading" (click)="GetMedia()"></button>
                 </p-inputGroup>
             </div>
             <div class="options-container">
@@ -23,17 +23,25 @@
                     size="small" />
             </div>
         </div>
-        <div [ngClass]="panelBoxActive">
-            <div class="server-logs cutive-mono-regular">
-                <div class="download-details">
-                    <span>{{downloadingTitle}}</span>
-                    <span style="margin-left: auto;">{{downloadingChannel}}</span>
+        <p-fieldset legend="Information" [toggleable]="true">
+            <div class="information-box">
+                <div>
+                    <img [src]="activeDLImage" class="info-image-size" />
                 </div>
-                <span>server-logs: {{logs}}</span>
+                <div class="information-details">
+                    <div class="download-details">
+                        <span style="font-size: 14px;"><b>Title:</b> {{activeDLTitle}}</span>
+                        <span style="font-size: 14px;"><b>Channel:</b> {{activeDLChannel}}</span>
+                    </div>
+                    <span style="font-size: 14px;"><b>server-logs:</b> </span>
+                    <br />
+                    <span class="serverlogs-size">{{serverlogs}}</span>
+                </div>
             </div>
-        </div>
+        </p-fieldset>
     </div>
 </div>
+<p-toast />
 
 <div>
     <p-sidebar [(visible)]="sidebarVisible" styleClass="queued-box">

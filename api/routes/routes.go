@@ -14,7 +14,7 @@ func SetupRoutes(app *fiber.App) {
 	api.Get("/hello", handler.Hello)
 
 	//Network Downloads: Playlist, Videos or Audios
-	download := app.Group("/download", logger.New())
+	download := api.Group("/download", logger.New())
 	download.Post("/metadata", handler.NetworkIngestMetadata) //Download Metadata + Thumbnail and save to db for [Playlists, Videos]
 	download.Post("/media", handler.NetworkIngestMedia)       //Download Media File(s) and update db for [Playlists, Videos]
 

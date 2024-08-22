@@ -11,14 +11,17 @@ import { PanelModule } from 'primeng/panel';
 import { CardModule } from 'primeng/card';
 import { SidebarModule } from 'primeng/sidebar';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { FieldsetModule } from 'primeng/fieldset';
 import { webSocket } from 'rxjs/webSocket'
 
 //Services & Classes
-import { VideoData, VideoDataRequest } from '../../classes/video-data';
+import { QueueDownloads, DownloadMedia, VideoData, VideoDataRequest } from '../../classes/video-data';
 import { DownloadService } from '../../services/download.service';
 import { SimplecardComponent } from "../simplecard/simplecard.component";
+import { BehaviorSubject, queue } from 'rxjs';
 
 interface ExtractionOptions {
   Identifier: string;
@@ -30,33 +33,37 @@ interface ExtractionOptions {
 @Component({
   selector: 'app-downloads',
   standalone: true,
-  imports: [ToastModule, ProgressBarModule, SidebarModule, CardModule, FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule, SimplecardComponent],
+  imports: [ToastModule, ProgressBarModule, FieldsetModule, ProgressSpinnerModule, SidebarModule, CardModule, FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule, SimplecardComponent],
   providers: [DownloadService, MessageService],
   templateUrl: './downloads.component.html',
   styleUrl: './downloads.component.scss'
 })
 export class DownloadsComponent implements OnInit {
-
+  loading: boolean = false;
   sock = webSocket('ws://localhost:3000/ws/downloadstatus')
-  msg = 'No active downloads'
-  logs = ''
-  downloadingChannel = 'test channel'
-  downloadingTitle = 'test title'
+  wsMessage = 'No active downloads'
+
+  activeDLImage = ''
+  activeDLChannel = ''
+  activeDLTitle = ''
+
+  serverlogs = 'No logs available.'
+
   sendRequest() {
     this.sock.subscribe();
-    this.sock.next(this.msg);
+    this.sock.next(this.wsMessage);
     // this.sock.complete();
     this.sock.subscribe({
       next: msg => this.updateLogs(JSON.stringify(msg)),
-      error: err => { console.log('error in ws connection', err), this.updateLogs('{"download": "ws connection closed"}') },
-      // complete: () => console.log('complete') 
+      error: err => { console.log('error in ws connection', err), this.updateLogs('{"download": "web-socket connection is closed."}') },
+      //complete: () => console.log('complete') 
     });
   }
 
   updateLogs(message: string) {
-    this.logs = message
+    this.serverlogs = message
     const serverlog = JSON.parse(message)
-    this.logs = serverlog.download
+    this.serverlogs = serverlog.download
 
     //these below will be set from metadata only
     //
@@ -71,8 +78,9 @@ export class DownloadsComponent implements OnInit {
   interval: any;
   dlProgress: number = 98
   dl: VideoData = new VideoData()
+
+  //css-classes
   homeBoxActive = 'home-box'
-  panelBoxActive = 'panel-box'
   contentBoxActive = 'content-box'
 
   sidebarVisible: boolean = false;
@@ -88,7 +96,7 @@ export class DownloadsComponent implements OnInit {
 
   placeholder = 'Video or Playlist URL'
   ngOnInit() {
-    this.sendRequest();
+    //this.sendRequest();
   }
 
   ngOnDestroy() {
@@ -96,17 +104,76 @@ export class DownloadsComponent implements OnInit {
 
 
 
-  async GetMedia(): Promise<void> {
+  async GetMedia() {
 
-    let request: VideoDataRequest = new VideoDataRequest()
+    this.loading = true;
+    let metadataRequest = await this.GetMetadataRequest(this.options)
+    if (metadataRequest.Indicator === '') {
+      this.showMessage('No URL or Identifier provided', 'error', 'error')
+      return
+    }
 
-    request.Indicator = "UMBEkWFMacc"
-    request.SubtitlesReq = false
-    request.IsAudioOnly = false
+    //this.dl = await this.currentDL.getMetadata(request)
+    let metadata: VideoData[] = await this.currentDL.getMetadata(metadataRequest)
+    this.populateVideoMetadata(metadata)
 
-    this.dl = await this.currentDL.getMetadata(request)
-    console.log(this.dl)
+    //trigger download
+    let downloadRequest = await this.GetMediaRequest(metadata)
+    console.log('dl req', downloadRequest)
+    if (downloadRequest.DownloadMedia[0].VideoId === -1 || downloadRequest.DownloadMedia[0].VideoURL === '') {
+      this.showMessage('VideoId & VideoURL are required', 'error', 'Error')
+      return
+    }
 
+    let triggerDownload: string = await this.currentDL.getMedia(downloadRequest)
+    console.log(triggerDownload)
+
+    //trigger stats checker if all goes well
+    this.sendRequest();
+
+    //Complete Result
+    this.loading = false;
+    this.showMessage('Video/Playlist queued', 'info', 'Info')
+  }
+
+  async GetMetadataRequest(options: ExtractionOptions) {
+
+    let request = new VideoDataRequest()
+
+    request.Indicator = options.Identifier
+    request.SubtitlesReq = options.GetSubs
+    request.IsAudioOnly = options.GetAudioOnly
+
+    if (request.Indicator === '') {
+      request.Indicator = 'UMBEkWFMacc'
+      this.showMessage('Using Test Video Indicator', 'info', 'Info')
+      return request
+    }
+    return request
+  }
+
+  populateVideoMetadata(metadata: VideoData[]) {
+    this.activeDLChannel = metadata[0].channel
+    this.activeDLTitle = metadata[0].title
+    this.activeDLImage = metadata[0].thumbnail
+  }
+
+  async GetMediaRequest(metadata: VideoData[]) {
+
+    let request = new DownloadMedia()
+    
+    request.VideoId = metadata[0].video_id
+    request.VideoURL = metadata[0].original_url
+    
+    let queueDownloads: QueueDownloads = {DownloadMedia: [request]};
+    return queueDownloads
+  }
+
+
+
+  //Toast Messages
+  showMessage(message: string, severity: string, summary: string) {
+    this.messageService.add({ severity: severity, summary: summary, detail: message });
   }
 }
 
