@@ -107,8 +107,6 @@ export class DownloadsComponent implements OnInit {
     this.dl = await this.currentDL.getMetadata(request)
     console.log(this.dl)
 
-    //this.dl = this.currentDL.getDownloadingVideo()
-    //console.log(this.dl)
   }
 }
 
