@@ -8,7 +8,7 @@
             <div class="url-container">
                 <p-inputGroup>
                     <p-inputGroupAddon>http://</p-inputGroupAddon>
-                    <input type="text" pInputText [placeholder]="placeholder" [(ngModel)]="options.Identifier" />
+                    <input type="text" pInputText [placeholder]="urlPlaceholder" [(ngModel)]="options.Identifier" />
                     <button type="button" pButton label="Get" [loading]="loading" (click)="GetMedia()"></button>
                 </p-inputGroup>
             </div>
@@ -35,7 +35,7 @@
                     </div>
                     <span style="font-size: 14px;"><b>server-logs:</b> </span>
                     <br />
-                    <span class="serverlogs-size">{{serverlogs}}</span>
+                    <span class="serverlogs-size">{{serverLogs}}</span>
                 </div>
             </div>
         </p-fieldset>
@@ -45,12 +45,13 @@
 
 <div>
     <p-sidebar [(visible)]="sidebarVisible" styleClass="queued-box">
-        <h3>Sidebar</h3>
-        <p>
-            <app-simplecard></app-simplecard>
-            <br />
-            <app-simplecard></app-simplecard>
-        </p>
+        <h3>Queued Downloads</h3>
+        <div *ngIf="this.queuedItems.length > 0; else elseBlock">
+            <app-simplecard *ngFor="let metadata of this.queuedItems" [meta]="metadata"></app-simplecard>
+        </div>
+        <ng-template #elseBlock>
+            <app-simplecard [meta]="nilMetadata"></app-simplecard>
+        </ng-template>
     </p-sidebar>
 </div>
 

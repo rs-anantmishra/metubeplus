@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { VideoData, VideoDataRequest, QueueDownloads } from '../classes/video-data';
 import { HttpClient } from '@angular/common/http';
+import { SharedDataService } from './shared-data.service';
 
 const apiUrl: string = 'http://localhost:3000/api'
 
@@ -9,7 +10,7 @@ const apiUrl: string = 'http://localhost:3000/api'
 })
 export class DownloadService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private sharedData: SharedDataService) { }
 
   getDownloadingVideo(): string {
     return '';

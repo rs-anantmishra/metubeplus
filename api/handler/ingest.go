@@ -91,12 +91,15 @@ func DownloadStatus(c *websocket.Conn) {
 	)
 	//global MPI
 	const _blank string = ""
+	waitDelay := 5
+	index := 0
 	activeItem := g.NewActiveItem()
 	mt = websocket.TextMessage
 
 	for {
 		if len(activeItem) > 0 && activeItem[0].VideoURL != _blank {
 
+			index = 0 //reset if messages are available
 			dsr := res.DownloadStatusResponse{Message: activeItem[0].StatusMessage, VideoURL: activeItem[0].VideoURL}
 			jsonData, e := json.Marshal(dsr)
 			if e != nil {
@@ -109,14 +112,45 @@ func DownloadStatus(c *websocket.Conn) {
 				break
 			}
 		} else {
-			c.Conn.Close()
-			break
+			//if messages are not available, wait a bit then terminate
+			if index == waitDelay {
+				// c.Conn.Close()
+				// break
+				deadline := time.Now().Add(time.Second * 1)
+				err := c.Conn.WriteControl(
+					websocket.CloseMessage,
+					websocket.FormatCloseMessage(websocket.CloseNormalClosure, "ws-messages closed by server"),
+					deadline,
+				)
+				if err != nil {
+					log.Info(err)
+				}
+
+				// Set deadline for reading the next message
+				err = c.Conn.SetReadDeadline(time.Now().Add(5 * time.Second))
+				if err != nil {
+					log.Info(err)
+				}
+				for {
+					_, _, err = c.Conn.NextReader()
+					if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+						break
+					}
+					if err != nil {
+						break
+					}
+				}
+				// Close the TCP connection
+				err = c.Conn.Close()
+				if err != nil {
+					log.Info(err)
+				}
+			}
 		}
 
 		//transmit data once per second
 		duration := time.Second
 		time.Sleep(duration)
-
 	}
 }
 

@@ -1,10 +1,9 @@
-<div style="width: 50px; height: 50px; background-color: red;">
-    <div>
-        <img src="" />
-    </div>
-    <div>
-        <span>
-            {{title}}
-        </span>
-    </div>
+<div class="simplecard">
+    <p-panel [header]="getChannel()">
+        <p>
+            <img [src]="meta.thumbnail" class="info-image-size" />
+            <br />
+            <span style="font-size: 14px;"><b>{{meta.title}}</b></span>
+        </p>
+    </p-panel>
 </div>

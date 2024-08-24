@@ -412,13 +412,20 @@ func executeDownloadProcess(stdout io.ReadCloser, activeItem []g.DownloadStatus)
 			result := b.String()
 			results := strings.Split(result, "\n")
 
-			activeItem[0].StatusMessage = results[len(results)-2]
-			log.Info("MESSAGE VALUE: ", activeItem[0].StatusMessage)
+			if len(results)-2 >= 0 {
+				activeItem[0].StatusMessage = results[len(results)-2]
+				log.Info("MESSAGE VALUE: ", activeItem[0].StatusMessage)
+			}
 		}
 
 		//terminate loop at eof
 		if err != nil {
 			log.Info("Error Reading:", err)
+			if err == io.EOF {
+				activeItem[0].StatusMessage = "Download completed successfully."
+			} else {
+				activeItem[0].StatusMessage = "Error:" + err.Error()
+			}
 			break
 		}
 	}

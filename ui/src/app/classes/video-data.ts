@@ -16,6 +16,7 @@ export class VideoData {
     is_deleted: boolean = false
     created_date: number = -1
     thumbnail: string = ''
+    download_status: string = ''
 }
 
 export class VideoDataRequest {
