@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy, ɵisComponentDefPendingResolution } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
@@ -69,14 +69,13 @@ export class DownloadsComponent implements OnInit {
     async sendRequest() {
         this.sock.subscribe();
         this.sock.next(this.wsMessage);
-        // this.sock.complete();
 
         this.sock.subscribe({
-            next: msg => this.updateLogs(JSON.stringify(msg)),
-            error: err => { this.updateLogs('{"download": "web-socket connection is closed."}') },
-            // complete: () => console.log('complete')
+            next: msg => { this.updateLogs(JSON.stringify(msg)); console.log('msg:', msg) },
+            error: err => { this.updateLogs('{"download": "web-socket connection is closed."}'); console.log('err:', err) },
+            complete: () => console.log('complete')
         });
-
+        //this.sock.complete();
     }
 
     async updateLogs(message: string) {
@@ -93,15 +92,15 @@ export class DownloadsComponent implements OnInit {
             if (this.sharedData.queuedItemsMetadata.length > 0) {
 
                 setTimeout(() => {
-                    this.showMessage("New download starting in 2 seconds",
+                    this.showMessage("New download starting in 1 seconds",
                         this.msg.Severities[Severity.danger].toLowerCase(),
                         this.msg.Severities[Severity.danger])
                     this.tgrMediaDownload();                                 //trigger the next download
                     setTimeout(() => { this.sendRequest(); }, 500);          //trigger stats checker if all goes well    
-                }, 2000);
+                }, 1000);
 
-                
-
+                // this.tgrMediaDownload();                                 //trigger the next download
+                // setTimeout(() => { this.sendRequest(); }, 500);          //trigger stats checker if all goes well    
             } else {
                 //3. Handle isDownloadActive
                 this.sharedData.isDownloadActive = false;
@@ -142,10 +141,10 @@ export class DownloadsComponent implements OnInit {
         this.sharedData.activeDownloadMetadata = this.sharedData.getActiveDownloadMetadata()
 
         // // if there is an active download
-         if (this.sharedData.isDownloadActive) {
-             this.sendRequest()
-             this.populateVideoMetadata()
-         }
+        if (this.sharedData.isDownloadActive) {
+            this.sendRequest()
+            this.populateVideoMetadata()
+        }
 
         // //if there are queued items but no active downloads
         // if (!this.sharedData.isDownloadActive && this.sharedData.queuedItemsMetadata.length > 0) {
@@ -181,7 +180,7 @@ export class DownloadsComponent implements OnInit {
         this.queuedItems = this.sharedData.queuedItemsMetadata  //update local object
 
         //if download in-progress add to queue
-        if (this.sharedData.isDownloadActive) {            
+        if (this.sharedData.isDownloadActive) {
             //Completion Process
             this.GetMediaCompleteResult()
             return
@@ -191,7 +190,7 @@ export class DownloadsComponent implements OnInit {
         await this.tgrMediaDownload();
 
         //trigger stats checker if all goes well
-        setTimeout(() => { this.sendRequest(); }, 500); 
+        setTimeout(() => { this.sendRequest(); }, 500);
 
         //Completion Process
         this.GetMediaCompleteResult()

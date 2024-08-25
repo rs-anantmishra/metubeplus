@@ -93,6 +93,7 @@ func DownloadStatus(c *websocket.Conn) {
 	const _blank string = ""
 	activeItem := g.NewActiveItem()
 	mt = websocket.TextMessage
+	terminate := false
 
 	for {
 		if len(activeItem) > 0 && activeItem[0].VideoURL != _blank {
@@ -109,8 +110,43 @@ func DownloadStatus(c *websocket.Conn) {
 				break
 			}
 		} else {
-			c.Conn.Close()
-			break
+			// Send a WebSocket close message
+			deadline := time.Now().Add(time.Second * 5)
+			err := c.Conn.WriteControl(
+				websocket.CloseMessage,
+				websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
+				deadline,
+			)
+			if err != nil {
+				log.Info("ws error:", err)
+			}
+
+			// Set deadline for reading the next message
+			err = c.Conn.SetReadDeadline(time.Now().Add(2 * time.Second))
+			if err != nil {
+				log.Info("ws error:", err)
+			}
+			// Read messages until the close message is confirmed
+			for {
+				_, _, err = c.Conn.NextReader()
+				if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+					terminate = true
+					break
+				}
+				if err != nil {
+					terminate = true
+					break
+				}
+			}
+			// Close the TCP connection
+			err = c.Conn.Close()
+			if err != nil {
+				log.Info("ws error:", err)
+			}
+
+			if terminate {
+				break
+			}
 		}
 
 		//transmit data once per second
