@@ -53,6 +53,9 @@ If you have an entry for the video in SQLite and you are attempting to download 
 - Bookmark favorites.
 - Fetch title for queued downloads.
 - Queue Playlist videos
+- Favorites/Liked Category of Videos
+- Shorts autofind and cluster into 1 category
+- Autofind lyrics to songs.
 
 Priority wise distribution of work items to be done asap.
 Implement Project Management in Projects section. 
