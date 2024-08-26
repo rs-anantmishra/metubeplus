@@ -59,7 +59,8 @@
   position: fixed;
   bottom: 0px;
   width: 100%;
-  background-color: #F3F4F6;
+//   background-color: #F3F4F6;
+  background-color: #000;
   height: 60px;
   left: 0px;
 
@@ -126,4 +127,34 @@
 
 .info-image-size {
   max-width: 150px !important;
+}
+
+:host::ng-deep .p-sidebar {
+    // background-color: #13111D;
+    // border-color: #13111D;
+    // background-color: #2F1229;
+    // border-color: #2F1229;
+
+    background:
+	linear-gradient(
+		#13111D,
+		transparent
+	),
+	linear-gradient(
+		90deg,
+		#2F1229,
+		transparent
+	),
+	linear-gradient(
+		-90deg,
+		#1D0E2C,
+		transparent
+	);
+	
+background-blend-mode: color-burn;
+}
+
+.queued-heading {
+    // color: #850AC2;
+    color: #853BCE;
 }

@@ -23,7 +23,7 @@
                     size="small" />
             </div>
         </div>
-        <p-fieldset legend="Information" [toggleable]="true">
+        <p-fieldset legend="Information" [toggleable]="false">
             <div class="information-box">
                 <div>
                     <img [src]="activeDLImage" class="info-image-size" />
@@ -45,7 +45,7 @@
 
 <div>
     <p-sidebar [(visible)]="sidebarVisible" styleClass="queued-box">
-        <h3>Queued Downloads</h3>
+        <h3 class="queued-heading">Queued Downloads</h3>
         <div *ngIf="this.queuedItems.length > 0; else elseBlock">
             <app-simplecard *ngFor="let metadata of this.queuedItems" [meta]="metadata"></app-simplecard>
         </div>

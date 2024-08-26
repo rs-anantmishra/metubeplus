@@ -73,9 +73,15 @@ export class DownloadsComponent implements OnInit {
         this.sock.subscribe({
             next: msg => { this.updateLogs(JSON.stringify(msg)); console.log('msg:', msg) },
             error: err => { this.updateLogs('{"download": "web-socket connection is closed."}'); console.log('err:', err) },
-            complete: () => console.log('complete')
+            complete: () => { this.wsCloseWithDownloadComplete() }
         });
         //this.sock.complete();
+    }
+
+    wsCloseWithDownloadComplete() {
+        console.log('ws-close message frame recieved from server.')
+        this.sharedData.isDownloadActive = false
+        this.sharedData.setIsDownloadActive(false)
     }
 
     async updateLogs(message: string) {
@@ -92,15 +98,12 @@ export class DownloadsComponent implements OnInit {
             if (this.sharedData.queuedItemsMetadata.length > 0) {
 
                 setTimeout(() => {
-                    this.showMessage("New download starting in 1 seconds",
+                    this.showMessage("Next download starts now.",
                         this.msg.Severities[Severity.danger].toLowerCase(),
                         this.msg.Severities[Severity.danger])
                     this.tgrMediaDownload();                                 //trigger the next download
                     setTimeout(() => { this.sendRequest(); }, 500);          //trigger stats checker if all goes well    
-                }, 1000);
-
-                // this.tgrMediaDownload();                                 //trigger the next download
-                // setTimeout(() => { this.sendRequest(); }, 500);          //trigger stats checker if all goes well    
+                }, 750);
             } else {
                 //3. Handle isDownloadActive
                 this.sharedData.isDownloadActive = false;
@@ -137,8 +140,10 @@ export class DownloadsComponent implements OnInit {
     ngOnInit() {
 
         this.sharedData.isDownloadActive = this.sharedData.getIsDownloadActive()
+        this.sharedData.activeDownloadMetadata = this.sharedData.getActiveDownloadMetadata()        
         this.sharedData.queuedItemsMetadata = this.sharedData.getQueuedItemsMetadata()
-        this.sharedData.activeDownloadMetadata = this.sharedData.getActiveDownloadMetadata()
+        this.queuedItems = this.sharedData.queuedItemsMetadata
+
 
         // // if there is an active download
         if (this.sharedData.isDownloadActive) {
@@ -147,11 +152,10 @@ export class DownloadsComponent implements OnInit {
         }
 
         // //if there are queued items but no active downloads
-        // if (!this.sharedData.isDownloadActive && this.sharedData.queuedItemsMetadata.length > 0) {
-        //     this.tgrMediaDownload();
-        //     this.sendRequest();
-        //     // setTimeout(() => { this.sendRequest(); }, 500);
-        // }
+        if (!this.sharedData.isDownloadActive && this.sharedData.queuedItemsMetadata.length > 0) {
+            this.tgrMediaDownload();
+            setTimeout(() => { this.sendRequest(); }, 500);
+        }
     }
 
     ngOnDestroy() {
@@ -229,6 +233,7 @@ export class DownloadsComponent implements OnInit {
         this.activeDLChannel = this.sharedData.activeDownloadMetadata[0].channel
         this.activeDLTitle = this.sharedData.activeDownloadMetadata[0].title
         this.activeDLImage = this.sharedData.activeDownloadMetadata[0].thumbnail
+        this.serverLogs = ">>>waiting for server logs<<<"
     }
 
     async GetMediaRequest(metadata: VideoData) {

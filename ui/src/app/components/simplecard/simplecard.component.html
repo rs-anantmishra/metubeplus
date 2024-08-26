@@ -1,9 +1,18 @@
 <div class="simplecard">
-    <p-panel [header]="getChannel()">
+    <!-- <p-panel [header]="getChannel()">
         <p>
             <img [src]="meta.thumbnail" class="info-image-size" />
             <br />
-            <span style="font-size: 14px;"><b>{{meta.title}}</b></span>
         </p>
-    </p-panel>
+    </p-panel> -->
+
+    <p-card [header]="" [subheader]="">
+        <ng-template pTemplate="header">
+            <img [src]="meta.thumbnail" class="info-image-size" />
+        </ng-template>
+        <span style="font-size: 14px;">{{meta.title}}</span>
+
+        <ng-template pTemplate="footer">
+        </ng-template>
+    </p-card>
 </div>

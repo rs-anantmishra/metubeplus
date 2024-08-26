@@ -3,11 +3,12 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { PanelModule } from 'primeng/panel';
 import { VideoData } from '../../classes/video-data'
+import { CardModule } from 'primeng/card';
 
 @Component({
     selector: 'app-simplecard',
     standalone: true,
-    imports: [ToastModule, PanelModule],
+    imports: [ToastModule, PanelModule, CardModule],
     providers: [MessageService],
     templateUrl: './simplecard.component.html',
     styleUrl: './simplecard.component.scss'
