@@ -26,6 +26,11 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/ws/downloadstatus", websocket.New(handler.DownloadStatus))
 
 	//Todo: Homepage
+	homepage := api.Group("/homepage", logger.New())
+	homepage.Get("/videos", handler.GetAllVideos)
+	homepage.Get("/playlists", handler.GetAllPlaylists)
+	homepage.Get("/audios", handler.GetAllAudios)
+
 	//Todo: Tags & Categories
 	//Todo: Patterns
 	//Todo: Files

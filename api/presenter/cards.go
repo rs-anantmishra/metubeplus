@@ -25,3 +25,13 @@ type DownloadStatusResponse struct {
 	Message  string `json:"download"`
 	VideoURL string `json:"video_url"`
 }
+
+type LimitedCardsInfoResponse struct {
+	VideoId     int    `json:"video_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Duration    int    `json:"duration"`
+	OriginalURL string `json:"original_url"`
+	Thumbnail   string `json:"thumbnail"`
+	Channel     string `json:"channel"`
+}

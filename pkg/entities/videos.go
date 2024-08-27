@@ -1,24 +1,25 @@
 package entities
 
 type Videos struct {
-	Id               int
-	Title            string
-	Description      string
-	DurationSeconds  int
-	WebpageURL       string
-	IsFileDownloaded int
-	IsDeleted        int
-	Channel          Channel
-	Playlist         Playlist
-	LiveStatus       string
-	Domain           Domain
-	Availability     string
-	Format           Format
-	Files            []Files
-	Tags             []Tags
-	Categories       []Categories
-	YoutubeVideoId   int
-	CreatedDate      int
+	Id                int
+	Title             string
+	Description       string
+	DurationSeconds   int
+	WebpageURL        string
+	IsFileDownloaded  int
+	IsDeleted         int
+	Channel           Channel
+	Playlist          Playlist
+	LiveStatus        string
+	Domain            Domain
+	Availability      string
+	Format            Format
+	ThumbnailFilePath string
+	Files             []Files
+	Tags              []Tags
+	Categories        []Categories
+	YoutubeVideoId    string
+	CreatedDate       int
 }
 
 type Channel struct {

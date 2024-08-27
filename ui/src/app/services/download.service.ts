@@ -12,10 +12,6 @@ export class DownloadService {
 
   constructor(private http: HttpClient, private sharedData: SharedDataService) { }
 
-  getDownloadingVideo(): string {
-    return '';
-  }
-
   //metadata
   async getMetadata(request: VideoDataRequest): Promise<VideoData[]> {
     let url = '/download/metadata'

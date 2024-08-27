@@ -1,7 +1,23 @@
-// .info-image-size {
-//     max-width: 150px !important;
-// }
-
 .simplecard {
-    margin: 8px 0px;
+    margin: 0.5rem;
+    min-width: 350px;
+    max-width: 350px;
+
+    min-height: 350px;
+    max-height: 350px;
 }
+
+.card-setting {
+    display: flex;
+    min-width: 340px;
+    max-width: 340px;
+    min-height: 300px;
+    max-height: 300px;
+}
+
+.center-cropped {
+    width: 340px;
+    height: 200px;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }

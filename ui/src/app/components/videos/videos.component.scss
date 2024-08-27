@@ -1,0 +1,33 @@
+.box {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+}
+
+.element {
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    width: 73%;
+}
+
+.full-page {
+    background:
+	linear-gradient(
+		#13111D,
+		transparent
+	),
+	linear-gradient(
+		90deg,
+		#2F1229,
+		transparent
+	),
+	linear-gradient(
+		-90deg,
+		#1D0E2C,
+		transparent
+	);
+	
+background-blend-mode: color-burn;
+max-height: 100%;
+}

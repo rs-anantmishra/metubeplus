@@ -64,3 +64,11 @@ const GetVideoInformationById string = `Select V.Title, V.PlayListId, C.Name as 
 										WHERE V.Id = ?;`
 
 const UpdateVideoFileFields string = `UPDATE tblVideos SET IsFileDownloaded = ?, FileId = ? WHERE Id = ?;`
+
+const GetAllVideos_Info string = `Select V.Id, V.Title, V.Description, V.DurationSeconds, V.WebpageURL, V.IsFileDownloaded, V.IsDeleted, C.Name, P.Title, V.LiveStatus, D.Domain, V.Availability, F.Format, V.YoutubeVideoId, V.CreatedDate,  FI.FilePath || '\' || FI.FileName as 'ThumbnailFilePath'
+								  FROM tblVideos V
+								  INNER JOIN tblChannels C ON V.ChannelId = C.Id
+								  INNER JOIN tblPlaylists P ON V.PlaylistId = P.Id
+								  INNER JOIN tblDomains D ON V.DomainId = D.Id
+								  INNER JOIN tblFormats F ON V.FormatId = F.Id
+								  INNER JOIN tblFiles FI ON (V.Id = FI.VideoId AND FI.FileType = 'Thumbnail');`

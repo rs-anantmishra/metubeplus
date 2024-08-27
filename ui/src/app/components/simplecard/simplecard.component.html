@@ -1,17 +1,10 @@
 <div class="simplecard">
-    <!-- <p-panel [header]="getChannel()">
-        <p>
-            <img [src]="meta.thumbnail" class="info-image-size" />
-            <br />
-        </p>
-    </p-panel> -->
-
-    <p-card [header]="" [subheader]="">
+    <p-card [header]="" [subheader]="" class="card-setting">
         <ng-template pTemplate="header">
-            <img [src]="meta.thumbnail" class="info-image-size" />
+            <img [src]="meta.thumbnail" class="center-cropped" />
         </ng-template>
         <span style="font-size: 14px;">{{meta.title}}</span>
-
+        <span *ngIf="meta.title === ''">No queued downloads.</span>
         <ng-template pTemplate="footer">
         </ng-template>
     </p-card>
