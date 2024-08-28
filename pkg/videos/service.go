@@ -86,6 +86,8 @@ func getImagesFromURL(filepath string) string {
 	switch extension {
 	case "jpeg":
 		base64EncodedImage += "data:image/jpeg;base64,"
+	case "jpg":
+		base64EncodedImage += "data:image/jpg;base64,"
 	case "png":
 		base64EncodedImage += "data:image/png;base64,"
 	case "webp":

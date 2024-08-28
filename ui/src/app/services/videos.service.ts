@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SharedDataService } from './shared-data.service';
 import { VideoData, VideoDataRequest, QueueDownloads } from '../classes/video-data';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs'
 
 const apiUrl: string = 'http://localhost:3000/api'
 

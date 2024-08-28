@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
 import { VideoData } from '../classes/video-data';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SharedDataService {
 
-    constructor() {
-
-    }
-
+    constructor() { }
+    lstVideos: VideoData[] = [];
     isDownloadActive: boolean = false;
     queuedItemsMetadata: VideoData[] = [];
     activeDownloadMetadata: VideoData[] = [];
@@ -63,6 +62,30 @@ export class SharedDataService {
         return this.activeDownloadMetadata
     }
 
+    setlstVideos(value: any) {
+        localStorage.setItem('lstVideos', JSON.stringify(value));
+    }
+
+    getlstVideos() {
+        let stringResult = localStorage.getItem('lstVideos') !== null ? localStorage.getItem('lstVideos') : JSON.stringify([])
+        let lstVideosData = stringResult === null ? [new VideoData()] : JSON.parse(stringResult);
+        this.lstVideos = lstVideosData;
+
+        return this.lstVideos
+    }
+
+    private playVideo: BehaviorSubject<VideoData> = new BehaviorSubject(new VideoData());
+    onPlayVideoChange(): Observable<VideoData> {
+        return this.playVideo.asObservable();
+      }
+      
+      setPlayVideo(nextSuggestion: VideoData): void {
+        this.playVideo.next(nextSuggestion);
+      }
+      
+      resetPlayVideo(): void {
+        this.playVideo.next(new VideoData());
+      }
 }
 
 

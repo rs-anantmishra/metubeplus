@@ -20,4 +20,27 @@
     height: 200px;
     background-position: center center;
     background-repeat: no-repeat;
-  }
+    border-radius: 8px;
+}
+
+.zoom-img {
+    overflow: hidden;
+    border: 2px transparent solid;
+    border-radius: 8px;
+}
+
+.zoom-img:hover {
+    overflow: hidden;
+    border: 2px #ffffff solid;
+    border-radius: 8px;
+}
+
+
+.zoom-img img {
+    object-fit: cover;
+    transition: all .3s ease;
+}
+
+.zoom-img img:hover {
+    transform: scale(1.1);
+}

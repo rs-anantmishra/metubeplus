@@ -5,6 +5,7 @@ import { SimplecardComponent } from "../simplecard/simplecard.component";
 import { SharedDataService } from '../../services/shared-data.service'
 import { VideosService } from '../../services/videos.service'
 import { CommonModule } from '@angular/common';
+import { VideoData } from '../../classes/video-data';
 
 @Component({
     selector: 'app-videos',
@@ -16,15 +17,21 @@ import { CommonModule } from '@angular/common';
 
 export class VideosComponent implements OnInit {
 
-    constructor(private svcVideos: VideosService) { }
+    constructor(private svcVideos: VideosService, private svcSharedData: SharedDataService) { }
 
     lstVideos: any
     ngOnInit(): void {
         this.getAllVideos();
     }
 
+    //check local storage or service call
     async getAllVideos() {
-        let result = await this.svcVideos.getAllVideos();
-        this.lstVideos = result
+        if (this.svcSharedData.getlstVideos().length == 0) {
+            let result = await this.svcVideos.getAllVideos();
+            this.lstVideos = result
+            this.svcSharedData.setlstVideos(this.lstVideos)
+        } else {
+            this.lstVideos = this.svcSharedData.getlstVideos()
+        }
     }
 }

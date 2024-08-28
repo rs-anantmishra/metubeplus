@@ -1,7 +1,9 @@
 <div class="simplecard">
-    <p-card [header]="" [subheader]="" class="card-setting">
+    <p-card [header]="" [subheader]="" class="card-setting" (click)="getVideoDetails(meta)">
         <ng-template pTemplate="header">
-            <img [src]="meta.thumbnail" class="center-cropped" />
+            <div class="zoom-img">
+                <img [src]="meta.thumbnail" class="center-cropped" />
+            </div>
         </ng-template>
         <span style="font-size: 14px;">{{meta.title}}</span>
         <span *ngIf="meta.title === ''">No queued downloads.</span>

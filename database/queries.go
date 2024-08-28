@@ -71,4 +71,4 @@ const GetAllVideos_Info string = `Select V.Id, V.Title, V.Description, V.Duratio
 								  INNER JOIN tblPlaylists P ON V.PlaylistId = P.Id
 								  INNER JOIN tblDomains D ON V.DomainId = D.Id
 								  INNER JOIN tblFormats F ON V.FormatId = F.Id
-								  INNER JOIN tblFiles FI ON (V.Id = FI.VideoId AND FI.FileType = 'Thumbnail');`
+								  INNER JOIN tblFiles FI ON (V.Id = FI.VideoId AND FI.FileType = 'Thumbnail') LIMIT 25;`

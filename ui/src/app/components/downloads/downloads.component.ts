@@ -161,9 +161,9 @@ export class DownloadsComponent implements OnInit {
     ngOnDestroy() {
         // prevent memory leak when component destroyed
         if (this.sock.closed) {
+            this.sock.complete();
             this.sock.unsubscribe();
         } else {
-            this.sock.complete();
             this.sock.unsubscribe();
         }
     }
@@ -175,8 +175,13 @@ export class DownloadsComponent implements OnInit {
             this.showMessage('No URL or Identifier provided', 'error', 'error')
             return
         }
-
+        
         let metadata: VideoData[] = await this.currentDL.getMetadata(metadataRequest)
+
+        //delta update for all videos
+        let allVideos = this.sharedData.getlstVideos()
+        allVideos.push(...metadata)
+        this.sharedData.setlstVideos(allVideos)
 
         //add item to queue
         this.sharedData.queuedItemsMetadata.push(...metadata)

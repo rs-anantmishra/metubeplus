@@ -5,7 +5,7 @@
     </div>
 
     <!-- <div style="position: fixed; top: 24px; left: 168px;"> -->
-    <div class="search-box" [ngStyle]="{visibility: visible}">
+    <!-- <div class="search-box" [ngStyle]="{visibility: visible}">
         <span class="p-fluid">
             <p-autoComplete [(ngModel)]="selectedCity" [group]="true" [suggestions]="filteredGroups"
                 (completeMethod)="filterGroupedCity($event)" placeholder="Search" variant="filled">
@@ -18,11 +18,10 @@
                 </ng-template>
             </p-autoComplete>
         </span>
-    </div>
+    </div> -->
     <!-- <div style="position: fixed; top: 22px; right: 8px;"> -->
     <div class="nav-box">
         <p-toast />
-        <p-splitButton size="small" label="Navigation" (onClick)="navigateToHome()" [model]="navigationItems" severity="primary"
-            raised />
+        <p-splitButton size="small" label="Navigation" (onClick)="navigateToHome($event)" [model]="navigationItems" raised />
     </div>
 </div>
