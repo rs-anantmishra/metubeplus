@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "startOld": "ng serve --proxy-config=./proxy.config.js",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -21,6 +22,7 @@
     "@angular/router": "^18.1.0",
     "@types/socket.io-client": "^3.0.0",
     "ngx-socket-io": "^4.7.0",
+    "plyr": "^3.7.8",
     "primeicons": "^7.0.0",
     "primeng": "^17.18.4",
     "rxjs": "~7.8.0",

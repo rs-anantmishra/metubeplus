@@ -15,6 +15,7 @@ type Videos struct {
 	Availability      string
 	Format            Format
 	ThumbnailFilePath string
+	VideoFilePath     string
 	Files             []Files
 	Tags              []Tags
 	Categories        []Categories

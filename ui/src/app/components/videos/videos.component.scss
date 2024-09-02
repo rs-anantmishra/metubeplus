@@ -13,24 +13,9 @@
 
 .full-page {
     background: linear-gradient(#1b043b, transparent), linear-gradient(90deg, #1b043b, transparent), linear-gradient(-90deg, #1D0E2C, transparent);
-    // linear-gradient(
-    // 	#13111D,
-    // 	transparent
-    // ),
-    // linear-gradient(
-    // 	90deg,
-    // 	#2F1229,
-    // 	transparent
-    // ),
-    // linear-gradient(
-    // 	-90deg,
-    // 	#1D0E2C,
-    // 	transparent
-    // );
-
     background-blend-mode: color-burn;
-    max-height: calc(100vh - 98px);
-    overflow-y: scroll;
+    //min-height: calc(100vh - 96px);
+    //overflow-y: auto;
 }
 
 :host::ng-deep .p-card {

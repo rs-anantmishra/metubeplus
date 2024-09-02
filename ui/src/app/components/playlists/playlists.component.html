@@ -1,4 +1,4 @@
-<div>
+<div style="display: none;">
     <a routerLink="/home" class="p-button font-bold">Router</a>
 </div>
 
@@ -6,7 +6,7 @@
 <div style="display: flex; position: fixed; bottom: 8px;  left: 0px; width: 100%;">
     <div style="margin: auto;" [ngStyle]="{'visibility': visibility}">
         playlists here
-      <!-- <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="120"
-        [rowsPerPageOptions]="[10, 20, 30]" /> -->
+        <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="120"
+            [rowsPerPageOptions]="[10, 20, 30]" />
     </div>
-  </div>
+</div>

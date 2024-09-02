@@ -23,12 +23,12 @@ interface PageEvent {
 export class PlaylistsComponent {
 
     visibility = 'visible'
-    // first: number = 0;
-    // rows: number = 10;
+    first: number = 0;
+    rows: number = 10;
 
-    // onPageChange(event: any) {
-    //     this.first = event.first;
-    //     this.rows = event.rows;
-    // }
+    onPageChange(event: any) {
+        this.first = event.first;
+        this.rows = event.rows;
+    }
 
 }

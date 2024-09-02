@@ -11,6 +11,7 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideAnimationsAsync(), provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),
-  importProvidersFrom(BrowserModule), importProvidersFrom(BrowserAnimationsModule), provideAnimations(), provideHttpClient(withFetch()),
+  importProvidersFrom(BrowserModule), importProvidersFrom(BrowserAnimationsModule), provideAnimations(), provideHttpClient(withFetch())
   ]
 };
+

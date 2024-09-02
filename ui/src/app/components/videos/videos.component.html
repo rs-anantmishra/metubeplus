@@ -1,9 +1,21 @@
 <div class="full-page">
-    <div class="element">
-        <div class="box">
-            <div *ngFor="let video of this.lstVideos" class="all-videos">
-                <app-simplecard [meta]="video"></app-simplecard>
+    <p-scrollPanel [style]="{ width: '100%', height: 'calc(100vh - 96px)' }">
+        <div class="element">
+            <div class="box">
+                <div *ngFor="let video of this.lstVideos" class="all-videos">
+                    <app-simplecard [meta]="video"></app-simplecard>
+                </div>
             </div>
+        </div>
+    </p-scrollPanel>
+
+
+    <div style="display: flex; position: fixed; bottom: 8px;  left: 0px; width: 100%;">
+        <div style="margin: auto;" [ngStyle]="{'visibility': visibility}">
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                [totalRecords]="totalRecords" [showCurrentPageReport]="true" [showPageLinks]="true"
+                [showJumpToPageDropdown]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+                [rowsPerPageOptions]="[10, 20, 30]" />
         </div>
     </div>
 </div>

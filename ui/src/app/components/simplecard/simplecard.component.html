@@ -1,5 +1,5 @@
-<div class="simplecard">
-    <p-card [header]="" [subheader]="" class="card-setting" (click)="getVideoDetails(meta)">
+<div class="simplecard" (click)="selectedVideo(meta)">
+    <p-card [header]="" [subheader]="" class="card-setting">
         <ng-template pTemplate="header">
             <div class="zoom-img">
                 <img [src]="meta.thumbnail" class="center-cropped" />

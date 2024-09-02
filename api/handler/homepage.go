@@ -21,7 +21,6 @@ func GetAllVideos(c *fiber.Ctx) error {
 		log.Info("error fetching all videos", err)
 	}
 	return c.JSON(result)
-	// return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
 }
 
 // Get All Playlists

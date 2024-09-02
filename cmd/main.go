@@ -17,6 +17,7 @@ func main() {
 		StrictRouting: true,
 		ServerHeader:  "Fiber",
 		AppName:       "MeTube+",
+		UnescapePath:  true,
 	})
 
 	port := ":" + c.Config("APP_PORT")

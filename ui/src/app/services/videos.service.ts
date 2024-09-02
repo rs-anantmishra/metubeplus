@@ -4,7 +4,7 @@ import { SharedDataService } from './shared-data.service';
 import { VideoData, VideoDataRequest, QueueDownloads } from '../classes/video-data';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs'
 
-const apiUrl: string = 'http://localhost:3000/api'
+const apiUrl: string = 'http://streamsphere.local:3000/api'
 
 @Injectable({
     providedIn: 'root'

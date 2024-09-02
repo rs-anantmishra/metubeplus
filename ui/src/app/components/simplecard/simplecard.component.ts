@@ -23,21 +23,14 @@ export class SimplecardComponent implements OnInit {
     @Input() meta: VideoData = new VideoData();
 
     ngOnInit(): void {
-
-        console.log('nav:', this.router.navigated)
         if (this.meta.thumbnail == '') {
             this.meta.thumbnail = './noimage.png'
         }
     }
 
-    getVideoDetails(playVideo: VideoData) {
-        // console.log('videoId', playVideo)
+    selectedVideo(playVideo: VideoData) {
         this.svcSharedData.setPlayVideo(playVideo);
-        if (!this.router.navigated) {
-            this.router.navigate(['/play'])
-        } else {
-            console.log('navigated')
-        }
+        this.router.navigate(['/play'])
     }
 
 }
