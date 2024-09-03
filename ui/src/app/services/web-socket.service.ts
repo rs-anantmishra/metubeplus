@@ -8,7 +8,7 @@ export class WebSocketService {
     private webSocket!: Socket;
     constructor() {
         this.webSocket = new Socket({
-            url: "ws://streamsphere.local:3000/ws/test",
+            url: "ws://localhost:3000/ws/test",
             options: {},
         });
     }

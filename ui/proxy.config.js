@@ -5,12 +5,12 @@ const PROXY_CONFIG = {
         "changeOrigin": true,
         "logLevel": "debug"
     },
-    // "/restapp": {
-    //     "target": "http://localhost:8084",
-    //     "secure": false,
-    //     "changeOrigin": true,
-    //     "logLevel": "debug"
-    // },
+    "/api": {
+        "target": "http://localhost:3000",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug"
+    },
     // "/products": {
     //     "target": "http://localhost:8083",
     //     "secure": false,
@@ -25,4 +25,4 @@ const PROXY_CONFIG = {
     // }
 };
 
-//module.exports = PROXY_CONFIG
+module.exports = PROXY_CONFIG

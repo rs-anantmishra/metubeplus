@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { PaginatorModule } from 'primeng/paginator';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Paginator, PaginatorModule } from 'primeng/paginator';
 import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { SimplecardComponent } from "../simplecard/simplecard.component";
@@ -10,13 +10,7 @@ import { VideosService } from '../../services/videos.service'
 import { CommonModule } from '@angular/common';
 import { VideoData } from '../../classes/video-data';
 import { Scroll } from '@angular/router';
-
-interface PageEvent {
-    first: number;
-    rows: number;
-    page: number;
-    pageCount: number;
-}
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-videos',
@@ -26,7 +20,10 @@ interface PageEvent {
     styleUrl: './videos.component.scss'
 })
 
-export class VideosComponent implements OnInit {
+export class VideosComponent implements OnInit, OnDestroy {
+
+    subscription!: Subscription;
+
     visibility = 'visible'
     first: number = 0;
     rows: number = 10;
@@ -34,8 +31,21 @@ export class VideosComponent implements OnInit {
 
     //videos presenter
     lstVideos: any
+    @ViewChild('paginator', { static: true }) paginator!: Paginator
 
-    constructor(private svcVideos: VideosService, private svcSharedData: SharedDataService) { }
+    constructor(private svcVideos: VideosService, private svcSharedData: SharedDataService) {
+        let pageCount = -1;
+        this.subscription = this.svcSharedData.getPageSizeCount().subscribe(x => pageCount = x)
+        if (pageCount < 0) {
+            if (this.svcSharedData.getVideosPageSizeCount() < 0) {
+                this.svcSharedData.setPageSizeCount(this.rows) 
+            } else {
+                this.svcSharedData.setPageSizeCount(this.svcSharedData.getVideosPageSizeCount());
+            }
+        }
+        this.subscription = this.svcSharedData.getPageSizeCount().subscribe(rows => this.rows = rows);
+    }
+
     ngOnInit(): void {
         this.getAllVideos();
         //this.getAllVideosDelta();
@@ -65,9 +75,15 @@ export class VideosComponent implements OnInit {
     }
 
     onPageChange(event: any) {
+        //remember the page-size change
+        this.svcSharedData.setPageSizeCount(event.rows)
         //set array to match page
         this.lstVideos = this.getPagedResult(event.first, event.rows)
         this.first = event.first
         this.rows = event.rows;
+    }    
+
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();        
     }
 }

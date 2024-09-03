@@ -3,9 +3,13 @@
 </div>
 
 <div class="video-frame">
-    <video id='plyrID' controls crossorigin playsinline [poster]="selectedVideo.thumbnail">
-        <source src='{{selectedVideo.video_filepath}}' type='video/webm' size='1080'>
+    <video id='plyrID' controls crossorigin playsinline [poster]="selectedVideo.thumbnail" class="player-video">
+        <source class="player-source" src='{{selectedVideo.video_filepath}}' type='video/webm'>
         <!-- Fallback for browsers that don't support the <video> element -->
         <a href='{{selectedVideo.video_filepath}}' download>Download</a>
     </video>
 </div>
+
+<p-scrollPanel class="video-content">
+
+</p-scrollPanel>

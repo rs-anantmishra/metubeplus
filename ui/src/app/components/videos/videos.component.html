@@ -12,10 +12,10 @@
 
     <div style="display: flex; position: fixed; bottom: 8px;  left: 0px; width: 100%;">
         <div style="margin: auto;" [ngStyle]="{'visibility': visibility}">
-            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
-                [totalRecords]="totalRecords" [showCurrentPageReport]="true" [showPageLinks]="true"
+            <p-paginator #paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                [totalRecords]="totalRecords" [showCurrentPageReport]="true" [showPageLinks]="true" [pageLinkSize]="10"
                 [showJumpToPageDropdown]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-                [rowsPerPageOptions]="[10, 20, 30]" />
+                [rowsPerPageOptions]="[10, 20, 30]"/>
         </div>
     </div>
 </div>

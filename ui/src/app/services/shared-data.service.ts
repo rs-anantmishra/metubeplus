@@ -12,6 +12,8 @@ export class SharedDataService {
     isDownloadActive: boolean = false;
     queuedItemsMetadata: VideoData[] = [];
     activeDownloadMetadata: VideoData[] = [];
+    videosPageSizeCount: number = -1;
+    activePlayerMetadata: VideoData = new VideoData();
 
     //add or remove from queuedItems
     setQueuedItemsMetadata(metadata: VideoData[], ops: Operation) {
@@ -24,7 +26,7 @@ export class SharedDataService {
             let deleted = metadata.splice(0, 1)
             localStorage.setItem('queuedItemsMetadata', JSON.stringify(metadata));
             this.queuedItemsMetadata = metadata
-        }else if (Operation.Replace == ops) {
+        } else if (Operation.Replace == ops) {
             localStorage.setItem('queuedItemsMetadata', JSON.stringify(metadata));
         }
     }
@@ -41,7 +43,7 @@ export class SharedDataService {
     setIsDownloadActive(value: boolean) {
         localStorage.setItem('isDownloadActive', JSON.stringify(value));
     }
-    
+
     getIsDownloadActive(): boolean {
         let stringResult = localStorage.getItem('isDownloadActive') !== null ? localStorage.getItem('isDownloadActive') : 'false'
         let isActive = stringResult === null ? false : JSON.parse(stringResult);
@@ -74,18 +76,60 @@ export class SharedDataService {
         return this.lstVideos
     }
 
+    setVideosPageSizeCount(value: any) {
+        localStorage.setItem('videosPageSizeCount', JSON.stringify(value));
+    }
+
+    getVideosPageSizeCount() {
+        let stringResult = localStorage.getItem('videosPageSizeCount') !== null ? localStorage.getItem('videosPageSizeCount') : JSON.stringify('-1')
+        let pageSizeCount = stringResult === null ? -1 : JSON.parse(stringResult);
+        this.videosPageSizeCount = pageSizeCount;
+
+        return this.videosPageSizeCount
+    }
+
+    setActivePlayerMetadata(value: any) {
+        localStorage.setItem('activePlayerMetadata', JSON.stringify(value));
+    }
+
+    getActivePlayerMetadata() {
+        let stringResult = localStorage.getItem('activePlayerMetadata') !== null ? localStorage.getItem('activePlayerMetadata') : JSON.stringify(new VideoData())
+        let activePlayerMeta = stringResult === null ? new VideoData() : JSON.parse(stringResult);
+        this.activePlayerMetadata = activePlayerMeta;
+
+        return this.activePlayerMetadata
+    }
+
+
+
     private playVideo: BehaviorSubject<VideoData> = new BehaviorSubject(new VideoData());
-    onPlayVideoChange(): Observable<VideoData> {
+    onPlayVideoChange(): Observable<VideoData> {        
+        //check localstorage
+        let activeVideo = this.getActivePlayerMetadata()
+        if (activeVideo.video_filepath != '') {
+            this.setPlayVideo(activeVideo)
+        }
         return this.playVideo.asObservable();
-      }
-      
-      setPlayVideo(nextSuggestion: VideoData): void {
-        this.playVideo.next(nextSuggestion);
-      }
-      
-      resetPlayVideo(): void {
+    }
+
+    setPlayVideo(data: VideoData): void {
+        this.setActivePlayerMetadata(data);
+        this.playVideo.next(data);
+    }
+
+    resetPlayVideo(): void {
         this.playVideo.next(new VideoData());
-      }
+    }
+
+    private pageSizeCount: BehaviorSubject<number> = new BehaviorSubject(-1)
+    setPageSizeCount(count: number): void {
+        this.setVideosPageSizeCount(count);
+        this.pageSizeCount.next(count);
+    }
+
+    getPageSizeCount(): Observable<number> {
+        return this.pageSizeCount.asObservable()
+    }
 }
 
 

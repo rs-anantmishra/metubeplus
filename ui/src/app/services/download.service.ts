@@ -3,7 +3,7 @@ import { VideoData, VideoDataRequest, QueueDownloads } from '../classes/video-da
 import { HttpClient } from '@angular/common/http';
 import { SharedDataService } from './shared-data.service';
 
-const apiUrl: string = 'http://streamsphere.local:3000/api'
+const apiUrl: string = 'http://localhost:3000/api'
 
 @Injectable({
   providedIn: 'root'

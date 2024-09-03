@@ -1,4 +1,34 @@
 .video-frame {
-    max-width: 640px;
-    max-height: 480px;
+    min-width: 98vw;
+    max-width: 98vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+//setting 1
+// .player-video {
+//     display: flex;
+//     margin-left: auto;
+//     margin-right: auto;
+//     width: 75%;
+// }
+
+//setting 2
+.player-video {
+    display: flex;
+    max-height: 75vh;
+    width: 100%;
+} 
+
+// .player-source {
+    // display: block;
+    // max-height: 50%;
+    // width: auto;
+// }
+
+.video-content {
+    width: 90%;
+    height: 600px;
+    margin: 0px auto;
+    background-color: red;
 }

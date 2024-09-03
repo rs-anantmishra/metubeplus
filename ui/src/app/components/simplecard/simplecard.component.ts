@@ -29,6 +29,8 @@ export class SimplecardComponent implements OnInit {
     }
 
     selectedVideo(playVideo: VideoData) {
+        playVideo.video_filepath = playVideo.video_filepath.replace(/\\/g, "/");
+        playVideo.video_filepath = playVideo.video_filepath.replace('../media', 'http://localhost:8484')
         this.svcSharedData.setPlayVideo(playVideo);
         this.router.navigate(['/play'])
     }
