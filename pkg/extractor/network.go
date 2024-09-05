@@ -111,7 +111,6 @@ func (d *download) ExtractMediaContent() int {
 	_ = results
 
 	return activeItem[0].State
-
 }
 
 func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files {
@@ -146,7 +145,7 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 	} else if d.indicatorType == Playlist {
 		fp = GetPlaylistFilepath(fPath, e.Thumbnail)
 	}
-	fp = strings.ReplaceAll(fp, "../media/", "..\\media")
+	fp = strings.ReplaceAll(fp, "../files/", "..\\files")
 
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractThumbnail")
@@ -248,7 +247,7 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.
 	} else if d.indicatorType == Playlist {
 		fp = GetPlaylistFilepath(fPath, e.Subtitles)
 	}
-	fp = strings.ReplaceAll(fp, "../media/", "..\\media")
+	fp = strings.ReplaceAll(fp, "../files/", "..\\files")
 
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractSubtitles")
@@ -295,7 +294,7 @@ func (d *download) GetDownloadedMediaFileInfo(smi e.SavedMediaInformation, fPath
 	} else if smi.PlaylistId > -1 {
 		fp = GetPlaylistFilepath(fPath, e.Video)
 	}
-	fp = strings.ReplaceAll(fp, "../media/", "..\\media")
+	fp = strings.ReplaceAll(fp, "../files/", "..\\files")
 
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractMediaContent")
@@ -444,9 +443,23 @@ func sanitizeResults(b bytes.Buffer) []string {
 	result := b.String()
 	results := strings.Split(result, "\n")
 
-	for i := range results {
+	for i := 0; i < len(results); i++ {
 		//valid json require keys and values to be enclosed in double quotes, not single quotes
 		results[i] = proximityQuoteReplacement(results[i])
+
+		//convert \x prefixed hex characters to utf8 (ex: \xe9)
+		{
+			data := ""
+			for k := 0; k < len(results[i]); k++ {
+				data += string(results[i][k])
+			}
+			results[i] = data
+		}
+
+		//handle description differently
+		if i == 2 && strings.Contains(results[i], "description") {
+			results[i] = strings.ReplaceAll(results[i], "\\n", "<br />")
+		}
 	}
 
 	//remove newlines from the end
@@ -608,11 +621,18 @@ func patchDataField(mediaInfo e.MediaInformation) e.MediaInformation {
 			} else if idx := strings.Index(procResult[i], plainTitle); idx == 0 {
 				mediaInfo.Title = procResult[i][len(plainTitle):]
 			} else if idx := strings.Index(procResult[i], plainDescription); idx == 0 {
-				mediaInfo.Description = procResult[i][len(plainDescription):]
+				if len(procResult[i]) > 1 {
+					//first
+					procResult[0] = procResult[0][len(plainDescription):]
+					//rest
+					mediaInfo.Description = strings.Join(procResult, "<br />")
+				} else {
+					mediaInfo.Description = procResult[i][len(plainDescription):]
+				}
 			} else if idx := strings.Index(procResult[i], plainTags); idx == 0 {
-				mediaInfo.Description = procResult[i][len(plainTags):]
+				mediaInfo.Tags = []string{procResult[i][len(plainTags):]}
 			} else if idx := strings.Index(procResult[i], plainCategories); idx == 0 {
-				mediaInfo.Description = procResult[i][len(plainCategories):]
+				mediaInfo.Categories = []string{procResult[i][len(plainCategories):]}
 			}
 		}
 	}

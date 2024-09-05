@@ -11,5 +11,9 @@
 </div>
 
 <p-scrollPanel class="video-content">
-
+    <h2>
+        {{selectedVideo.title}}
+    </h2>
+    <h3>{{selectedVideo.channel}}</h3>
+    <p [innerHTML]="selectedVideo.description"> </p>
 </p-scrollPanel>

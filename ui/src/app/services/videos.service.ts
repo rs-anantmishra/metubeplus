@@ -22,7 +22,8 @@ export class VideosService {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(response => { return response.json(); });
+        }).then(response => { return response.json(); })
+            
     }
 
 }

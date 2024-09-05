@@ -8,8 +8,6 @@ import { SimplecardComponent } from "../simplecard/simplecard.component";
 import { SharedDataService } from '../../services/shared-data.service'
 import { VideosService } from '../../services/videos.service'
 import { CommonModule } from '@angular/common';
-import { VideoData } from '../../classes/video-data';
-import { Scroll } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -46,7 +44,7 @@ export class VideosComponent implements OnInit, OnDestroy {
         this.subscription = this.svcSharedData.getPageSizeCount().subscribe(rows => this.rows = rows);
     }
 
-    ngOnInit(): void {
+    ngOnInit(): void {        
         this.getAllVideos();
         //this.getAllVideosDelta();
     }

@@ -1,3 +1,25 @@
-cmd/docs/
-utils/
-media/
+# Ignore all
+#*
+
+# Unignore all with extensions
+#!*.*
+
+# Unignore all dirs
+#!*/
+
+### Above combination will ignore all files without extension ###
+
+# Ignore files with extension `.class` & `.exe`
+#*.class
+*.exe
+
+# Ignore `cmd` dir
+cmd/
+# or
+cmd/*
+utils/*
+media/*
+files/*
+
+# Unignore all `.exe` in `bin` dir
+#!*/bin/*.exe
