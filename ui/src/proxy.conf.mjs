@@ -4,7 +4,7 @@ export default [
     //       '/api',
     //       '/media'          
     //     ],
-    //   target: 'http://192.168.1.10:3000',
+    //   target: 'http://localhost:3000',
     //   secure: false
     // }
 ];

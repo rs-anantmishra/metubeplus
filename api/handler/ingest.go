@@ -39,7 +39,7 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 	// just show that error on the UI
 	result := svcVideos.ExtractIngestMetadata(*params)
 
-	return c.JSON(result)
+	return c.Status(fiber.StatusOK).JSON(result)
 }
 
 func NetworkIngestMedia(c *fiber.Ctx) error {
@@ -80,7 +80,7 @@ func NetworkIngestMedia(c *fiber.Ctx) error {
 	}
 
 	result := res.QueueResponse{Result: "Item added to download queue successfully."}
-	return c.JSON(result)
+	return c.Status(fiber.StatusOK).JSON(result)
 }
 
 func DownloadStatus(c *websocket.Conn) {
@@ -156,9 +156,9 @@ func DownloadStatus(c *websocket.Conn) {
 }
 
 func NetworkIngestAutoSubs(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": "nil"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": "nil"})
 }
 
 func NetworkIngestThumbnail(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": "nil"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": "nil"})
 }
