@@ -161,7 +161,7 @@ func BuilderOptions() []CSwitch {
 			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: true},
 			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: true}},
 		},
-		{Index: 31, Name: `MediaDirectory`, Value: GetMediaDirectory(), DataField: false, Group: FxGroups{
+		{Index: 31, Name: `MediaDirectory`, Value: GetMediaDirectory(true), DataField: false, Group: FxGroups{
 			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true},
 			Video:    Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true}},
 		},
@@ -203,11 +203,11 @@ func GetCommandString() string {
 func GetVideoFilepath(fp e.Filepath, fType int) string {
 	var result string
 	if fType == e.Thumbnail {
-		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, "Videos", "Thumbnails"}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, "Videos", "Thumbnails"}, "\\")
 	} else if fType == e.Subtitles {
-		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, "Videos", "Subtitles"}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, "Videos", "Subtitles"}, "\\")
 	} else {
-		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, "Videos"}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, "Videos"}, "\\")
 	}
 	return result
 }
@@ -216,11 +216,11 @@ func GetPlaylistFilepath(fp e.Filepath, fType int) string {
 
 	var result string
 	if fType == e.Thumbnail {
-		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, fp.PlaylistTitle, "Thumbnails"}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, fp.PlaylistTitle, "Thumbnails"}, "\\")
 	} else if fType == e.Subtitles {
-		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, fp.PlaylistTitle, "Subtitles"}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, fp.PlaylistTitle, "Subtitles"}, "\\")
 	} else {
-		result = strings.Join([]string{c.Config("MEDIA_PATH"), fp.Domain, fp.Channel, fp.PlaylistTitle}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, fp.PlaylistTitle}, "\\")
 	}
 	return result
 }

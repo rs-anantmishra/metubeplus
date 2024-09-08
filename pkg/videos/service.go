@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/rs-anantmishra/metubeplus/api/presenter"
 	"github.com/rs-anantmishra/metubeplus/pkg/entities"
-	//"github.com/rs-anantmishra/metubeplus/pkg/entities"
+	"github.com/rs-anantmishra/metubeplus/pkg/extractor"
 )
 
 // Service is an interface from which our api module can access our repository of all our models
@@ -60,7 +60,7 @@ func GetVideosPageInfo(videos []entities.Videos) []presenter.LimitedCardsInfoRes
 		cardsInfo.Duration = elem.DurationSeconds
 		cardsInfo.OriginalURL = elem.WebpageURL
 		cardsInfo.Thumbnail = getImagesFromURL(elem.ThumbnailFilePath)
-		cardsInfo.VideoFilepath = strings.Replace(elem.VideoFilePath, "..\\media", "http://localhost:3000/media", -1)
+		cardsInfo.VideoFilepath = strings.Replace(elem.VideoFilePath, extractor.GetMediaDirectory(false), "http://localhost:3000/", -1)
 		cardsInfo.VideoFilepath = strings.Replace(elem.VideoFilePath, "\\", "/", -1)
 
 		lstCardsInfo = append(lstCardsInfo, cardsInfo)

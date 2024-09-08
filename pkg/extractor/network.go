@@ -142,11 +142,14 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 	//Get FilePaths
 	if d.indicatorType == Video {
 		fp = GetVideoFilepath(fPath, e.Thumbnail)
+		fp = strings.ReplaceAll(fp, "\\\\", "\\")
 	} else if d.indicatorType == Playlist {
 		fp = GetPlaylistFilepath(fPath, e.Thumbnail)
+		fp = strings.ReplaceAll(fp, "\\\\", "\\")
 	}
-	fp = strings.ReplaceAll(fp, "../files/", "..\\files")
+	//fp = strings.ReplaceAll(fp, "../files/", "..\\files")
 
+	fmt.Println(os.Getwd())
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractThumbnail")
 
@@ -244,10 +247,12 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.
 	//Get FilePaths
 	if d.indicatorType == Video {
 		fp = GetVideoFilepath(fPath, e.Subtitles)
+		fp = strings.ReplaceAll(fp, "\\\\", "\\")
 	} else if d.indicatorType == Playlist {
 		fp = GetPlaylistFilepath(fPath, e.Subtitles)
+		fp = strings.ReplaceAll(fp, "\\\\", "\\")
 	}
-	fp = strings.ReplaceAll(fp, "../files/", "..\\files")
+	// fp = strings.ReplaceAll(fp, "../files/", "..\\files")
 
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractSubtitles")
@@ -291,10 +296,12 @@ func (d *download) GetDownloadedMediaFileInfo(smi e.SavedMediaInformation, fPath
 	//Get FilePaths
 	if smi.PlaylistId == -1 {
 		fp = GetVideoFilepath(fPath, e.Video)
+		fp = strings.ReplaceAll(fp, "\\\\", "\\")
 	} else if smi.PlaylistId > -1 {
 		fp = GetPlaylistFilepath(fPath, e.Video)
+		fp = strings.ReplaceAll(fp, "\\\\", "\\")
 	}
-	fp = strings.ReplaceAll(fp, "../files/", "..\\files")
+	// fp = strings.ReplaceAll(fp, "../files/", "..\\files")
 
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractMediaContent")

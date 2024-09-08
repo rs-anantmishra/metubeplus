@@ -1,6 +1,6 @@
 const PROXY_CONFIG = {
     "/youtube.com": {
-        "target": "http://192.168.1.10:8484",
+        "target": "http://loclhost:3500/youtube.com",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug"

@@ -101,7 +101,14 @@ const Space string = " "
 // Parent Directory
 const mediaDirectory string = `-P {{MediaDir}}`
 
-func GetMediaDirectory() string {
+func GetMediaDirectory(keepParentDirectoryFlag bool) string {
+
 	mediaDir := strings.ReplaceAll(mediaDirectory, "{{MediaDir}}", c.Config("MEDIA_PATH"))
+	mediaDir = strings.ReplaceAll(mediaDir, "/", "\\")
+
+	if !keepParentDirectoryFlag {
+		mediaDir = strings.ReplaceAll(mediaDir, "-P ", "")
+	}
+
 	return mediaDir
 }
