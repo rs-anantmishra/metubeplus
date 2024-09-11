@@ -12,6 +12,7 @@ type QueueDownloads struct {
 }
 
 type DownloadMedia struct {
-	VideoId  int    `json:"VideoId"`
-	VideoURL string `json:"VideoURL"`
+	VideoId         int    `json:"VideoId"`
+	VideoURL        string `json:"VideoURL"`
+	IsPlaylistVideo string `json:"IsPlaylistVideo"`
 }

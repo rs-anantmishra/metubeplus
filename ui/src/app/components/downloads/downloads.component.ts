@@ -125,9 +125,9 @@ export class DownloadsComponent implements OnInit {
     contentBoxActive = 'content-box'
 
     urlPlaceholder = 'Video or Playlist URL'
-
     sidebarVisible: boolean = false;
     options: ExtractionOptions = { Identifier: '', GetAudioOnly: false, GetSubs: false }
+    isPlaylist: boolean = false
 
     flipCheckbox(event: any, option: string): void {
         if (option === 'GetAudioOnly') {
@@ -139,19 +139,20 @@ export class DownloadsComponent implements OnInit {
 
     ngOnInit() {
 
+        this.sharedData.isPlaylist = this.sharedData.getIsPlaylist()
         this.sharedData.isDownloadActive = this.sharedData.getIsDownloadActive()
-        this.sharedData.activeDownloadMetadata = this.sharedData.getActiveDownloadMetadata()        
+        this.sharedData.activeDownloadMetadata = this.sharedData.getActiveDownloadMetadata()
         this.sharedData.queuedItemsMetadata = this.sharedData.getQueuedItemsMetadata()
         this.queuedItems = this.sharedData.queuedItemsMetadata
 
 
-        // // if there is an active download
+        //if there is an active download
         if (this.sharedData.isDownloadActive) {
             this.sendRequest()
             this.populateVideoMetadata()
         }
 
-        // //if there are queued items but no active downloads
+        //if there are queued items but no active downloads
         if (!this.sharedData.isDownloadActive && this.sharedData.queuedItemsMetadata.length > 0) {
             this.tgrMediaDownload();
             setTimeout(() => { this.sendRequest(); }, 500);
@@ -175,8 +176,14 @@ export class DownloadsComponent implements OnInit {
             this.showMessage('No URL or Identifier provided', 'error', 'error')
             return
         }
-        
+
         let metadata: VideoData[] = await this.currentDL.getMetadata(metadataRequest)
+
+        //set isPlaylist here
+        if (metadata.length > 1) {
+            // this.sharedData.setIsPlaylist(true);
+            metadata.forEach(item => { item.isPlaylistVideo = true })
+        }
 
         //delta update for all videos
         let allVideos = this.sharedData.getlstVideos()
@@ -247,6 +254,7 @@ export class DownloadsComponent implements OnInit {
 
         request.VideoId = metadata.video_id
         request.VideoURL = metadata.original_url
+        request.IsPlaylistVideo = metadata.isPlaylistVideo
 
         let queueDownloads: QueueDownloads = { DownloadMedia: [request] };
         return queueDownloads

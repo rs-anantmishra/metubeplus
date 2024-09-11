@@ -10,6 +10,7 @@ export class SharedDataService {
     constructor() { }
     lstVideos: VideoData[] = [];
     isDownloadActive: boolean = false;
+    isPlaylist: boolean = false; //PL9FSW1L-cEGJWKj3lMoSGIhuvL2Eo-Qzj
     queuedItemsMetadata: VideoData[] = [];
     activeDownloadMetadata: VideoData[] = [];
     videosPageSizeCount: number = -1;
@@ -50,6 +51,18 @@ export class SharedDataService {
         this.isDownloadActive = isActive;
 
         return this.isDownloadActive
+    }
+
+    setIsPlaylist(value: boolean) {
+        localStorage.setItem('isPlaylist', JSON.stringify(value));
+    }
+
+    getIsPlaylist(): boolean {
+        let stringResult = localStorage.getItem('isPlaylist') !== null ? localStorage.getItem('isPlaylist') : 'false'
+        let isPl = stringResult === null ? false : JSON.parse(stringResult);
+        this.isPlaylist = isPl;
+
+        return this.isPlaylist
     }
 
     setActiveDownloadMetadata(value: any) {

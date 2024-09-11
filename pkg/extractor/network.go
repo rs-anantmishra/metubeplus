@@ -26,9 +26,10 @@ type IDownload interface {
 }
 
 type download struct {
-	p             e.IncomingRequest
-	indicatorType int
-	lstDownloads  []g.DownloadStatus
+	p               e.IncomingRequest
+	indicatorType   int
+	IsPlaylistVideo bool
+	lstDownloads    []g.DownloadStatus
 }
 
 func NewDownload(params e.IncomingRequest) IDownload {
@@ -93,7 +94,16 @@ func (d *download) ExtractMediaContent() int {
 
 	activeItem := g.NewActiveItem()
 
-	args, command := cmdBuilderDownload(activeItem[0].VideoURL, Video)
+	var (
+		args    string
+		command string
+	)
+	if d.IsPlaylistVideo {
+		args, command = cmdBuilderDownload(activeItem[0].VideoURL, Playlist)
+	} else {
+		args, command = cmdBuilderDownload(activeItem[0].VideoURL, Video)
+	}
+
 	logCommand := command + Space + args
 
 	//log executed command - in activity log later

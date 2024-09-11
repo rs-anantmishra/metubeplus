@@ -18,6 +18,7 @@ export class VideoData {
     thumbnail: string = ''
     video_filepath: string = ''
     download_status: string = ''
+    isPlaylistVideo: boolean = false
 }
 
 export class VideoDataRequest {
@@ -33,4 +34,5 @@ export class QueueDownloads {
 export class DownloadMedia {
     VideoId: number = -1
     VideoURL: string = ''
+    IsPlaylistVideo: boolean = false
 }
