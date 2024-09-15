@@ -18,7 +18,7 @@ import (
 
 type IDownload interface {
 	ExtractMetadata() ([]e.MediaInformation, e.Filepath)
-	ExtractMediaContent() int
+	ExtractMediaContent(smi e.SavedMediaInformation) int
 	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	ExtractSubtitles(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	GetDownloadedMediaFileInfo(smi e.SavedMediaInformation, fp e.Filepath) []e.Files
@@ -26,10 +26,9 @@ type IDownload interface {
 }
 
 type download struct {
-	p               e.IncomingRequest
-	indicatorType   int
-	IsPlaylistVideo bool
-	lstDownloads    []g.DownloadStatus
+	p             e.IncomingRequest
+	indicatorType int
+	lstDownloads  []g.DownloadStatus
 }
 
 func NewDownload(params e.IncomingRequest) IDownload {
@@ -90,7 +89,7 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 	return mediaInfo, fp
 }
 
-func (d *download) ExtractMediaContent() int {
+func (d *download) ExtractMediaContent(smi e.SavedMediaInformation) int {
 
 	activeItem := g.NewActiveItem()
 
@@ -98,10 +97,10 @@ func (d *download) ExtractMediaContent() int {
 		args    string
 		command string
 	)
-	if d.IsPlaylistVideo {
-		args, command = cmdBuilderDownload(activeItem[0].VideoURL, Playlist)
+	if smi.PlaylistTitle != "" && smi.PlaylistId > -1 {
+		args, command = cmdBuilderDownload(activeItem[0].VideoURL, Playlist, smi)
 	} else {
-		args, command = cmdBuilderDownload(activeItem[0].VideoURL, Video)
+		args, command = cmdBuilderDownload(activeItem[0].VideoURL, Video, smi)
 	}
 
 	logCommand := command + Space + args
@@ -125,7 +124,7 @@ func (d *download) ExtractMediaContent() int {
 
 func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files {
 
-	args, command := cmdBuilderThumbnails(d.p.Indicator, d.indicatorType)
+	args, command := cmdBuilderThumbnails(d.p.Indicator, d.indicatorType, lstSMI[0])
 	logCommand := command + Space + args
 
 	//log executed command - in activity log later
@@ -230,7 +229,7 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 
 func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files {
 
-	args, command := cmdBuilderSubtitles(d.p.Indicator, d.indicatorType)
+	args, command := cmdBuilderSubtitles(d.p.Indicator, d.indicatorType, lstSMI[0])
 	logCommand := command + Space + args
 
 	//log executed command - in activity log later

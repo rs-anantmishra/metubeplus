@@ -48,6 +48,7 @@ func (s *service) ExtractIngestMetadata(params e.IncomingRequest) []p.CardsInfoR
 }
 
 func (s *service) ExtractIngestMedia() {
+
 	defer falsifyQueueAlive()
 
 	//cleanup of processed
@@ -68,8 +69,8 @@ func (s *service) ExtractIngestMedia() {
 			activeItem[0] = lstDownloads[i]
 
 			//download file
-			lstDownloads[i].State = s.download.ExtractMediaContent()
 			smi, fp, err := s.repository.GetVideoFileInfo(activeItem[0].VideoId)
+			lstDownloads[i].State = s.download.ExtractMediaContent(smi)
 
 			if err != nil {
 				log.Info(err)

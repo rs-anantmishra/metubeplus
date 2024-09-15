@@ -1,6 +1,7 @@
 package extractor
 
 import (
+	"strconv"
 	"strings"
 
 	c "github.com/rs-anantmishra/metubeplus/config"
@@ -78,7 +79,7 @@ func BuilderOptions() []CSwitch {
 			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 10, Name: `PlaylistIndex`, Value: PlaylistIndex, DataField: true, Group: FxGroups{
-			Playlist: Functions{Metadata: true, Download: true, Subtitle: false, Thumbnail: false},
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 11, Name: `PlaylistCount`, Value: PlaylistCount, DataField: true, Group: FxGroups{
@@ -255,7 +256,7 @@ func cmdBuilderMetadata(url string, indicatorType int) (string, string) {
 }
 
 // Download Media Content
-func cmdBuilderDownload(url string, indicatorType int) (string, string) {
+func cmdBuilderDownload(url string, indicatorType int, smi e.SavedMediaInformation) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
@@ -270,6 +271,10 @@ func cmdBuilderDownload(url string, indicatorType int) (string, string) {
 
 		//Handle Playlist
 		if indicatorType == Playlist && elem.Group.Playlist.Download {
+			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
+				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist)s", smi.PlaylistTitle)
+				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist_index)s", strconv.Itoa(smi.PlaylistVideoIndex))
+			}
 			args = append(args, elem.Value)
 		}
 	}
@@ -281,7 +286,7 @@ func cmdBuilderDownload(url string, indicatorType int) (string, string) {
 	return arguments, cmd
 }
 
-func cmdBuilderSubtitles(url string, indicatorType int) (string, string) {
+func cmdBuilderSubtitles(url string, indicatorType int, smi e.SavedMediaInformation) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
@@ -296,6 +301,10 @@ func cmdBuilderSubtitles(url string, indicatorType int) (string, string) {
 
 		//Handle Playlist
 		if indicatorType == Playlist && elem.Group.Playlist.Subtitle {
+			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
+				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist)s", smi.PlaylistTitle)
+				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist_index)s", strconv.Itoa(smi.PlaylistVideoIndex))
+			}
 			args = append(args, elem.Value)
 		}
 	}
@@ -307,7 +316,7 @@ func cmdBuilderSubtitles(url string, indicatorType int) (string, string) {
 	return arguments, cmd
 }
 
-func cmdBuilderThumbnails(url string, indicatorType int) (string, string) {
+func cmdBuilderThumbnails(url string, indicatorType int, smi e.SavedMediaInformation) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
@@ -322,6 +331,10 @@ func cmdBuilderThumbnails(url string, indicatorType int) (string, string) {
 
 		//Handle Playlist
 		if indicatorType == Playlist && elem.Group.Playlist.Thumbnail {
+			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
+				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist)s", smi.PlaylistTitle)
+				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist_index)s", strconv.Itoa(smi.PlaylistVideoIndex))
+			}
 			args = append(args, elem.Value)
 		}
 	}

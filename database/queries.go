@@ -56,7 +56,7 @@ const InsertFile string = `INSERT INTO tblFiles SELECT NULL, ?, ?, ?, ?, ?, ?, ?
 const InsertMediaFileCheck string = `SELECT Id From tblFiles WHERE FileType = ? AND VideoId = ? AND FileName = ?`
 
 const GetNetworkVideoURLById string = `Select WebpageURL from tblVideos Where Id = ?`
-const GetVideoInformationById string = `Select V.Title, V.PlayListId, C.Name as 'Channel', D.Domain, P.Title as 'PlaylistTitle', YoutubeVideoId
+const GetVideoInformationById string = `Select V.Title, V.PlayListId, P.Title, V.PlaylistVideoIndex, C.Name as 'Channel', D.Domain, P.Title as 'PlaylistTitle', YoutubeVideoId
 										FROM tblVideos V 
 										INNER JOIN tblChannels C ON C.Id = V.ChannelId 
 										INNER JOIN tblDomains D ON D.Id = V.DomainId

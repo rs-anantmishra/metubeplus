@@ -32,8 +32,22 @@ type MediaInformation struct {
 // }
 
 type SavedMediaInformation struct {
-	VideoId        int
-	PlaylistId     int
-	Title          string
-	YoutubeVideoId string
+	VideoId            int
+	PlaylistId         int
+	YoutubeVideoId     string
+	Domain             string
+	Channel            string
+	Title              string
+	PlaylistTitle      string
+	PlaylistVideoIndex int
 }
+
+// Playlist: Videos, Subtitles, Thumbnails
+//const OutputPlaylistVideoFile string = `-o "%(webpage_url_domain)s/%(channel)s/%(playlist)s/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
+//const OutputPlaylistSubtitleFile string = `-o "subtitle:%(webpage_url_domain)s/%(channel)s/%(playlist)s/Subtitles/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
+//const OutputPlaylistThumbnailFile string = `-o "%(webpage_url_domain)s/%(channel)s/%(playlist)s/Thumbnails/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
+
+// Videos: Videos, Subtitles, Thumbnails
+//const OutputVideoFile string = `-o "%(webpage_url_domain)s/%(channel)s/Videos/%(title)s [%(id)s].%(ext)s"`
+//const OutputSubtitleFile string = `-o "subtitle:%(webpage_url_domain)s/%(channel)s/Videos/Subtitles/%(title)s [%(id)s].%(ext)s"`
+//const OutputThumbnailFile string = `-o "thumbnail:%(webpage_url_domain)s/%(channel)s/Videos/Thumbnails/%(title)s [%(id)s].%(ext)s"`

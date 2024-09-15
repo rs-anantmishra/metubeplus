@@ -178,7 +178,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 			}
 		}
 
-		lstSMI = append(lstSMI, e.SavedMediaInformation{VideoId: ytVideoId, PlaylistId: playlistId, Title: elem.Title, YoutubeVideoId: elem.YoutubeVideoId})
+		lstSMI = append(lstSMI, e.SavedMediaInformation{VideoId: ytVideoId, PlaylistId: playlistId, PlaylistTitle: elem.PlaylistTitle, PlaylistVideoIndex: elem.PlaylistIndex, Title: elem.Title, YoutubeVideoId: elem.YoutubeVideoId})
 	}
 	return sequencedVideoIds, lstSMI
 }
@@ -287,7 +287,7 @@ func (r *repository) GetVideoFileInfo(videoId int) (e.SavedMediaInformation, e.F
 
 	smi.VideoId = videoId
 	row := r.db.QueryRow(p.GetVideoInformationById, videoId)
-	if err := row.Scan(&smi.Title, &smi.PlaylistId, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId); err != nil {
+	if err := row.Scan(&smi.Title, &smi.PlaylistId, &smi.PlaylistTitle, &smi.PlaylistVideoIndex, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId); err != nil {
 		if err == sql.ErrNoRows {
 			return smi, fPath, fmt.Errorf("VideoId %d: no such video", videoId)
 		}
