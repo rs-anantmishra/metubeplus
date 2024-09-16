@@ -272,6 +272,7 @@ func cmdBuilderDownload(url string, indicatorType int, smi e.SavedMediaInformati
 		//Handle Playlist
 		if indicatorType == Playlist && elem.Group.Playlist.Download {
 			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
+				smi.PlaylistTitle = strings.ReplaceAll(smi.PlaylistTitle, "//", "")
 				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist)s", smi.PlaylistTitle)
 				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist_index)s", strconv.Itoa(smi.PlaylistVideoIndex))
 			}
@@ -302,6 +303,7 @@ func cmdBuilderSubtitles(url string, indicatorType int, smi e.SavedMediaInformat
 		//Handle Playlist
 		if indicatorType == Playlist && elem.Group.Playlist.Subtitle {
 			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
+				smi.PlaylistTitle = strings.ReplaceAll(smi.PlaylistTitle, "//", "")
 				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist)s", smi.PlaylistTitle)
 				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist_index)s", strconv.Itoa(smi.PlaylistVideoIndex))
 			}
@@ -332,6 +334,7 @@ func cmdBuilderThumbnails(url string, indicatorType int, smi e.SavedMediaInforma
 		//Handle Playlist
 		if indicatorType == Playlist && elem.Group.Playlist.Thumbnail {
 			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
+				smi.PlaylistTitle = strings.ReplaceAll(smi.PlaylistTitle, "//", "")
 				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist)s", smi.PlaylistTitle)
 				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist_index)s", strconv.Itoa(smi.PlaylistVideoIndex))
 			}

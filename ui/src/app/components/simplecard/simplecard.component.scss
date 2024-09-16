@@ -1,10 +1,13 @@
+p-card {
+    cursor: pointer;
+}
+
 .simplecard {
     margin: 0.5rem;
     min-width: 350px;
     max-width: 350px;
-
     min-height: 350px;
-    max-height: 350px;
+    max-height: 350px;    
 }
 
 .card-setting {

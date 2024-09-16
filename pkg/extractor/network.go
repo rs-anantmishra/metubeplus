@@ -70,7 +70,6 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 		pResult = executeProcess(stdout)
 		video := parseResults(pResult, VideoMetadata, itemCount)
 
-		//dump data to db and return result from here
 		fmt.Println(video)
 		mediaInfo = video
 	}
@@ -79,7 +78,6 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 		pResult = executeProcess(stdout)
 		playlist := parseResults(pResult, PlaylistMetadata, itemCount)
 
-		//dump data to db and return result from here
 		fmt.Println(playlist)
 		mediaInfo = playlist
 	}
@@ -147,14 +145,21 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 		return []e.Files{}
 	}
 
-	var fp string
+	///////////////////////////////////////////////////////////////////////////
+	// All unsupported symbols in folder names need to be handled here.      //
+	// Unsupported characters: \ / : * ? " < > |							 //
+	// Test Playlist: PL9xmBV_5YoZNsyqgPW-DNwUeT8F8uhWc6					 //
+	///////////////////////////////////////////////////////////////////////////
 	//Get FilePaths
+	var fp string
 	if d.indicatorType == Video {
 		fp = GetVideoFilepath(fPath, e.Thumbnail)
 		fp = strings.ReplaceAll(fp, "\\\\", "\\")
+		// fp = strings.ReplaceAll(fp, "\\\\", "\\")
 	} else if d.indicatorType == Playlist {
 		fp = GetPlaylistFilepath(fPath, e.Thumbnail)
 		fp = strings.ReplaceAll(fp, "\\\\", "\\")
+		fp = strings.ReplaceAll(fp, "//", "")
 	}
 	//fp = strings.ReplaceAll(fp, "../files/", "..\\files")
 
@@ -257,9 +262,11 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.
 	if d.indicatorType == Video {
 		fp = GetVideoFilepath(fPath, e.Subtitles)
 		fp = strings.ReplaceAll(fp, "\\\\", "\\")
+		// fp = strings.ReplaceAll(fp, "//", "")
 	} else if d.indicatorType == Playlist {
 		fp = GetPlaylistFilepath(fPath, e.Subtitles)
 		fp = strings.ReplaceAll(fp, "\\\\", "\\")
+		fp = strings.ReplaceAll(fp, "//", "")
 	}
 	// fp = strings.ReplaceAll(fp, "../files/", "..\\files")
 
@@ -306,9 +313,11 @@ func (d *download) GetDownloadedMediaFileInfo(smi e.SavedMediaInformation, fPath
 	if smi.PlaylistId == -1 {
 		fp = GetVideoFilepath(fPath, e.Video)
 		fp = strings.ReplaceAll(fp, "\\\\", "\\")
+		// fp = strings.ReplaceAll(fp, "//", "")
 	} else if smi.PlaylistId > -1 {
 		fp = GetPlaylistFilepath(fPath, e.Video)
 		fp = strings.ReplaceAll(fp, "\\\\", "\\")
+		fp = strings.ReplaceAll(fp, "//", "")
 	}
 	// fp = strings.ReplaceAll(fp, "../files/", "..\\files")
 
@@ -348,7 +357,6 @@ func (d *download) GetDownloadedMediaFileInfo(smi e.SavedMediaInformation, fPath
 }
 
 func getIndicatorType(url string) (int, int) {
-
 	arguments := "\"" + url + "\"" + Space + Title + Space + SkipDownload
 	cmd, stdout := buildProcess(arguments, GetCommandString())
 
@@ -658,8 +666,9 @@ func patchDataField(mediaInfo e.MediaInformation) e.MediaInformation {
 
 // Result Type for entity binding and result parsing
 const (
-	Indicator        = iota
-	VideoMetadata    = iota
-	PlaylistMetadata = iota
-	Download         = iota
+	Indicator            = iota
+	VideoMinimalMetadata = iota
+	VideoMetadata        = iota
+	PlaylistMetadata     = iota
+	Download             = iota
 )

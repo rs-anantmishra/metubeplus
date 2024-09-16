@@ -3,6 +3,7 @@ import { Paginator, PaginatorModule } from 'primeng/paginator';
 import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { SimplecardComponent } from "../simplecard/simplecard.component";
+import { Router, RouterModule } from '@angular/router'
 
 //services
 import { SharedDataService } from '../../services/shared-data.service'
@@ -13,7 +14,8 @@ import { Subscription } from 'rxjs';
 @Component({
     selector: 'app-videos',
     standalone: true,
-    imports: [SimplecardComponent, CommonModule, PaginatorModule, ButtonModule, ScrollPanelModule],
+    imports: [SimplecardComponent, CommonModule, PaginatorModule, ButtonModule, ScrollPanelModule, RouterModule],
+    providers: [Router],
     templateUrl: './videos.component.html',
     styleUrl: './videos.component.scss'
 })
@@ -36,7 +38,7 @@ export class VideosComponent implements OnInit, OnDestroy {
         this.subscription = this.svcSharedData.getPageSizeCount().subscribe(x => pageCount = x)
         if (pageCount < 0) {
             if (this.svcSharedData.getVideosPageSizeCount() < 0) {
-                this.svcSharedData.setPageSizeCount(this.rows) 
+                this.svcSharedData.setPageSizeCount(this.rows)
             } else {
                 this.svcSharedData.setPageSizeCount(this.svcSharedData.getVideosPageSizeCount());
             }
@@ -44,9 +46,9 @@ export class VideosComponent implements OnInit, OnDestroy {
         this.subscription = this.svcSharedData.getPageSizeCount().subscribe(rows => this.rows = rows);
     }
 
-    ngOnInit(): void {        
-        this.getAllVideos();
+    ngOnInit() {
         //this.getAllVideosDelta();
+        this.getAllVideos();
     }
 
     //check local storage or service call
@@ -61,9 +63,12 @@ export class VideosComponent implements OnInit, OnDestroy {
     }
 
     async getAllVideos() {
-        let result = await this.svcVideos.getAllVideos();
-        this.svcSharedData.setlstVideos(result)
-        this.lstVideos = this.getPagedResult(this.first, this.rows);
+        let result = await this.svcVideos.getAllVideos();        
+        if (result !== null && result.length > 0) {
+            this.svcSharedData.setlstVideos(result)
+            this.lstVideos = this.getPagedResult(this.first, this.rows);
+            
+        }
     }
 
     getPagedResult(first: number, rows: number): any {
@@ -79,9 +84,9 @@ export class VideosComponent implements OnInit, OnDestroy {
         this.lstVideos = this.getPagedResult(event.first, event.rows)
         this.first = event.first
         this.rows = event.rows;
-    }    
+    }
 
     ngOnDestroy(): void {
-        this.subscription.unsubscribe();        
+        this.subscription.unsubscribe();
     }
 }
