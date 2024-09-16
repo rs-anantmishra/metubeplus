@@ -545,6 +545,7 @@ func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInfor
 		for i := (0 + k*metaItemsCount); i < (k+1)*metaItemsCount; i++ {
 
 			//Unmarshall is unreliable since the json coming from yt-dlp is invalid.
+			//case statement for handling each field is required here because unmarshal is shit.
 			if results[i][0] == '{' && results[i][len(results[i])-1] == '}' {
 				json.Unmarshal([]byte(results[i]), &mediaInfo)
 			}
