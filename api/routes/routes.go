@@ -15,8 +15,10 @@ func SetupRoutes(app *fiber.App) {
 
 	//Network Downloads: Playlist, Videos or Audios
 	download := api.Group("/download", logger.New())
-	download.Post("/metadata", handler.NetworkIngestMetadata) //Download Metadata + Thumbnail and save to db for [Playlists, Videos]
-	download.Post("/media", handler.NetworkIngestMedia)       //Download Media File(s) and update db for [Playlists, Videos]
+
+	download.Get("/queued-items", handler.NetworkIngestQueuedItems) //Get Queued-Items
+	download.Post("/metadata", handler.NetworkIngestMetadata)       //Download Metadata + Thumbnail and save to db for [Playlists, Videos]
+	download.Post("/media", handler.NetworkIngestMedia)             //Download Media File(s) and update db for [Playlists, Videos]
 
 	//Specific to network Video and Audio only
 	download.Post("/autosubs", handler.NetworkIngestAutoSubs)   //Download auto-subs for a video that exists in library [Videos]

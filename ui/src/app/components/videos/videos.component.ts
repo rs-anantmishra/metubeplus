@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Paginator, PaginatorModule } from 'primeng/paginator';
 import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SimplecardComponent } from "../simplecard/simplecard.component";
 import { Router, RouterModule } from '@angular/router'
 
@@ -14,7 +15,7 @@ import { Subscription } from 'rxjs';
 @Component({
     selector: 'app-videos',
     standalone: true,
-    imports: [SimplecardComponent, CommonModule, PaginatorModule, ButtonModule, ScrollPanelModule, RouterModule],
+    imports: [SimplecardComponent, CommonModule, PaginatorModule, ButtonModule, ScrollPanelModule, RouterModule, ProgressSpinnerModule],
     providers: [Router],
     templateUrl: './videos.component.html',
     styleUrl: './videos.component.scss'
@@ -28,6 +29,7 @@ export class VideosComponent implements OnInit, OnDestroy {
     first: number = 0;
     rows: number = 10;
     totalRecords: number = -1
+    loadPage: number = -1
 
     //videos presenter
     lstVideos: any
@@ -46,9 +48,10 @@ export class VideosComponent implements OnInit, OnDestroy {
         this.subscription = this.svcSharedData.getPageSizeCount().subscribe(rows => this.rows = rows);
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         //this.getAllVideosDelta();
-        this.getAllVideos();
+        await this.getAllVideos();
+        this.loadPage = 0
     }
 
     //check local storage or service call

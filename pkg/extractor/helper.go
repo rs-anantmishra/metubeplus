@@ -3,6 +3,7 @@ package extractor
 import (
 	"encoding/base64"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2/log"
@@ -91,6 +92,8 @@ func getImagesFromURL(file e.Files) string {
 	switch file.Extension {
 	case "jpeg":
 		base64EncodedImage += "data:image/jpeg;base64,"
+	case "jpg":
+		base64EncodedImage += "data:image/jpg;base64,"
 	case "png":
 		base64EncodedImage += "data:image/png;base64,"
 	case "webp":
@@ -98,6 +101,41 @@ func getImagesFromURL(file e.Files) string {
 	}
 
 	base64EncodedImage += base64.StdEncoding.EncodeToString(bytes)
+	return base64EncodedImage
+}
 
+func getImagesFromURLString(filepath string) string {
+	var base64EncodedImage string
+	splitter := "."
+
+	// Read the entire file into a byte slice
+	bytes, err := os.ReadFile(filepath)
+	if err != nil {
+		log.Info(err)
+	}
+
+	if len(bytes) == 0 {
+		filepath = `..\utils\noimage.png`
+		bytes, err = os.ReadFile(filepath)
+		if err != nil {
+			log.Info(err)
+		}
+	}
+
+	splits := strings.SplitN(filepath, splitter, -1)
+	extension := splits[len(splits)-1]
+
+	switch extension {
+	case "jpeg":
+		base64EncodedImage += "data:image/jpeg;base64,"
+	case "jpg":
+		base64EncodedImage += "data:image/jpg;base64,"
+	case "png":
+		base64EncodedImage += "data:image/png;base64,"
+	case "webp":
+		base64EncodedImage += "data:image/webp;base64,"
+	}
+
+	base64EncodedImage += base64.StdEncoding.EncodeToString(bytes)
 	return base64EncodedImage
 }

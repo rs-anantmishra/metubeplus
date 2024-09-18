@@ -13,6 +13,7 @@ type IService interface {
 	ExtractIngestMetadata(p e.IncomingRequest) []p.CardsInfoResponse // here we have an option to dl subs as well, when the metadata is available.
 	ExtractIngestMedia()                                             //in case it was a metadata only files, youre free to dl video at a later time.
 	ExtractSubtitlesOnly(string) bool                                // here we are navigating to a Video and downloading subs for it.
+	GetQueuedItemsDetails([]int) []p.LimitedCardsInfoResponse
 }
 
 type service struct {
@@ -90,4 +91,20 @@ func (s *service) ExtractIngestMedia() {
 
 func (s *service) ExtractSubtitlesOnly(videoId string) bool {
 	return false
+}
+
+func (s *service) GetQueuedItemsDetails(videoIds []int) []p.LimitedCardsInfoResponse {
+
+	var result []p.LimitedCardsInfoResponse
+
+	for _, elem := range videoIds {
+		if elem > 0 {
+			mci, err := s.repository.GetVideoDetails(elem)
+			handleErrors(err, "GetQueuedItemsDetails")
+			result = append(result, p.LimitedCardsInfoResponse{VideoId: mci.VideoId, Title: mci.Title, Description: mci.Description, Duration: mci.Duration,
+				OriginalURL: mci.OriginalURL, Thumbnail: getImagesFromURLString(mci.Thumbnail), VideoFilepath: mci.VideoFilepath, Channel: mci.Channel})
+		}
+	}
+
+	return result
 }

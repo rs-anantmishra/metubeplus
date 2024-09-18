@@ -15,6 +15,7 @@ type IRepository interface {
 	SaveSubtitles([]e.Files) []int
 	SaveMediaContent([]e.Files) []int
 	GetVideoFileInfo(videoId int) (e.SavedMediaInformation, e.Filepath, error)
+	GetVideoDetails(videoId int) (e.MinimalCardsInfo, error)
 }
 
 type repository struct {
@@ -294,6 +295,21 @@ func (r *repository) GetVideoFileInfo(videoId int) (e.SavedMediaInformation, e.F
 		return smi, fPath, fmt.Errorf("VideoById %d: %v", videoId, err)
 	}
 	return smi, fPath, nil
+}
+
+func (r *repository) GetVideoDetails(videoId int) (e.MinimalCardsInfo, error) {
+
+	var minInfo e.MinimalCardsInfo
+
+	minInfo.VideoId = videoId
+	row := r.db.QueryRow(p.GetQueuedVideoDetailsById, videoId)
+	if err := row.Scan(&minInfo.VideoId, &minInfo.Title, &minInfo.Channel, &minInfo.Description, &minInfo.Duration, &minInfo.OriginalURL, &minInfo.Thumbnail); err != nil {
+		if err == sql.ErrNoRows {
+			return minInfo, fmt.Errorf("VideoId %d: no such video", videoId)
+		}
+		return minInfo, fmt.Errorf("VideoById %d: %v", videoId, err)
+	}
+	return minInfo, nil
 }
 
 // Private Methods ////////////////////////////////////////////////////

@@ -1,33 +1,43 @@
-<div class="full-page" *ngIf="this.totalRecords > 0; else empty;">
-    <p-scrollPanel [style]="{ width: '100%', height: 'calc(100vh - 96px)' }">
-        <div class="element">
-            <div class="box">
-                <div *ngFor="let video of this.lstVideos" class="all-videos">
-                    <app-simplecard [meta]="video"></app-simplecard>
+<div [ngSwitch]="this.totalRecords">
+    <!-- <div class="full-page" *ngIf="this.totalRecords > 0; else-if empty; else empty;"> -->
+    <div class="full-page" *ngSwitchDefault>
+        <p-scrollPanel [style]="{ width: '100%', height: 'calc(100vh - 96px)' }">
+            <div class="element">
+                <div class="box">
+                    <div *ngFor="let video of this.lstVideos" class="all-videos">
+                        <app-simplecard [meta]="video"></app-simplecard>
+                    </div>
                 </div>
             </div>
-        </div>
-    </p-scrollPanel>
+        </p-scrollPanel>
 
 
-    <div style="display: flex; position: fixed; bottom: 8px;  left: 0px; width: 100%;">
-        <div style="margin: auto;" [ngStyle]="{'visibility': visibility}">
-            <p-paginator #paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
-                [totalRecords]="totalRecords" [showCurrentPageReport]="true" [showPageLinks]="true" [pageLinkSize]="10"
-                [showJumpToPageDropdown]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-                [rowsPerPageOptions]="[10, 20, 30]" />
-        </div>
-    </div>
-</div>
-
-<ng-template #empty>
-    <div class="fullpage-empty">
-        <div class="empty-library">
-            There are no videos added to the library!
+        <div style="display: flex; position: fixed; bottom: 8px;  left: 0px; width: 100%;">
+            <div style="margin: auto;" [ngStyle]="{'visibility': visibility}">
+                <p-paginator #paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                    [totalRecords]="totalRecords" [showCurrentPageReport]="true" [showPageLinks]="true"
+                    [pageLinkSize]="10" [showJumpToPageDropdown]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+                    [rowsPerPageOptions]="[10, 20, 30]" />
+            </div>
         </div>
     </div>
-</ng-template>
 
-<div style="display: none;">
-    <a routerLink="/home" class="p-button font-bold">back to home</a>
+    <!-- <ng-template #empty> -->
+    <div *ngSwitchCase="0">
+        <div class="fullpage-empty">
+            <div class="empty-library">
+                There are no videos added to the library!
+            </div>
+        </div>
+    </div>
+
+    <!-- <ng-template #empty> -->
+    <div *ngSwitchCase="-1" class="spinner">
+        <p-progressSpinner ariaLabel="loading" />
+    </div>
+
+    <div style="display: none;">
+        <a routerLink="/home" class="p-button font-bold">back to home</a>
+    </div>
 </div>

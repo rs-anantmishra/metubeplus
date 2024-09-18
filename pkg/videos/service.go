@@ -2,7 +2,6 @@ package videos
 
 import (
 	"encoding/base64"
-	"fmt"
 	"os"
 	"strings"
 
@@ -48,10 +47,6 @@ func GetVideosPageInfo(videos []entities.Videos) []presenter.LimitedCardsInfoRes
 	var lstCardsInfo []presenter.LimitedCardsInfoResponse
 	for _, elem := range videos {
 		var cardsInfo presenter.LimitedCardsInfoResponse
-
-		if elem.Id == 212 {
-			fmt.Println([]byte(elem.Title))
-		}
 
 		cardsInfo.VideoId = elem.Id
 		cardsInfo.Title = elem.Title

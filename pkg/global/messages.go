@@ -87,7 +87,7 @@ func DefragmentQueue() {
 			dsQueue[k].VideoId = 0
 			dsQueue[k].VideoURL = ""
 			dsQueue[k].StatusMessage = ""
-			dsQueue[k].State = -1
+			dsQueue[k].State = Unassigned
 		} else if dsQueue[k].State == Queued {
 			items = append(items, dsQueue[k])
 		}
@@ -95,10 +95,10 @@ func DefragmentQueue() {
 
 	currentQueueIndex[0] = len(items)
 	copy(dsQueue, items)
-
 }
 
 const (
+	Unassigned  = iota
 	Queued      = iota
 	Downloading = iota
 	Completed   = iota

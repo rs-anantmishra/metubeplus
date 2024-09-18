@@ -6,37 +6,46 @@ import { SharedDataService } from './shared-data.service';
 const apiUrl: string = 'http://localhost:3000/api'
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class DownloadService {
 
-  constructor(private http: HttpClient, private sharedData: SharedDataService) { }
+    constructor(private http: HttpClient, private sharedData: SharedDataService) { }
 
-  //metadata
-  async getMetadata(request: VideoDataRequest): Promise<VideoData[]> {
-    let url = '/download/metadata'
+    //metadata
+    async getMetadata(request: VideoDataRequest): Promise<VideoData[]> {
+        let url = '/download/metadata'
 
-    return fetch(apiUrl + url, {
-      method: 'POST',
-      body: JSON.stringify(request),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(response => { return response.json(); });
-  }
+        return fetch(apiUrl + url, {
+            method: 'POST',
+            body: JSON.stringify(request),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => { return response.json(); });
+    }
 
-  //media
-  async getMedia(request: QueueDownloads): Promise<string> {
-    let url = '/download/media'
+    //media
+    async getMedia(request: QueueDownloads): Promise<string> {
+        let url = '/download/media'
 
-    return fetch(apiUrl + url, {
-      method: 'POST',
-      body: JSON.stringify(request),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(response => { return response.json(); });
-  }
+        return fetch(apiUrl + url, {
+            method: 'POST',
+            body: JSON.stringify(request),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => { return response.json(); });
+    }
 
-  
+    //queued-items
+    async getQueuedItems(): Promise<VideoData[]> {
+        let url = '/download/queued-items'
+
+        return fetch(apiUrl + url, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        }).then(response => { return response.json(); });
+    }
+
 }

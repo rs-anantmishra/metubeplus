@@ -73,3 +73,10 @@ const GetAllVideos_Info string = `Select V.Id, V.Title, V.Description, V.Duratio
 								  INNER JOIN tblFormats F ON V.FormatId = F.Id
 								  INNER JOIN tblFiles FIThumbnail ON (V.Id = FIThumbnail.VideoId AND FIThumbnail.FileType = 'Thumbnail')
 								  INNER JOIN tblFiles FIVideo ON (V.Id = FIVideo.VideoId AND FIVideo.FileType = 'Video');`
+
+const GetQueuedVideoDetailsById string = `Select V.Id, V.Title, C.Name as 'Channel', V.Description, V.DurationSeconds as 'Duration', V.WebpageURL as 'OriginalURL', FIThumbnail.FilePath || '\' || FIThumbnail.FileName as 'Thumbnail'
+										  FROM tblVideos V
+										  INNER JOIN tblChannels C ON V.ChannelId = C.Id
+										  INNER JOIN tblPlaylists P ON V.PlaylistId = P.Id
+										  INNER JOIN tblFiles FIThumbnail ON (V.Id = FIThumbnail.VideoId AND FIThumbnail.FileType = 'Thumbnail')
+										  WHERE V.Id = ?`

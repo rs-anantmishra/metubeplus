@@ -39,6 +39,27 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 	// just show that error on the UI
 	result := svcVideos.ExtractIngestMetadata(*params)
 
+	//queue downloads below
+	//global MPI
+	maxQueueLength, _ := strconv.Atoi((cfg.Config("MAX_QUEUE")))
+	lstDownloads := g.NewDownloadStatus()
+	qAlive := g.NewQueueAlive()
+	currentQueueIndex := g.NewCurrentQueueIndex()
+
+	if maxQueueLength-currentQueueIndex[0]-len(result) >= 0 {
+		for idx := range result {
+			lstDownloads[currentQueueIndex[0]] = g.DownloadStatus{VideoId: result[idx].VideoId, VideoURL: result[idx].OriginalURL, StatusMessage: "", State: g.Queued}
+			currentQueueIndex[0]++
+		}
+	} else {
+		//send error response that queue is full. Please wait for existing downloads to complete.
+	}
+
+	if qAlive[0] != 1 {
+		qAlive[0] = 1
+		go svcVideos.ExtractIngestMedia()
+	}
+
 	return c.Status(fiber.StatusOK).JSON(result)
 }
 
@@ -161,4 +182,25 @@ func NetworkIngestAutoSubs(c *fiber.Ctx) error {
 
 func NetworkIngestThumbnail(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": "nil"})
+}
+
+func NetworkIngestQueuedItems(c *fiber.Ctx) error {
+
+	allQueueItems := g.NewDownloadStatus()
+	var queuedItemsId []int
+
+	for _, elem := range allQueueItems {
+		if elem.State == g.Queued {
+			queuedItemsId = append(queuedItemsId, elem.VideoId)
+		}
+	}
+
+	//Instantiate
+	svcDownloads := ex.NewDownload(en.IncomingRequest{})
+	svcRepo := ex.NewDownloadRepo(sql.DB)
+	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
+
+	result := svcVideos.GetQueuedItemsDetails(queuedItemsId)
+
+	return c.Status(fiber.StatusOK).JSON(result)
 }

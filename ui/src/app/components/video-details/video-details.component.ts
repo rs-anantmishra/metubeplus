@@ -25,17 +25,17 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
     selectedVideo: VideoData = new VideoData()
 
     constructor(private svcSharedData: SharedDataService) {
-        this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
         this.player = new Plyr('#plyrID', { captions: { active: true }, loop: { active: true }, ratio: '16:9' });
+        this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
     }
-
-    async ngOnInit(): Promise<void> {
-
+    
+    async ngOnInit(): Promise<void> {    
+        
         //encode
-        const enc = new TextEncoder();
-        let array = enc.encode(this.selectedVideo.title)
-
-        console.log(array)
+        // const enc = new TextEncoder();
+        // let array = enc.encode(this.selectedVideo.title)
+        // console.log(array)
+        
         //decode
         // const dec = new TextDecoder("windows-1252");
         // this.selectedVideo.description = dec.decode(array);

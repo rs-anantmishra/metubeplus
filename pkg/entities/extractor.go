@@ -33,3 +33,14 @@ type SavedMediaInformation struct {
 	PlaylistVideoIndex int
 	YoutubeVideoId     string
 }
+
+type MinimalCardsInfo struct {
+	VideoId       int
+	Title         string
+	Description   string
+	Duration      int
+	OriginalURL   string
+	Thumbnail     string
+	VideoFilepath string
+	Channel       string
+}

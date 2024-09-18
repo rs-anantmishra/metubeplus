@@ -76,15 +76,15 @@ func BuilderOptions() []CSwitch {
 		},
 		{Index: 9, Name: `PlaylistTitle`, Value: PlaylistTitle, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 10, Name: `PlaylistIndex`, Value: PlaylistIndex, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 11, Name: `PlaylistCount`, Value: PlaylistCount, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 12, Name: `Tags`, Value: Tags, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
@@ -132,7 +132,7 @@ func BuilderOptions() []CSwitch {
 		},
 		{Index: 23, Name: `PlaylistId`, Value: PlaylistId, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 24, Name: `ShowProgress`, Value: ShowProgress, DataField: false, Group: FxGroups{
 			Playlist: Functions{Metadata: false, Download: true, Subtitle: true, Thumbnail: true},
@@ -175,7 +175,7 @@ func BuilderOptions() []CSwitch {
 			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 34, Name: `OutputPlaylistThumbnailFile`, Value: OutputPlaylistThumbnailFile, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: true},
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
 			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 35, Name: `OutputVideoFile`, Value: OutputVideoFile, DataField: false, Group: FxGroups{
@@ -188,7 +188,7 @@ func BuilderOptions() []CSwitch {
 		},
 		{Index: 37, Name: `OutputThumbnailFile`, Value: OutputThumbnailFile, DataField: false, Group: FxGroups{
 			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: true}},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true}},
 		},
 		//Audio only file options to be added later
 	}
