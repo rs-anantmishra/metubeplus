@@ -51,9 +51,10 @@ export class DownloadsComponent implements OnInit {
     nilMetadata = new VideoData()
 
     constructor(private messageService: MessageService,
-        private currentDL: DownloadService,
+        private svcDownload: DownloadService,
         private sharedData: SharedDataService,
         private msg: Messages) {
+
         this.wsMessage = msg.wsMessage
         this.serverLogs = msg.serverLogs
     }
@@ -64,6 +65,7 @@ export class DownloadsComponent implements OnInit {
     activeDLImage = ''
     activeDLChannel = ''
     activeDLTitle = ''
+    activeDownload: VideoData = new VideoData()
 
 
     async getDownloadStatus() {
@@ -85,11 +87,20 @@ export class DownloadsComponent implements OnInit {
     }
 
     async updateLogs(message: string) {
+        let isActiveDownload = this.sharedData.getIsDownloadActive()
+
+        if (!isActiveDownload) {
+            await this.getAndSaveActiveDownload()
+            this.populateVideoMetadata()
+            if (this.activeDownload !== null && this.activeDownload.title !== '') {
+                this.sharedData.setIsDownloadActive(true)
+            }
+        }
 
         const log = JSON.parse(message)
         if (log.download === this.msg.downloadComplete) {
-            //update UI logs
             this.serverLogs = log.download
+            this.sharedData.setIsDownloadActive(false)
         } else if (this.serverLogs === this.msg.downloadComplete) {
             this.serverLogs = this.serverLogs + ' ' + log.download
         } else if (log.download.indexOf(this.msg.downloadInfoIdentifier) !== -1) {
@@ -119,7 +130,7 @@ export class DownloadsComponent implements OnInit {
         this.sharedData.isPlaylist = this.sharedData.getIsPlaylist()
         this.sharedData.isDownloadActive = this.sharedData.getIsDownloadActive()
         this.sharedData.activeDownloadMetadata = this.sharedData.getActiveDownloadMetadata()
-        
+
         //get queued-items on reload
         await this.getQueuedItems()
 
@@ -142,13 +153,21 @@ export class DownloadsComponent implements OnInit {
 
     async GetMedia() {
         this.loading = true;
-        let metadataRequest = await this.GetMetadataRequest(this.options)        
+        let metadataRequest = await this.GetMetadataRequest(this.options)
         if (metadataRequest.Indicator === '') {
             this.showMessage('No URL or Identifier provided', 'error', 'error')
             return
         }
 
-        let metadata: VideoData[] = await this.currentDL.getMetadata(metadataRequest)
+        let metadata: VideoData[] = await this.svcDownload.getMetadata(metadataRequest)
+        let isDownloadActive = this.sharedData.getIsDownloadActive()
+        if (!isDownloadActive) {
+            await this.getAndSaveActiveDownload()
+            this.populateVideoMetadata()
+
+            //set to true
+            this.sharedData.setIsDownloadActive(true)
+        }
 
         if (metadata.length > 1) {
             // this.sharedData.setIsPlaylist(true);
@@ -199,15 +218,18 @@ export class DownloadsComponent implements OnInit {
     }
 
     populateVideoMetadata() {
+        //clear previous
+        this.activeDownload = new VideoData()
 
-        if (this.sharedData.activeDownloadMetadata.length == 0) {
-            this.sharedData.activeDownloadMetadata = this.sharedData.getActiveDownloadMetadata()
-        }
+        //get ActiveDownloadMetadata
+        this.activeDownload = this.sharedData.getActiveDownloadMetadata()[0]
+        console.log('activedownload is null?', this.activeDownload)
 
-        this.activeDLChannel = this.sharedData.activeDownloadMetadata[0].channel
-        this.activeDLTitle = this.sharedData.activeDownloadMetadata[0].title
-        this.activeDLImage = this.sharedData.activeDownloadMetadata[0].thumbnail
+        this.activeDLChannel = this.activeDownload.channel
+        this.activeDLTitle = this.activeDownload.title
+        this.activeDLImage = this.activeDownload.thumbnail
         this.serverLogs = ">>>waiting for server logs<<<"
+
     }
 
     async resetDownloadOptions() {
@@ -218,7 +240,11 @@ export class DownloadsComponent implements OnInit {
 
     async getQueuedItems() {
         this.sidebarVisible = true
-        await this.currentDL.getQueuedItems().then(x => this.queuedItems = x)
+        await this.svcDownload.getQueuedItems("queued").then(item => { this.queuedItems = item })
+    }
+
+    async getAndSaveActiveDownload() {
+        await this.svcDownload.getQueuedItems("downloading").then(item => { this.sharedData.setActiveDownloadMetadata(item); })
     }
 
 

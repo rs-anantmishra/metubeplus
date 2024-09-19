@@ -1,7 +1,6 @@
 package extractor
 
 import (
-	"strconv"
 	"strings"
 
 	c "github.com/rs-anantmishra/metubeplus/config"
@@ -273,8 +272,6 @@ func cmdBuilderDownload(url string, indicatorType int, smi e.SavedMediaInformati
 		if indicatorType == Playlist && elem.Group.Playlist.Download {
 			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
 				smi.PlaylistTitle = strings.ReplaceAll(smi.PlaylistTitle, "//", "")
-				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist)s", smi.PlaylistTitle)
-				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist_index)s", strconv.Itoa(smi.PlaylistVideoIndex))
 			}
 			args = append(args, elem.Value)
 		}
@@ -304,8 +301,6 @@ func cmdBuilderSubtitles(url string, indicatorType int, smi e.SavedMediaInformat
 		if indicatorType == Playlist && elem.Group.Playlist.Subtitle {
 			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
 				smi.PlaylistTitle = strings.ReplaceAll(smi.PlaylistTitle, "//", "")
-				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist)s", smi.PlaylistTitle)
-				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist_index)s", strconv.Itoa(smi.PlaylistVideoIndex))
 			}
 			args = append(args, elem.Value)
 		}
@@ -335,8 +330,6 @@ func cmdBuilderThumbnails(url string, indicatorType int, smi e.SavedMediaInforma
 		if indicatorType == Playlist && elem.Group.Playlist.Thumbnail {
 			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
 				smi.PlaylistTitle = strings.ReplaceAll(smi.PlaylistTitle, "//", "")
-				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist)s", smi.PlaylistTitle)
-				elem.Value = strings.ReplaceAll(elem.Value, "%(playlist_index)s", strconv.Itoa(smi.PlaylistVideoIndex))
 			}
 			args = append(args, elem.Value)
 		}

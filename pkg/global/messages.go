@@ -21,12 +21,15 @@ var onceQueueAlive sync.Once
 // Singletons
 
 type DownloadStatus struct {
-	VideoId       int    //Local VideoId
-	VideoURL      string //Network Video Id
-	StatusMessage string //completion percentage is in here
-	State         int    //0 = downloading, 1 = queued, 2 = Downloaded
-	VideoTitle    string //VideoTitle
-	Channel       string //Channel
+	VideoId       int    // Local VideoId
+	VideoURL      string // Network Video Id
+	StatusMessage string // completion percentage is in here
+	State         int    // 0 = downloading, 1 = queued, 2 = Downloaded
+	Title         string // VideoTitle
+	Channel       string // Channel
+	Thumbnail     string // Thumbnail base64
+	Duration      int    // content duration
+	Description   string // Video descriptions
 	// PlaylistOrVideo string // Possible Values: "Playlist" or "Video"
 	// PlaylistId      int    // Playlist Id from db
 }

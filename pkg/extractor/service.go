@@ -66,6 +66,7 @@ func (s *service) ExtractIngestMedia() {
 
 			//copy to active-item
 			activeItem[0] = lstDownloads[i]
+			lstDownloads[i].State = g.Downloading
 
 			//download file
 			smi, fp, err := s.repository.GetVideoFileInfo(activeItem[0].VideoId)

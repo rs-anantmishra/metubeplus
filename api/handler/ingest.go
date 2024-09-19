@@ -48,7 +48,15 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 
 	if maxQueueLength-currentQueueIndex[0]-len(result) >= 0 {
 		for idx := range result {
-			lstDownloads[currentQueueIndex[0]] = g.DownloadStatus{VideoId: result[idx].VideoId, VideoURL: result[idx].OriginalURL, StatusMessage: "", State: g.Queued}
+			lstDownloads[currentQueueIndex[0]] = g.DownloadStatus{VideoId: result[idx].VideoId,
+				VideoURL:      result[idx].OriginalURL,
+				StatusMessage: "",
+				State:         g.Queued,
+				Title:         result[idx].Title,
+				Channel:       result[idx].Channel,
+				Duration:      result[idx].Duration,
+				Thumbnail:     result[idx].Thumbnail,
+			}
 			currentQueueIndex[0]++
 		}
 	} else {
@@ -186,21 +194,44 @@ func NetworkIngestThumbnail(c *fiber.Ctx) error {
 
 func NetworkIngestQueuedItems(c *fiber.Ctx) error {
 
+	qry := c.Queries()
+	state := qry["state"]
+
 	allQueueItems := g.NewDownloadStatus()
-	var queuedItemsId []int
+	var queuedItems []res.LimitedCardsInfoResponse
 
 	for _, elem := range allQueueItems {
-		if elem.State == g.Queued {
-			queuedItemsId = append(queuedItemsId, elem.VideoId)
+		if elem.State == g.Queued && state == "queued" {
+			queuedItems = append(queuedItems, res.LimitedCardsInfoResponse{
+				VideoId:       elem.VideoId,
+				Title:         elem.Title,
+				Description:   elem.Title,
+				Duration:      elem.Duration,
+				OriginalURL:   elem.VideoURL,
+				Thumbnail:     elem.Thumbnail,
+				VideoFilepath: "",
+				Channel:       elem.Channel,
+			})
+		} else if elem.State == g.Downloading && state == "downloading" {
+			queuedItems = append(queuedItems, res.LimitedCardsInfoResponse{
+				VideoId:       elem.VideoId,
+				Title:         elem.Title,
+				Description:   elem.Title,
+				Duration:      elem.Duration,
+				OriginalURL:   elem.VideoURL,
+				Thumbnail:     elem.Thumbnail,
+				VideoFilepath: "",
+				Channel:       elem.Channel,
+			})
 		}
 	}
 
 	//Instantiate
-	svcDownloads := ex.NewDownload(en.IncomingRequest{})
-	svcRepo := ex.NewDownloadRepo(sql.DB)
-	svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
+	//svcDownloads := ex.NewDownload(en.IncomingRequest{})
+	//svcRepo := ex.NewDownloadRepo(sql.DB)
+	//svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
 
-	result := svcVideos.GetQueuedItemsDetails(queuedItemsId)
+	//result := svcVideos.GetQueuedItemsDetails(queuedItemsId)
 
-	return c.Status(fiber.StatusOK).JSON(result)
+	return c.Status(fiber.StatusOK).JSON(queuedItems)
 }

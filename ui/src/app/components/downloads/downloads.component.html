@@ -46,7 +46,7 @@
 <div>
     <p-sidebar [(visible)]="sidebarVisible" styleClass="queued-box">
         <h3 class="queued-heading">Queued Downloads</h3>
-        <div *ngIf="this.queuedItems.length > 0; else elseBlock">
+        <div *ngIf="this.queuedItems !== null && this.queuedItems.length > 0; else elseBlock">
             <app-simplecard *ngFor="let metadata of this.queuedItems" [meta]="metadata"></app-simplecard>
         </div>
         <ng-template #elseBlock>

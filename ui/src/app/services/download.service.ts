@@ -39,10 +39,10 @@ export class DownloadService {
     }
 
     //queued-items
-    async getQueuedItems(): Promise<VideoData[]> {
+    async getQueuedItems(state: string): Promise<VideoData[]> {
         let url = '/download/queued-items'
-
-        return fetch(apiUrl + url, {
+        let queryParams = '?state=' + state
+        return fetch(apiUrl + url + queryParams, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         }).then(response => { return response.json(); });
