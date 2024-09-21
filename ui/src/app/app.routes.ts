@@ -9,12 +9,12 @@ import { PlaylistDetailsComponent } from './components/playlist-details/playlist
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
-    { path: 'home', component: DownloadsComponent, title: 'Metube+' },
-    { path: 'videos', component: VideosComponent, title: 'Videos+' },
-    { path: 'tags', component: TagsComponent, title: 'Tags+' },
-    { path: 'categories', component: CategoriesComponent, title: 'Categories+' },
-    { path: 'play', component: VideoDetailsComponent, title: 'Metube+' },
-    { path: 'playlists', component: PlaylistsComponent, title: 'Playlists+' },
-    { path: 'playlist-details', component: PlaylistDetailsComponent, title: 'Metube+' },
+    { path: 'home', component: DownloadsComponent, title: 'Streamsphere' },
+    { path: 'videos', component: VideosComponent, title: 'Streamsphere' },
+    { path: 'tags', component: TagsComponent, title: 'Streamsphere' },
+    { path: 'categories', component: CategoriesComponent, title: 'Streamsphere' },
+    { path: 'play', component: VideoDetailsComponent, title: 'Streamsphere' },
+    { path: 'playlists', component: PlaylistsComponent, title: 'Streamsphere' },
+    { path: 'playlist-details', component: PlaylistDetailsComponent, title: 'Streamsphere' },
     { path: '**', redirectTo: '/home'}
 ];
