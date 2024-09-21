@@ -56,7 +56,7 @@ If you have an entry for the video in SQLite and you are attempting to download 
 - Favorites/Liked Category of Videos
 - Shorts autofind and cluster into 1 category
 - Autofind lyrics to songs.
-- Get Lyrics for Songs
+- Get Lyrics for Songs (may not be needed.)
 
 Priority wise distribution of work items to be done asap.
 Implement Project Management in Projects section. 
