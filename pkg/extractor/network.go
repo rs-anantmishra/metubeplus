@@ -481,7 +481,7 @@ func sanitizeResults(b bytes.Buffer) []string {
 		}
 
 		//handle description differently
-		if i == 2 && strings.Contains(results[i], "description") {
+		if strings.Contains(results[i], "description") {
 			results[i] = strings.ReplaceAll(results[i], "\\n", "<br />")
 		}
 	}
@@ -494,7 +494,18 @@ func sanitizeResults(b bytes.Buffer) []string {
 }
 
 // valid json require keys and values to be enclosed in double quotes, not single quotes
+// escaped single quotes within data replaced with escaped double quotes
 func proximityQuoteReplacement(data string) string {
+
+	//replace double-quotes with escaped-double-quotes
+	//if condition because in some case double quotes is text qualifier
+	//for the value field while the key is still using single quotes
+	if !strings.Contains(data, ": \"") {
+		data = strings.ReplaceAll(data, "\"", "\\\"")
+	}
+
+	//replace escaped-single-quotes with single-quotes
+	data = strings.ReplaceAll(data, "\\'", "'")
 
 	dQ := []byte("\"")[0]
 	b := []byte(data)
@@ -547,7 +558,8 @@ func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInfor
 			//Unmarshall is unreliable since the json coming from yt-dlp is invalid.
 			//case statement for handling each field is required here because unmarshal is shit.
 			if results[i][0] == '{' && results[i][len(results[i])-1] == '}' {
-				json.Unmarshal([]byte(results[i]), &mediaInfo)
+				err := json.Unmarshal([]byte(results[i]), &mediaInfo)
+				handleErrors(err, "JSON Parser")
 			}
 		}
 
