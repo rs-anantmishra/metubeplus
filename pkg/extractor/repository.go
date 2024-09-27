@@ -41,8 +41,8 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 		if channelId <= 0 {
 			var args []any
 			args = append(args, elem.Channel)
-			args = append(args, elem.ChannelURL)
 			args = append(args, elem.ChannelFollowerCount)
+			args = append(args, elem.ChannelURL)
 			args = append(args, elem.ChannelId)
 			args = append(args, time.Now().Unix())
 

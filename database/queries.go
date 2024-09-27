@@ -22,6 +22,15 @@ const InsertMetadata string = `INSERT INTO tblVideos (
 	,WebpageURL
 	,LiveStatus
 	,Availability
+	,YoutubeViewCount
+	,LikeCount
+	,DislikeCount
+	,License
+	,AgeLimit
+	,PlayableInEmbed
+	,UploadDate
+	,ReleaseTimestamp
+	,ModifiedTimestamp
 	,PlaylistVideoIndex
 	,IsFileDownloaded
 	,FileId
@@ -34,7 +43,7 @@ const InsertMetadata string = `INSERT INTO tblVideos (
 	,IsDeleted
 	,CreatedDate
 )
-VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
+VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
 
 const InsertTagsCheck string = `Select Id From tblTags Where Name = ?`
 const InsertTags string = `INSERT INTO tblTags Select NULL, ?, ?, ?;`

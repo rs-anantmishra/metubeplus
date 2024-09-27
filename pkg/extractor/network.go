@@ -71,7 +71,7 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 	var pResult []string
 	var mediaInfo []e.MediaInformation
 
-	pResult = executeProcess(stdout)
+	pResult = executeProcess(stdout, false)
 	mediaInfo = parseResults(pResult, VideoMetadata)
 
 	////////////////////////////////////
@@ -126,7 +126,7 @@ func (d *download) ExtractMediaContent(smi e.SavedMediaInformation) int {
 
 func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files {
 
-	args, command := cmdBuilderThumbnails(d.p.Indicator, d.indicatorType, lstSMI[0])
+	args, command := cmdBuilderThumbnails(d.p.Indicator, lstSMI[0])
 	logCommand := command + Space + args
 
 	//log executed command - in activity log later
@@ -136,7 +136,7 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 	err := cmd.Start()
 	handleErrors(err, "Thumbnail - Cmd.Start")
 
-	pResult := executeProcess(stdout)
+	pResult := executeProcess(stdout, true)
 	_, errors, results := stripResultSections(pResult)
 
 	//results are not really needed - except maybe to check for errors.
@@ -248,7 +248,7 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.
 	err := cmd.Start()
 	handleErrors(err, "Subtitles - Cmd.Start")
 
-	pResult := executeProcess(stdout)
+	pResult := executeProcess(stdout, true)
 	_, errors, results := stripResultSections(pResult)
 
 	//results are not really needed - except maybe to check for errors.
@@ -367,7 +367,7 @@ func getIndicatorType(url string) (int, int) {
 	err := cmd.Start()
 	handleErrors(err, "ValidateRequest - Cmd.Start")
 
-	pResult := executeProcess(stdout)
+	pResult := executeProcess(stdout, false)
 	_, _, results := stripResultSections(pResult)
 
 	switch {
@@ -394,7 +394,7 @@ func buildProcess(args string, command string) (*exec.Cmd, io.ReadCloser) {
 	return cmd, stdout
 }
 
-func executeProcess(stdout io.ReadCloser) []string {
+func executeProcess(stdout io.ReadCloser, isFileDownload bool) []string {
 	// var result string
 	var b bytes.Buffer
 	for {
@@ -416,7 +416,10 @@ func executeProcess(stdout io.ReadCloser) []string {
 	}
 
 	//sanitize and return
-	results := sanitizeResults(b)
+	var results []string
+	if !isFileDownload {
+		results = sanitizeResults(b)
+	}
 	return results
 }
 
@@ -506,6 +509,11 @@ func proximityQuoteReplacement(data string) string {
 	//for the value field while the key is still using single quotes
 	if !strings.Contains(data, ": \"") {
 		data = strings.ReplaceAll(data, "\"", "\\\"")
+	}
+
+	//replace boolean values not enclosed in any quotes to be of lower case atleast.
+	if strings.Contains(data, ": True}") || strings.Contains(data, ": False}") {
+		data = strings.ToLower(data)
 	}
 
 	//replace escaped-single-quotes with single-quotes
@@ -664,7 +672,7 @@ func patchDataField(mediaInfo e.MediaInformation) e.MediaInformation {
 		err := cmd.Start()
 		handleErrors(err, "patchDataField - Cmd.Start")
 
-		procResult := executeProcess(stdout)
+		procResult := executeProcess(stdout, false)
 
 		for i := range procResult {
 			if idx := strings.Index(procResult[i], plainChannel); idx == 0 {

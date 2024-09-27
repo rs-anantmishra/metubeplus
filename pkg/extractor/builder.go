@@ -190,8 +190,8 @@ func BuilderOptions() []CSwitch {
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true}},
 		},
 		{Index: 38, Name: `ThumbnailURL`, Value: ThumbnailURL, DataField: true, Group: FxGroups{
-			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true}},
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 39, Name: `License`, Value: License, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
@@ -349,7 +349,7 @@ func cmdBuilderSubtitles(url string, indicatorType int, smi e.SavedMediaInformat
 	return arguments, cmd
 }
 
-func cmdBuilderThumbnails(url string, indicatorType int, smi e.SavedMediaInformation) (string, string) {
+func cmdBuilderThumbnails(url string, smi e.SavedMediaInformation) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
@@ -358,12 +358,12 @@ func cmdBuilderThumbnails(url string, indicatorType int, smi e.SavedMediaInforma
 	for _, elem := range bo {
 
 		//Handle Video
-		if indicatorType == Video && elem.Group.Video.Thumbnail {
+		if elem.Group.Video.Thumbnail && smi.PlaylistId == -1 {
 			args = append(args, elem.Value)
 		}
 
 		//Handle Playlist
-		if indicatorType == Playlist && elem.Group.Playlist.Thumbnail {
+		if elem.Group.Video.Thumbnail && smi.PlaylistId > 0 {
 			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
 				smi.PlaylistTitle = strings.ReplaceAll(smi.PlaylistTitle, "//", "")
 			}

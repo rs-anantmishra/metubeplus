@@ -33,8 +33,11 @@ type MediaInformation struct {
 	LikeCount            int      `json:"like_count"`             //added later
 	DislikeCount         int      `json:"dislike_count"`          //added later
 	AgeLimit             int      `json:"age_limit"`              //added later
-	PlayableInEmbed      bool     `json:"playable_in_embed"`      //added later
+	PlayableInEmbed      Bool     `json:"playable_in_embed"`      //added later
 }
+
+// helps unmarshalling unquoted true/false as bools in json
+type Bool bool
 
 type SavedMediaInformation struct {
 	VideoId            int
