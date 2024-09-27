@@ -15,7 +15,7 @@ type IRepository interface {
 	SaveSubtitles([]e.Files) []int
 	SaveMediaContent([]e.Files) []int
 	GetVideoFileInfo(videoId int) (e.SavedMediaInformation, e.Filepath, error)
-	GetVideoDetails(videoId int) (e.MinimalCardsInfo, error)
+	GetQueuedVideoDetails(videoId int) (e.MinimalCardsInfo, error)
 }
 
 type repository struct {
@@ -42,6 +42,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 			var args []any
 			args = append(args, elem.Channel)
 			args = append(args, elem.ChannelURL)
+			args = append(args, elem.ChannelFollowerCount)
 			args = append(args, elem.ChannelId)
 			args = append(args, time.Now().Unix())
 
@@ -101,6 +102,15 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 			args = append(args, elem.OriginalURL)
 			args = append(args, elem.LiveStatus)
 			args = append(args, elem.Availability)
+			args = append(args, elem.YoutubeViewCount)
+			args = append(args, elem.LikeCount)
+			args = append(args, elem.DislikeCount)
+			args = append(args, elem.License)
+			args = append(args, elem.AgeLimit)
+			args = append(args, elem.PlayableInEmbed)
+			args = append(args, elem.UploadDate)
+			args = append(args, elem.ReleaseTimestamp)
+			args = append(args, elem.ModifiedTimestamp)
 			args = append(args, elem.PlaylistIndex)
 			args = append(args, 0) //IsFileDownloaded
 			args = append(args, 0) //FileId
@@ -297,7 +307,7 @@ func (r *repository) GetVideoFileInfo(videoId int) (e.SavedMediaInformation, e.F
 	return smi, fPath, nil
 }
 
-func (r *repository) GetVideoDetails(videoId int) (e.MinimalCardsInfo, error) {
+func (r *repository) GetQueuedVideoDetails(videoId int) (e.MinimalCardsInfo, error) {
 
 	var minInfo e.MinimalCardsInfo
 

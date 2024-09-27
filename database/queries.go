@@ -2,7 +2,7 @@ package database
 
 // This file to be replaced with .sql files for each query
 const InsertChannelCheck string = `Select Id From tblChannels Where YoutubeChannelId = ?`
-const InsertChannel string = `INSERT INTO tblChannels Select NULL, ?, ?, ?, ?;`
+const InsertChannel string = `INSERT INTO tblChannels Select NULL, ?, ?, ?, ?, ?;`
 
 const InsertPlaylistCheck string = `Select Id From tblPlaylists WHERE YoutubePlaylistID = ?`
 const InsertPlaylist string = `INSERT INTO tblPlaylists Select NULL, ?, ?, ?, ?, ?, ?, ?;`

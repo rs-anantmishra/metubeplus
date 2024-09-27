@@ -19,8 +19,8 @@ import (
 type IDownload interface {
 	ExtractMetadata() ([]e.MediaInformation, e.Filepath)
 	ExtractMediaContent(smi e.SavedMediaInformation) int
-	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	ExtractSubtitles(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
+	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
 	GetDownloadedMediaFileInfo(smi e.SavedMediaInformation, fp e.Filepath) []e.Files
 	Cleanup()
 }
@@ -50,10 +50,14 @@ func (d *download) Cleanup() {
 
 func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
-	indicatorType, itemCount := getIndicatorType(d.p.Indicator)
-	d.indicatorType = indicatorType
+	//itemCount is {title:"value"} counts.
+	//indicatorType, itemCount := getIndicatorType(d.p.Indicator)
+	//d.indicatorType = indicatorType
 
-	args, command := cmdBuilderMetadata(d.p.Indicator, indicatorType)
+	////////////////////////////////////
+	// getURLDomain - UI ///////////////
+	////////////////////////////////////
+	args, command := cmdBuilderMetadata(d.p.Indicator)
 	logCommand := command + Space + args
 
 	//log executed command - in activity log later
@@ -66,21 +70,21 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
 	var pResult []string
 	var mediaInfo []e.MediaInformation
-	if indicatorType == Video {
-		pResult = executeProcess(stdout)
-		video := parseResults(pResult, VideoMetadata, itemCount)
 
-		fmt.Println(video)
-		mediaInfo = video
-	}
+	pResult = executeProcess(stdout)
+	mediaInfo = parseResults(pResult, VideoMetadata)
 
-	if indicatorType == Playlist {
-		pResult = executeProcess(stdout)
-		playlist := parseResults(pResult, PlaylistMetadata, itemCount)
+	////////////////////////////////////
+	//handle shortened URL /////////////
+	////////////////////////////////////
 
-		fmt.Println(playlist)
-		mediaInfo = playlist
-	}
+	// if indicatorType == Playlist {
+	// 	pResult = executeProcess(stdout)
+	// 	playlist := parseResults(pResult, PlaylistMetadata, itemCount)
+
+	// 	fmt.Println(playlist)
+	// 	mediaInfo = playlist
+	// }
 
 	fp := e.Filepath{Domain: mediaInfo[0].Domain, Channel: mediaInfo[0].Channel, PlaylistTitle: mediaInfo[0].PlaylistTitle}
 
@@ -537,9 +541,19 @@ func proximityQuoteReplacement(data string) string {
 	return data
 }
 
-func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInformation {
+func parseResults(pResult []string, metadataType int) []e.MediaInformation {
 
 	_, _, results := stripResultSections(pResult)
+	var itemCount int         //no of Videos. If its
+	titleKey := "{\"title\":" //title of the video starts with in results json
+
+	//count title keys
+	for _, elem := range results {
+		//if the string starts with a title key, it is a new video
+		if strings.Index(elem, titleKey) == 0 {
+			itemCount = itemCount + 1
+		}
+	}
 
 	metaItemsCount := 0
 	for _, elem := range BuilderOptions() {
@@ -551,7 +565,7 @@ func parseResults(pResult []string, metadataType int, vCount int) []e.MediaInfor
 	}
 
 	var lstMediaInfo []e.MediaInformation
-	for k := 0; k < vCount; k++ {
+	for k := 0; k < itemCount; k++ {
 		mediaInfo := e.MediaInformation{}
 		for i := (0 + k*metaItemsCount); i < (k+1)*metaItemsCount; i++ {
 

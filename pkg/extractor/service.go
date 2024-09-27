@@ -100,7 +100,7 @@ func (s *service) GetQueuedItemsDetails(videoIds []int) []p.LimitedCardsInfoResp
 
 	for _, elem := range videoIds {
 		if elem > 0 {
-			mci, err := s.repository.GetVideoDetails(elem)
+			mci, err := s.repository.GetQueuedVideoDetails(elem)
 			handleErrors(err, "GetQueuedItemsDetails")
 			result = append(result, p.LimitedCardsInfoResponse{VideoId: mci.VideoId, Title: mci.Title, Description: mci.Description, Duration: mci.Duration,
 				OriginalURL: mci.OriginalURL, Thumbnail: getImagesFromURLString(mci.Thumbnail), VideoFilepath: mci.VideoFilepath, Channel: mci.Channel})

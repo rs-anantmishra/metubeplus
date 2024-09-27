@@ -6,6 +6,15 @@ CREATE TABLE IF NOT EXISTS tblVideos(
 	WebpageURL TEXT NOT NULL,
 	LiveStatus TEXT,
 	Availability TEXT,
+    YoutubeViewCount INTEGER DEFAULT 0,
+    LikeCount INTEGER DEFAULT 0,
+    DislikeCount INTEGER DEFAULT 0,
+    License TEXT,    
+    AgeLimit INTEGER,
+    PlayableInEmbed TEXT,
+    UploadDate TEXT,
+    ReleaseTimestamp INTEGER,
+    ModifiedTimestamp INTEGER,
 	PlaylistVideoIndex INTEGER,
 	IsFileDownloaded INTEGER NOT NULL DEFAULT 0,
 	FileId INTEGER NOT NULL DEFAULT 0,
@@ -22,6 +31,7 @@ CREATE TABLE IF NOT EXISTS tblVideos(
 CREATE TABLE IF NOT EXISTS tblChannels(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	Name TEXT NOT NULL DEFAULT 'Unavailable',
+    ChannelFollowerCount INTEGER DEFAULT 0,
 	ChannelURL TEXT,
 	YoutubeChannelId INTEGER,
 	CreatedDate INTEGER NOT NULL
@@ -104,7 +114,7 @@ CREATE TABLE IF NOT EXISTS tblFiles(
 	Extension TEXT,
 	FileSize INTEGER,
 	FileSizeUnit TEXT,
-	NetworkPath TEXT,	
+	NetworkPath TEXT,
 	IsDeleted INTEGER,
 	CreatedDate INTEGER
 );

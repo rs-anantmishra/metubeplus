@@ -1,28 +1,39 @@
 package entities
 
 type MediaInformation struct {
-	YoutubeVideoId string   `json:"id"`
-	Channel        string   `json:"channel"`
-	Title          string   `json:"title"`
-	Description    string   `json:"description"`
-	Extension      string   `json:"ext"`
-	Duration       int      `json:"duration"`
-	Domain         string   `json:"webpage_url_domain"`
-	OriginalURL    string   `json:"original_url"`
-	PlaylistTitle  string   `json:"playlist_title"`
-	PlaylistCount  int      `json:"playlist_count"`
-	PlaylistIndex  int      `json:"playlist_index"`
-	Tags           []string `json:"tags"`
-	Format         string   `json:"format"`
-	Filesize       int      `json:"filesize_approx"`
-	FormatNote     string   `json:"format_note"`
-	Resolution     string   `json:"resolution"`
-	Categories     []string `json:"categories"`
-	ChannelId      string   `json:"channel_id"`
-	ChannelURL     string   `json:"channel_url"`
-	PlaylistId     string   `json:"playlist_id"`
-	Availability   string   `json:"availability"`
-	LiveStatus     string   `json:"live_status"`
+	YoutubeVideoId       string   `json:"id"`
+	Channel              string   `json:"channel"`
+	Title                string   `json:"title"`
+	Description          string   `json:"description"`
+	Extension            string   `json:"ext"`
+	Duration             int      `json:"duration"`
+	Domain               string   `json:"webpage_url_domain"`
+	OriginalURL          string   `json:"original_url"`
+	Tags                 []string `json:"tags"`
+	Format               string   `json:"format"`
+	Filesize             int      `json:"filesize_approx"`
+	FormatNote           string   `json:"format_note"`
+	Resolution           string   `json:"resolution"`
+	Categories           []string `json:"categories"`
+	ChannelId            string   `json:"channel_id"`
+	ChannelURL           string   `json:"channel_url"`
+	Availability         string   `json:"availability"`
+	LiveStatus           string   `json:"live_status"`
+	PlaylistId           string   `json:"playlist_id"`
+	PlaylistTitle        string   `json:"playlist_title"`
+	PlaylistCount        int      `json:"playlist_count"`
+	PlaylistIndex        int      `json:"playlist_index"`
+	ThumbnailURL         string   `json:"thumbnail"`              //added later
+	License              string   `json:"license"`                //added later
+	ChannelFollowerCount int      `json:"channel_follower_count"` //added later
+	UploadDate           string   `json:"upload_date"`            //added later
+	ReleaseTimestamp     int64    `json:"release_timestamp"`      //added later
+	ModifiedTimestamp    int64    `json:"modified_timestamp"`     //added later
+	YoutubeViewCount     int      `json:"view_count"`             //added later
+	LikeCount            int      `json:"like_count"`             //added later
+	DislikeCount         int      `json:"dislike_count"`          //added later
+	AgeLimit             int      `json:"age_limit"`              //added later
+	PlayableInEmbed      bool     `json:"playable_in_embed"`      //added later
 }
 
 type SavedMediaInformation struct {

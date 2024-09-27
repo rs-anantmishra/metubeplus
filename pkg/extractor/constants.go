@@ -35,6 +35,19 @@ const ChannelURL string = `--print %(.{channel_url})s`
 const PlaylistId string = `--print %(.{playlist_id})s`
 const WriteSubtitles string = `--write-auto-subs`
 
+// Added Later
+const ThumbnailURL string = `--print %(.{thumbnail})s`
+const License string = `--print %(.{license})s`
+const ChannelFollowerCount string = `--print %(.{channel_follower_count})s`
+const UploadDate string = `--print %(.{upload_date})s`
+const ReleaseTimestamp string = `--print %(.{release_timestamp})s`
+const ModifiedTimestamp string = `--print %(.{modified_timestamp})s`
+const ViewCount string = `--print %(.{view_count})s`
+const LikeCount string = `--print %(.{like_count})s`
+const DislikeCount string = `--print %(.{dislike_count})s`
+const AgeLimit string = `--print %(.{age_limit})s`
+const PlayableInEmbed string = `--print %(.{playable_in_embed})s`
+
 // --Options Plaintext-----------------------------------------------------------------------------//
 const Plaintext_YoutubeVideoId string = `--print after_move:id`
 const Plaintext_Availability string = `--print after_move:availability`
@@ -59,6 +72,19 @@ const Plaintext_Resolution string = `--print before_dl:resolution`
 const Plaintext_ChannelId string = `--print before_dl:channel_id`
 const Plaintext_ChannelURL string = `--print before_dl:channel_url`
 const Plaintext_PlaylistId string = `--print before_dl:playlist_id`
+const Plaintext_ThumbnailURL string = `--print before_dl:thumbnail`
+
+// Added later
+const Plaintext_License string = `--print before_dl:license`
+const Plaintext_ChannelFollowerCount string = `--print before_dl:channel_follower_count`
+const Plaintext_UploadDate string = `--print before_dl:upload_date`
+const Plaintext_ReleaseTimestamp string = `--print before_dl:release_timestamp`
+const Plaintext_ModifiedTimestamp string = `--print before_dl:modified_timestamp`
+const Plaintext_ViewCount string = `--print before_dl:view_count`
+const Plaintext_LikeCount string = `--print before_dl:like_count`
+const Plaintext_DislikeCount string = `--print before_dl:dislike_count`
+const Plaintext_AgeLimit string = `--print before_dl:age_limit`
+const Plaintext_PlayableInEmbed string = `--print before_dl:playable_in_embed`
 
 // --Extras----------------------------------------------------------------------------------------//
 const WriteThumbnail string = `--write-thumbnail`

@@ -73,59 +73,59 @@ func BuilderOptions() []CSwitch {
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 9, Name: `PlaylistTitle`, Value: PlaylistTitle, DataField: true, Group: FxGroups{
+		{Index: 9, Name: `Tags`, Value: Tags, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 10, Name: `PlaylistIndex`, Value: PlaylistIndex, DataField: true, Group: FxGroups{
+		{Index: 10, Name: `YTFormatString`, Value: YTFormatString, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 11, Name: `PlaylistCount`, Value: PlaylistCount, DataField: true, Group: FxGroups{
+		{Index: 11, Name: `FileSizeApprox`, Value: FileSizeApprox, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 12, Name: `Tags`, Value: Tags, DataField: true, Group: FxGroups{
+		{Index: 12, Name: `FormatNote`, Value: FormatNote, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 13, Name: `YTFormatString`, Value: YTFormatString, DataField: true, Group: FxGroups{
+		{Index: 13, Name: `Resolution`, Value: Resolution, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 14, Name: `FileSizeApprox`, Value: FileSizeApprox, DataField: true, Group: FxGroups{
+		{Index: 14, Name: `Categories`, Value: Categories, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 15, Name: `FormatNote`, Value: FormatNote, DataField: true, Group: FxGroups{
+		{Index: 15, Name: `YoutubeVideoId`, Value: YoutubeVideoId, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 16, Name: `Resolution`, Value: Resolution, DataField: true, Group: FxGroups{
+		{Index: 16, Name: `Availability`, Value: Availability, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 17, Name: `Categories`, Value: Categories, DataField: true, Group: FxGroups{
+		{Index: 17, Name: `LiveStatus`, Value: LiveStatus, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 18, Name: `YoutubeVideoId`, Value: YoutubeVideoId, DataField: true, Group: FxGroups{
+		{Index: 18, Name: `ChannelId`, Value: ChannelId, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 19, Name: `Availability`, Value: Availability, DataField: true, Group: FxGroups{
+		{Index: 19, Name: `ChannelURL`, Value: ChannelURL, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 20, Name: `LiveStatus`, Value: LiveStatus, DataField: true, Group: FxGroups{
+		{Index: 20, Name: `PlaylistTitle`, Value: PlaylistTitle, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 21, Name: `ChannelId`, Value: ChannelId, DataField: true, Group: FxGroups{
+		{Index: 21, Name: `PlaylistIndex`, Value: PlaylistIndex, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 22, Name: `ChannelURL`, Value: ChannelURL, DataField: true, Group: FxGroups{
+		{Index: 22, Name: `PlaylistCount`, Value: PlaylistCount, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
@@ -189,6 +189,50 @@ func BuilderOptions() []CSwitch {
 			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true}},
 		},
+		{Index: 38, Name: `ThumbnailURL`, Value: ThumbnailURL, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true}},
+		},
+		{Index: 39, Name: `License`, Value: License, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 40, Name: `ChannelFollowerCount`, Value: ChannelFollowerCount, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 41, Name: `UploadDate`, Value: UploadDate, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 42, Name: `ReleaseTimestamp`, Value: ReleaseTimestamp, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 43, Name: `ModifiedTimestamp`, Value: ModifiedTimestamp, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 44, Name: `ViewCount`, Value: ViewCount, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 45, Name: `LikeCount`, Value: LikeCount, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 46, Name: `DislikeCount`, Value: DislikeCount, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 47, Name: `AgeLimit`, Value: AgeLimit, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
+		{Index: 48, Name: `PlayableInEmbed`, Value: PlayableInEmbed, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
 		//Audio only file options to be added later
 	}
 
@@ -225,7 +269,7 @@ func GetPlaylistFilepath(fp e.Filepath, fType int) string {
 	return result
 }
 
-func cmdBuilderMetadata(url string, indicatorType int) (string, string) {
+func cmdBuilderMetadata(url string) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
@@ -234,17 +278,9 @@ func cmdBuilderMetadata(url string, indicatorType int) (string, string) {
 	for _, elem := range bo {
 
 		//Handle Video
-		if indicatorType == Video && elem.Group.Video.Metadata {
+		if elem.Group.Video.Metadata {
 			args = append(args, elem.Value)
 		}
-
-		//Handle Playlist
-		if indicatorType == Playlist && elem.Group.Playlist.Metadata {
-			args = append(args, elem.Value)
-		}
-
-		//Todo: Handle Audio
-		//Todo: Handle Audio Playlists
 	}
 
 	arguments := strings.Join(args, Space)
