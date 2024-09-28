@@ -28,28 +28,28 @@ func clearActiveItem(activeItem []g.DownloadStatus) []g.DownloadStatus {
 	return activeItem
 }
 
-func createMetadataResponse(metadata []e.MediaInformation, sequencedVideoIds []int, subtitles []e.Files, subtitlesReq bool, thumbnails []e.Files) []p.CardsInfoResponse {
+func createMetadataResponse(lstSavedInfo []e.SavedInfo, subtitles []e.Files, subtitlesReq bool, thumbnails []e.Files) []p.CardsInfoResponse {
 	//bind here to presenter entity
 	var cardMetaDataInfoList []p.CardsInfoResponse
 	const _blank string = ""
 
-	for i, elem := range metadata {
+	for _, elem := range lstSavedInfo {
 		var cardMetaDataInfo p.CardsInfoResponse
 
-		cardMetaDataInfo.Channel = elem.Channel
+		cardMetaDataInfo.Channel = elem.MediaInfo.Channel
 		cardMetaDataInfo.CreatedDate = int(time.Now().Unix())
-		cardMetaDataInfo.Description = elem.Description
-		cardMetaDataInfo.Domain = elem.Domain
-		cardMetaDataInfo.Duration = elem.Duration
+		cardMetaDataInfo.Description = elem.MediaInfo.Description
+		cardMetaDataInfo.Domain = elem.MediaInfo.Domain
+		cardMetaDataInfo.Duration = elem.MediaInfo.Duration
 		cardMetaDataInfo.IsDeleted = false
 		cardMetaDataInfo.IsFileDownloaded = false
 		cardMetaDataInfo.MediaURL = _blank
-		cardMetaDataInfo.OriginalURL = elem.OriginalURL
-		cardMetaDataInfo.Playlist = elem.PlaylistTitle
-		cardMetaDataInfo.PlaylistVideoIndex = elem.PlaylistIndex
-		cardMetaDataInfo.Title = elem.Title
-		cardMetaDataInfo.VideoFormat = elem.Format
-		cardMetaDataInfo.VideoId = sequencedVideoIds[i]
+		cardMetaDataInfo.OriginalURL = elem.MediaInfo.OriginalURL
+		cardMetaDataInfo.Playlist = elem.MediaInfo.PlaylistTitle
+		cardMetaDataInfo.PlaylistVideoIndex = elem.MediaInfo.PlaylistIndex
+		cardMetaDataInfo.Title = elem.MediaInfo.Title
+		cardMetaDataInfo.VideoFormat = elem.MediaInfo.Format
+		cardMetaDataInfo.VideoId = elem.VideoId
 		cardMetaDataInfo.WatchCount = 0
 
 		cardMetaDataInfoList = append(cardMetaDataInfoList, cardMetaDataInfo)
@@ -64,7 +64,7 @@ func createMetadataResponse(metadata []e.MediaInformation, sequencedVideoIds []i
 
 	//thumbnails
 	for i := range thumbnails {
-		if metadata[0].PlaylistTitle == _blank {
+		if lstSavedInfo[0].MediaInfo.PlaylistTitle == _blank {
 			cardMetaDataInfoList[i].Thumbnail = getImagesFromURL(thumbnails[i])
 		} else {
 			if i == 0 {

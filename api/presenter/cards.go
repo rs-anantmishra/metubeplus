@@ -31,7 +31,7 @@ type LimitedCardsInfoResponse struct {
 	Title         string `json:"title"`
 	Description   string `json:"description"`
 	Duration      int    `json:"duration"`
-	OriginalURL   string `json:"original_url"`
+	WebpageURL    string `json:"original_url"`
 	Thumbnail     string `json:"thumbnail"`
 	VideoFilepath string `json:"video_filepath"`
 	Channel       string `json:"channel"`

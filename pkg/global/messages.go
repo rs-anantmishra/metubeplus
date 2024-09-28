@@ -19,12 +19,11 @@ var onceQueueAlive sync.Once
 // -- todo --------------------------------------------------
 
 // Singletons
-
 type DownloadStatus struct {
 	VideoId       int    // Local VideoId
 	VideoURL      string // Network Video Id
 	StatusMessage string // completion percentage is in here
-	State         int    // 0 = downloading, 1 = queued, 2 = Downloaded
+	State         int    // 0 = Unassigned, 1 = Queued, 2 = Downloading, 3 = Completed, 4 = Failed
 	Title         string // VideoTitle
 	Channel       string // Channel
 	Thumbnail     string // Thumbnail base64

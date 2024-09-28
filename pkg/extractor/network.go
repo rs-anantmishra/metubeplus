@@ -18,10 +18,10 @@ import (
 
 type IDownload interface {
 	ExtractMetadata() ([]e.MediaInformation, e.Filepath)
-	ExtractMediaContent(smi e.SavedMediaInformation) int
-	ExtractSubtitles(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
-	ExtractThumbnail(fp e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files
-	GetDownloadedMediaFileInfo(smi e.SavedMediaInformation, fp e.Filepath) []e.Files
+	ExtractMediaContent(smi e.SavedInfo) int
+	ExtractSubtitles(fp e.Filepath, lstSavedInfo []e.SavedInfo) []e.Files
+	ExtractThumbnail(fp e.Filepath, lstSavedInfo []e.SavedInfo) []e.Files
+	GetDownloadedMediaFileInfo(smi e.SavedInfo, fp e.Filepath) []e.Files
 	Cleanup()
 }
 
@@ -91,7 +91,7 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 	return mediaInfo, fp
 }
 
-func (d *download) ExtractMediaContent(smi e.SavedMediaInformation) int {
+func (d *download) ExtractMediaContent(smi e.SavedInfo) int {
 
 	activeItem := g.NewActiveItem()
 
@@ -99,7 +99,7 @@ func (d *download) ExtractMediaContent(smi e.SavedMediaInformation) int {
 		args    string
 		command string
 	)
-	if smi.PlaylistTitle != "" && smi.PlaylistId > -1 {
+	if smi.MediaInfo.PlaylistTitle != "" && smi.PlaylistId > -1 {
 		args, command = cmdBuilderDownload(activeItem[0].VideoURL, Playlist, smi)
 	} else {
 		args, command = cmdBuilderDownload(activeItem[0].VideoURL, Video, smi)
@@ -124,9 +124,9 @@ func (d *download) ExtractMediaContent(smi e.SavedMediaInformation) int {
 	return activeItem[0].State
 }
 
-func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files {
+func (d *download) ExtractThumbnail(fPath e.Filepath, lstSavedInfo []e.SavedInfo) []e.Files {
 
-	args, command := cmdBuilderThumbnails(d.p.Indicator, lstSMI[0])
+	args, command := cmdBuilderThumbnails(d.p.Indicator, lstSavedInfo[0])
 	logCommand := command + Space + args
 
 	//log executed command - in activity log later
@@ -156,11 +156,11 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 	///////////////////////////////////////////////////////////////////////////
 	//Get FilePaths
 	var fp string
-	if d.indicatorType == Video {
+	if len(lstSavedInfo) == 1 && lstSavedInfo[0].PlaylistId < 0 {
 		fp = GetVideoFilepath(fPath, e.Thumbnail)
 		fp = strings.ReplaceAll(fp, "\\\\", "\\")
 		// fp = strings.ReplaceAll(fp, "\\\\", "\\")
-	} else if d.indicatorType == Playlist {
+	} else if len(lstSavedInfo) > 1 && lstSavedInfo[0].PlaylistId > 0 {
 		fp = GetPlaylistFilepath(fPath, e.Thumbnail)
 		fp = strings.ReplaceAll(fp, "\\\\", "\\")
 		fp = strings.ReplaceAll(fp, "//", "")
@@ -181,15 +181,15 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 		fs_filename := info.Name()
 
 		thumbnailVideoId := -1
-		thumbnailPlaylistId := lstSMI[0].PlaylistId
+		thumbnailPlaylistId := lstSavedInfo[0].PlaylistId
 		//for playlists, 1st Video Id should be -1
-		if d.indicatorType == Playlist {
+		if len(lstSavedInfo) > 1 && lstSavedInfo[0].PlaylistId > 0 {
 			if i > 0 {
-				thumbnailVideoId = lstSMI[i-1].VideoId
+				thumbnailVideoId = lstSavedInfo[i-1].VideoId
 			}
 			//if VideoId doesn't exist for this thumbnail
 			//can include logic to remove thumbnail too?
-			if i > 0 && lstSMI[i-1].VideoId < 0 {
+			if i > 0 && lstSavedInfo[i-1].VideoId < 0 {
 				continue
 			}
 
@@ -209,10 +209,10 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 			}
 
 			files = append(files, f)
-		} else if d.indicatorType == Video {
+		} else if len(lstSavedInfo) == 1 && lstSavedInfo[0].PlaylistId < 0 {
 			smiIndex := 0
-			thumbnailVideoId = lstSMI[smiIndex].VideoId
-			for _, saved := range lstSMI {
+			thumbnailVideoId = lstSavedInfo[smiIndex].VideoId
+			for _, saved := range lstSavedInfo {
 				if strings.Contains(fs_filename, saved.YoutubeVideoId) {
 					f := e.Files{
 						VideoId:      thumbnailVideoId,
@@ -236,9 +236,9 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, videoId []int, lstSMI []e.
 	return files
 }
 
-func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.SavedMediaInformation) []e.Files {
+func (d *download) ExtractSubtitles(fPath e.Filepath, lstSavedInfo []e.SavedInfo) []e.Files {
 
-	args, command := cmdBuilderSubtitles(d.p.Indicator, d.indicatorType, lstSMI[0])
+	args, command := cmdBuilderSubtitles(d.p.Indicator, d.indicatorType, lstSavedInfo[0])
 	logCommand := command + Space + args
 
 	//log executed command - in activity log later
@@ -286,11 +286,11 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.
 		splits := strings.SplitN(info.Name(), ".", -1)
 		fs_filename := info.Name()
 
-		for _, saved := range lstSMI {
+		for _, saved := range lstSavedInfo {
 			if strings.Contains(fs_filename, saved.YoutubeVideoId) {
 				f := e.Files{
-					VideoId:      lstSMI[smiIndex].VideoId,
-					PlaylistId:   lstSMI[smiIndex].PlaylistId,
+					VideoId:      lstSavedInfo[smiIndex].VideoId,
+					PlaylistId:   lstSavedInfo[smiIndex].PlaylistId,
 					FileType:     "Subtitles",
 					SourceId:     e.Downloaded,
 					FilePath:     fp,
@@ -310,7 +310,7 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, videoId []int, lstSMI []e.
 	return files
 }
 
-func (d *download) GetDownloadedMediaFileInfo(smi e.SavedMediaInformation, fPath e.Filepath) []e.Files {
+func (d *download) GetDownloadedMediaFileInfo(smi e.SavedInfo, fPath e.Filepath) []e.Files {
 
 	var fp string
 	//Get FilePaths

@@ -30,19 +30,19 @@ func NewDownloadService(r IRepository, d IDownload) IService {
 
 func (s *service) ExtractIngestMetadata(params e.IncomingRequest) []p.CardsInfoResponse {
 	metadata, fp := s.download.ExtractMetadata()
-	sequencedVideoIds, lstSMI := s.repository.SaveMetadata(metadata, fp)
+	lstSavedInfo := s.repository.SaveMetadata(metadata, fp)
 	//error check here before continuing exec for thumbs and subs
 
-	thumbnails := s.download.ExtractThumbnail(fp, sequencedVideoIds, lstSMI)
+	thumbnails := s.download.ExtractThumbnail(fp, lstSavedInfo)
 	s.repository.SaveThumbnail(thumbnails)
 
 	var subtitles []e.Files
 	if params.SubtitlesReq {
-		subtitles = s.download.ExtractSubtitles(fp, sequencedVideoIds, lstSMI)
+		subtitles = s.download.ExtractSubtitles(fp, lstSavedInfo)
 		s.repository.SaveSubtitles(subtitles)
 	}
 
-	response := createMetadataResponse(metadata, sequencedVideoIds, subtitles, params.SubtitlesReq, thumbnails)
+	response := createMetadataResponse(lstSavedInfo, subtitles, params.SubtitlesReq, thumbnails)
 	return response
 }
 
@@ -103,7 +103,7 @@ func (s *service) GetQueuedItemsDetails(videoIds []int) []p.LimitedCardsInfoResp
 			mci, err := s.repository.GetQueuedVideoDetails(elem)
 			handleErrors(err, "GetQueuedItemsDetails")
 			result = append(result, p.LimitedCardsInfoResponse{VideoId: mci.VideoId, Title: mci.Title, Description: mci.Description, Duration: mci.Duration,
-				OriginalURL: mci.OriginalURL, Thumbnail: getImagesFromURLString(mci.Thumbnail), VideoFilepath: mci.VideoFilepath, Channel: mci.Channel})
+				WebpageURL: mci.WebpageURL, Thumbnail: getImagesFromURLString(mci.Thumbnail), VideoFilepath: mci.VideoFilepath, Channel: mci.Channel})
 		}
 	}
 

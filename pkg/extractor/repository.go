@@ -10,11 +10,11 @@ import (
 )
 
 type IRepository interface {
-	SaveMetadata([]e.MediaInformation, e.Filepath) ([]int, []e.SavedMediaInformation)
+	SaveMetadata([]e.MediaInformation, e.Filepath) []e.SavedInfo
 	SaveThumbnail([]e.Files) []int
 	SaveSubtitles([]e.Files) []int
 	SaveMediaContent([]e.Files) []int
-	GetVideoFileInfo(videoId int) (e.SavedMediaInformation, e.Filepath, error)
+	GetVideoFileInfo(videoId int) (e.SavedInfo, e.Filepath, error)
 	GetQueuedVideoDetails(videoId int) (e.MinimalCardsInfo, error)
 }
 
@@ -28,9 +28,10 @@ func NewDownloadRepo(Database *sql.DB) IRepository {
 	}
 }
 
-func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) ([]int, []e.SavedMediaInformation) {
+func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) []e.SavedInfo {
 
-	var lstSMI []e.SavedMediaInformation
+	var savedInfo []e.SavedInfo
+
 	sequencedVideoIds := make([]int, len(metadata))
 	for i := range metadata {
 		sequencedVideoIds[i] = -1
@@ -100,6 +101,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 			args = append(args, elem.Description)
 			args = append(args, elem.Duration)
 			args = append(args, elem.OriginalURL)
+			args = append(args, elem.WebpageURL)
 			args = append(args, elem.LiveStatus)
 			args = append(args, elem.Availability)
 			args = append(args, elem.YoutubeViewCount)
@@ -189,9 +191,18 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 			}
 		}
 
-		lstSMI = append(lstSMI, e.SavedMediaInformation{VideoId: ytVideoId, PlaylistId: playlistId, PlaylistTitle: elem.PlaylistTitle, PlaylistVideoIndex: elem.PlaylistIndex, Title: elem.Title, YoutubeVideoId: elem.YoutubeVideoId})
+		//complete result
+		savedInfo = append(savedInfo, e.SavedInfo{
+			VideoId:        ytVideoId,
+			YoutubeVideoId: elem.YoutubeVideoId,
+			PlaylistId:     playlistId,
+			ChannelId:      channelId,
+			DomainId:       domainId,
+			FormatId:       formatId,
+			MediaInfo:      elem,
+		})
 	}
-	return sequencedVideoIds, lstSMI
+	return savedInfo
 }
 
 func (r *repository) SaveThumbnail(file []e.Files) []int {
@@ -291,14 +302,14 @@ func (r *repository) SaveMediaContent(file []e.Files) []int {
 	return lstFileIds
 }
 
-func (r *repository) GetVideoFileInfo(videoId int) (e.SavedMediaInformation, e.Filepath, error) {
+func (r *repository) GetVideoFileInfo(videoId int) (e.SavedInfo, e.Filepath, error) {
 
-	var smi e.SavedMediaInformation
+	var smi e.SavedInfo
 	var fPath e.Filepath
 
 	smi.VideoId = videoId
 	row := r.db.QueryRow(p.GetVideoInformationById, videoId)
-	if err := row.Scan(&smi.Title, &smi.PlaylistId, &smi.PlaylistTitle, &smi.PlaylistVideoIndex, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId); err != nil {
+	if err := row.Scan(&smi.MediaInfo.Title, &smi.PlaylistId, &smi.MediaInfo.PlaylistTitle, &smi.MediaInfo.PlaylistIndex, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId); err != nil {
 		if err == sql.ErrNoRows {
 			return smi, fPath, fmt.Errorf("VideoId %d: no such video", videoId)
 		}
@@ -313,7 +324,7 @@ func (r *repository) GetQueuedVideoDetails(videoId int) (e.MinimalCardsInfo, err
 
 	minInfo.VideoId = videoId
 	row := r.db.QueryRow(p.GetQueuedVideoDetailsById, videoId)
-	if err := row.Scan(&minInfo.VideoId, &minInfo.Title, &minInfo.Channel, &minInfo.Description, &minInfo.Duration, &minInfo.OriginalURL, &minInfo.Thumbnail); err != nil {
+	if err := row.Scan(&minInfo.VideoId, &minInfo.Title, &minInfo.Channel, &minInfo.Description, &minInfo.Duration, &minInfo.WebpageURL, &minInfo.Thumbnail); err != nil {
 		if err == sql.ErrNoRows {
 			return minInfo, fmt.Errorf("VideoId %d: no such video", videoId)
 		}

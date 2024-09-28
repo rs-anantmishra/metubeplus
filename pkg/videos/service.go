@@ -53,7 +53,7 @@ func GetVideosPageInfo(videos []entities.Videos) []presenter.LimitedCardsInfoRes
 		cardsInfo.Channel = elem.Channel.Name
 		cardsInfo.Description = elem.Description
 		cardsInfo.Duration = elem.DurationSeconds
-		cardsInfo.OriginalURL = elem.WebpageURL
+		cardsInfo.WebpageURL = elem.WebpageURL
 		cardsInfo.Thumbnail = getImagesFromURL(elem.ThumbnailFilePath)
 		cardsInfo.VideoFilepath = strings.Replace(elem.VideoFilePath, extractor.GetMediaDirectory(false), "http://localhost:3000/", -1)
 		cardsInfo.VideoFilepath = strings.Replace(elem.VideoFilePath, "\\", "/", -1)

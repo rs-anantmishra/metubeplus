@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS tblVideos(
 	Title TEXT NOT NULL DEFAULT 'Unavailable',
 	Description TEXT NOT NULL DEFAULT 'Unavailable',
 	DurationSeconds INTEGER,
+	OriginalURL TEXT NOT NULL,
 	WebpageURL TEXT NOT NULL,
 	LiveStatus TEXT,
 	Availability TEXT,

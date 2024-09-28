@@ -3,7 +3,7 @@
 -- Reason: Simplification is needed as SP, Fx, etc are not available.
 
 INSERT INTO tblPlaylists
-VALUES(-1, 'No Playlist', 0, '../','Not Available', 0, 'Not Available', 0)
+VALUES(-1, 'No Playlist', 0, '../','Not Available', 0, 'Not Available', 0);
 
 INSERT INTO tblLiveStatusType (LiveStatus)
 VALUES('not_live') UNION 
@@ -51,8 +51,4 @@ VALUES('Stream Video', 0, 1) UNION
 VALUES('Stream Audio', 0, 1) UNION 
 VALUES('Stream Playlist', 0, 1) UNION 
 VALUES('Stream Local Playlist', 0, 1);
-
-
-INSERT INTO tblPlaylists
-VALUES(-1, 'No Playlist', 0, '../','Not Available', 0, 'Not Available', 0)
 

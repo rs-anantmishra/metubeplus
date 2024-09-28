@@ -5,6 +5,7 @@ type Videos struct {
 	Title             string
 	Description       string
 	DurationSeconds   int
+	OriginalURL       string
 	WebpageURL        string
 	IsFileDownloaded  int
 	IsDeleted         int

@@ -9,6 +9,7 @@ type MediaInformation struct {
 	Duration             int      `json:"duration"`
 	Domain               string   `json:"webpage_url_domain"`
 	OriginalURL          string   `json:"original_url"`
+	WebpageURL           string   `json:"webpage_url"` //added later
 	Tags                 []string `json:"tags"`
 	Format               string   `json:"format"`
 	Filesize             int      `json:"filesize_approx"`
@@ -39,13 +40,14 @@ type MediaInformation struct {
 // helps unmarshalling unquoted true/false as bools in json
 type Bool bool
 
-type SavedMediaInformation struct {
-	VideoId            int
-	PlaylistId         int
-	Title              string
-	PlaylistTitle      string
-	PlaylistVideoIndex int
-	YoutubeVideoId     string
+type SavedInfo struct {
+	VideoId        int
+	YoutubeVideoId string
+	PlaylistId     int
+	ChannelId      int
+	DomainId       int
+	FormatId       int
+	MediaInfo      MediaInformation
 }
 
 type MinimalCardsInfo struct {
@@ -53,7 +55,7 @@ type MinimalCardsInfo struct {
 	Title         string
 	Description   string
 	Duration      int
-	OriginalURL   string
+	WebpageURL    string
 	Thumbnail     string
 	VideoFilepath string
 	Channel       string

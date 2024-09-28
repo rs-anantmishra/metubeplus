@@ -233,6 +233,10 @@ func BuilderOptions() []CSwitch {
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
+		{Index: 49, Name: `WebpageURL`, Value: WebpageURL, DataField: true, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
 		//Audio only file options to be added later
 	}
 
@@ -291,7 +295,7 @@ func cmdBuilderMetadata(url string) (string, string) {
 }
 
 // Download Media Content
-func cmdBuilderDownload(url string, indicatorType int, smi e.SavedMediaInformation) (string, string) {
+func cmdBuilderDownload(url string, indicatorType int, smi e.SavedInfo) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
@@ -307,7 +311,7 @@ func cmdBuilderDownload(url string, indicatorType int, smi e.SavedMediaInformati
 		//Handle Playlist
 		if indicatorType == Playlist && elem.Group.Playlist.Download {
 			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
-				smi.PlaylistTitle = strings.ReplaceAll(smi.PlaylistTitle, "//", "")
+				smi.MediaInfo.PlaylistTitle = strings.ReplaceAll(smi.MediaInfo.PlaylistTitle, "//", "")
 			}
 			args = append(args, elem.Value)
 		}
@@ -320,7 +324,7 @@ func cmdBuilderDownload(url string, indicatorType int, smi e.SavedMediaInformati
 	return arguments, cmd
 }
 
-func cmdBuilderSubtitles(url string, indicatorType int, smi e.SavedMediaInformation) (string, string) {
+func cmdBuilderSubtitles(url string, indicatorType int, smi e.SavedInfo) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
@@ -336,7 +340,7 @@ func cmdBuilderSubtitles(url string, indicatorType int, smi e.SavedMediaInformat
 		//Handle Playlist
 		if indicatorType == Playlist && elem.Group.Playlist.Subtitle {
 			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
-				smi.PlaylistTitle = strings.ReplaceAll(smi.PlaylistTitle, "//", "")
+				smi.MediaInfo.PlaylistTitle = strings.ReplaceAll(smi.MediaInfo.PlaylistTitle, "//", "")
 			}
 			args = append(args, elem.Value)
 		}
@@ -349,7 +353,7 @@ func cmdBuilderSubtitles(url string, indicatorType int, smi e.SavedMediaInformat
 	return arguments, cmd
 }
 
-func cmdBuilderThumbnails(url string, smi e.SavedMediaInformation) (string, string) {
+func cmdBuilderThumbnails(url string, smi e.SavedInfo) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
@@ -365,7 +369,7 @@ func cmdBuilderThumbnails(url string, smi e.SavedMediaInformation) (string, stri
 		//Handle Playlist
 		if elem.Group.Video.Thumbnail && smi.PlaylistId > 0 {
 			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
-				smi.PlaylistTitle = strings.ReplaceAll(smi.PlaylistTitle, "//", "")
+				smi.MediaInfo.PlaylistTitle = strings.ReplaceAll(smi.MediaInfo.PlaylistTitle, "//", "")
 			}
 			args = append(args, elem.Value)
 		}

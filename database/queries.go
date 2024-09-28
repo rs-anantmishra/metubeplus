@@ -19,6 +19,7 @@ const InsertMetadata string = `INSERT INTO tblVideos (
 	,Title
 	,Description
 	,DurationSeconds
+	,OriginalURL
 	,WebpageURL
 	,LiveStatus
 	,Availability
@@ -43,7 +44,7 @@ const InsertMetadata string = `INSERT INTO tblVideos (
 	,IsDeleted
 	,CreatedDate
 )
-VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
+VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
 
 const InsertTagsCheck string = `Select Id From tblTags Where Name = ?`
 const InsertTags string = `INSERT INTO tblTags Select NULL, ?, ?, ?;`
@@ -74,7 +75,7 @@ const GetVideoInformationById string = `Select V.Title, V.PlayListId, P.Title, V
 
 const UpdateVideoFileFields string = `UPDATE tblVideos SET IsFileDownloaded = ?, FileId = ? WHERE Id = ?;`
 
-const GetAllVideos_Info string = `Select V.Id, V.Title, V.Description, V.DurationSeconds, V.WebpageURL, V.IsFileDownloaded, V.IsDeleted, C.Name, P.Title, V.LiveStatus, D.Domain, V.Availability, F.Format, V.YoutubeVideoId, V.CreatedDate,  FIThumbnail.FilePath || '\' || FIThumbnail.FileName as 'ThumbnailFilePath', FIVideo.FilePath || '\' || FIVideo.FileName as 'VideoFilePath'
+const GetAllVideos_Info string = `Select V.Id, V.Title, V.Description, V.DurationSeconds, V.OriginalURL, V.WebpageURL, V.IsFileDownloaded, V.IsDeleted, C.Name, P.Title, V.LiveStatus, D.Domain, V.Availability, F.Format, V.YoutubeVideoId, V.CreatedDate,  FIThumbnail.FilePath || '\' || FIThumbnail.FileName as 'ThumbnailFilePath', FIVideo.FilePath || '\' || FIVideo.FileName as 'VideoFilePath'
 								  FROM tblVideos V
 								  INNER JOIN tblChannels C ON V.ChannelId = C.Id
 								  INNER JOIN tblPlaylists P ON V.PlaylistId = P.Id
@@ -83,7 +84,7 @@ const GetAllVideos_Info string = `Select V.Id, V.Title, V.Description, V.Duratio
 								  INNER JOIN tblFiles FIThumbnail ON (V.Id = FIThumbnail.VideoId AND FIThumbnail.FileType = 'Thumbnail')
 								  INNER JOIN tblFiles FIVideo ON (V.Id = FIVideo.VideoId AND FIVideo.FileType = 'Video');`
 
-const GetQueuedVideoDetailsById string = `Select V.Id, V.Title, C.Name as 'Channel', V.Description, V.DurationSeconds as 'Duration', V.WebpageURL as 'OriginalURL', FIThumbnail.FilePath || '\' || FIThumbnail.FileName as 'Thumbnail'
+const GetQueuedVideoDetailsById string = `Select V.Id, V.Title, C.Name as 'Channel', V.Description, V.DurationSeconds as 'Duration', V.WebpageURL, FIThumbnail.FilePath || '\' || FIThumbnail.FileName as 'Thumbnail'
 										  FROM tblVideos V
 										  INNER JOIN tblChannels C ON V.ChannelId = C.Id
 										  INNER JOIN tblPlaylists P ON V.PlaylistId = P.Id

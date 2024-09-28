@@ -36,6 +36,7 @@ const PlaylistId string = `--print %(.{playlist_id})s`
 const WriteSubtitles string = `--write-auto-subs`
 
 // Added Later
+const WebpageURL string = `--print %(.{webpage_url})s`
 const ThumbnailURL string = `--print %(.{thumbnail})s`
 const License string = `--print %(.{license})s`
 const ChannelFollowerCount string = `--print %(.{channel_follower_count})s`
