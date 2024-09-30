@@ -1,6 +1,7 @@
 package extractor
 
 import (
+	"os"
 	"strings"
 
 	c "github.com/rs-anantmishra/metubeplus/config"
@@ -174,7 +175,7 @@ func BuilderOptions() []CSwitch {
 			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 34, Name: `OutputPlaylistThumbnailFile`, Value: OutputPlaylistThumbnailFile, DataField: false, Group: FxGroups{
-			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true},
+			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: true},
 			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false}},
 		},
 		{Index: 35, Name: `OutputVideoFile`, Value: OutputVideoFile, DataField: false, Group: FxGroups{
@@ -187,7 +188,7 @@ func BuilderOptions() []CSwitch {
 		},
 		{Index: 37, Name: `OutputThumbnailFile`, Value: OutputThumbnailFile, DataField: false, Group: FxGroups{
 			Playlist: Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: false},
-			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: true}},
+			Video:    Functions{Metadata: false, Download: false, Subtitle: false, Thumbnail: true}},
 		},
 		{Index: 38, Name: `ThumbnailURL`, Value: ThumbnailURL, DataField: true, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
@@ -244,7 +245,7 @@ func BuilderOptions() []CSwitch {
 }
 
 func GetCommandString() string {
-	cmdPath := c.Config("YTDLP_PATH")
+	cmdPath := c.Config("YTDLP_PATH", true)
 	return cmdPath + CommandName
 }
 
@@ -288,96 +289,182 @@ func cmdBuilderMetadata(url string) (string, string) {
 	}
 
 	arguments := strings.Join(args, Space)
-	cmdPath := c.Config("YTDLP_PATH")
+	cmdPath := c.Config("YTDLP_PATH", true)
 	cmd := cmdPath + "/" + CommandName
 
 	return arguments, cmd
 }
 
 // Download Media Content
-func cmdBuilderDownload(url string, indicatorType int, smi e.SavedInfo) (string, string) {
+func cmdBuilderDownload(url string, savedInfo e.SavedInfo) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
+
+	//this is to get rid of the problem with special chars that windows does not support
+	//while maintaining the directory structure and aethetics for fs access to your data
+	contentFilepath := buildDownloadPath(savedInfo, e.Video)
 
 	bo := BuilderOptions()
 	for _, elem := range bo {
 
 		//Handle Video
-		if indicatorType == Video && elem.Group.Video.Download {
-			args = append(args, elem.Value)
+		if elem.Group.Video.Download {
+			switch elem.Name {
+			case "OutputVideoFile":
+				args = append(args, contentFilepath)
+			default:
+				args = append(args, elem.Value)
+			}
 		}
 
 		//Handle Playlist
-		if indicatorType == Playlist && elem.Group.Playlist.Download {
-			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
-				smi.MediaInfo.PlaylistTitle = strings.ReplaceAll(smi.MediaInfo.PlaylistTitle, "//", "")
+		if elem.Group.Playlist.Download {
+			switch elem.Name {
+			case "OutputPlaylistVideoFile":
+				args = append(args, contentFilepath)
+			default:
+				args = append(args, elem.Value)
 			}
-			args = append(args, elem.Value)
 		}
 	}
 
 	arguments := strings.Join(args, Space)
-	cmdPath := c.Config("YTDLP_PATH")
+	cmdPath := c.Config("YTDLP_PATH", true)
 	cmd := cmdPath + "/" + CommandName
 
 	return arguments, cmd
 }
 
-func cmdBuilderSubtitles(url string, indicatorType int, smi e.SavedInfo) (string, string) {
+func cmdBuilderSubtitles(url string, savedInfo e.SavedInfo) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
+
+	//this is to get rid of the problem with special chars that windows does not support
+	//while maintaining the directory structure and aethetics for fs access to your data
+	subtitlesFilepath := buildDownloadPath(savedInfo, e.Subtitles)
 
 	bo := BuilderOptions()
 	for _, elem := range bo {
 
 		//Handle Video
-		if indicatorType == Video && elem.Group.Video.Subtitle {
-			args = append(args, elem.Value)
+		if elem.Group.Video.Subtitle {
+			switch elem.Name {
+			case "OutputSubtitleFile":
+				args = append(args, subtitlesFilepath)
+			default:
+				args = append(args, elem.Value)
+			}
 		}
 
 		//Handle Playlist
-		if indicatorType == Playlist && elem.Group.Playlist.Subtitle {
-			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
-				smi.MediaInfo.PlaylistTitle = strings.ReplaceAll(smi.MediaInfo.PlaylistTitle, "//", "")
+		if elem.Group.Playlist.Subtitle {
+			switch elem.Name {
+			case "OutputPlaylistSubtitleFile":
+				args = append(args, subtitlesFilepath)
+			default:
+				args = append(args, elem.Value)
 			}
-			args = append(args, elem.Value)
 		}
 	}
 
 	arguments := strings.Join(args, Space)
-	cmdPath := c.Config("YTDLP_PATH")
+	cmdPath := c.Config("YTDLP_PATH", true)
 	cmd := cmdPath + "/" + CommandName
 
 	return arguments, cmd
 }
 
-func cmdBuilderThumbnails(url string, smi e.SavedInfo) (string, string) {
+func cmdBuilderThumbnails(url string, savedInfo e.SavedInfo) (string, string) {
 
 	var args []string
 	args = append(args, "\""+url+"\"")
+
+	//this is to get rid of the problem with special chars that windows does not support
+	//while maintaining the directory structure and aethetics for fs access to your data
+	thumbnailFilepath := buildDownloadPath(savedInfo, e.Thumbnail)
 
 	bo := BuilderOptions()
 	for _, elem := range bo {
 
 		//Handle Video
-		if elem.Group.Video.Thumbnail && smi.PlaylistId == -1 {
-			args = append(args, elem.Value)
+		if elem.Group.Video.Thumbnail {
+			switch elem.Name {
+			case "OutputThumbnailFile":
+				args = append(args, thumbnailFilepath)
+			default:
+				args = append(args, elem.Value)
+			}
 		}
 
 		//Handle Playlist
-		if elem.Group.Video.Thumbnail && smi.PlaylistId > 0 {
-			if elem.Index == 32 || elem.Index == 33 || elem.Index == 34 {
-				smi.MediaInfo.PlaylistTitle = strings.ReplaceAll(smi.MediaInfo.PlaylistTitle, "//", "")
+		if elem.Group.Playlist.Thumbnail {
+			switch elem.Name {
+			case "OutputPlaylistThumbnailFile":
+				args = append(args, thumbnailFilepath)
+			default:
+				args = append(args, elem.Value)
 			}
-			args = append(args, elem.Value)
 		}
 	}
 
 	arguments := strings.Join(args, Space)
-	cmdPath := c.Config("YTDLP_PATH")
+	cmdPath := c.Config("YTDLP_PATH", true)
 	cmd := cmdPath + "/" + CommandName
 
 	return arguments, cmd
+}
+
+func buildDownloadPath(savedInfo e.SavedInfo, pathType int) string {
+
+	result := ""
+	space := " "
+	sep := string(os.PathSeparator)
+
+	if savedInfo.PlaylistId < 0 {
+		var directories []string
+		directories = append(directories, savedInfo.MediaInfo.Domain)
+		directories = append(directories, savedInfo.MediaInfo.Channel)
+		directories = append(directories, "Videos")
+		{
+			if pathType == e.Thumbnail {
+				directories = append(directories, "Thumbnails")
+			} else if pathType == e.Subtitles {
+				directories = append(directories, "Subtitles")
+			}
+		}
+		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
+		result = strings.Join(directories, sep)
+	}
+
+	if savedInfo.PlaylistId > 0 {
+		var directories []string
+		directories = append(directories, savedInfo.MediaInfo.Domain)
+		directories = append(directories, savedInfo.MediaInfo.Channel)
+		directories = append(directories, savedInfo.MediaInfo.PlaylistTitle)
+		{
+			if pathType == e.Thumbnail {
+				directories = append(directories, "Thumbnails")
+			} else if pathType == e.Subtitles {
+				directories = append(directories, "Subtitles")
+			}
+		}
+		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
+		result = strings.Join(directories, sep)
+	}
+
+	switch pathType {
+	case e.Thumbnail:
+		result = "\"thumbnail:" + result + "\""
+		result = `-o ` + result
+	case e.Subtitles:
+		result = "\"subtitles:" + result + "\""
+		result = `-o ` + result
+	case e.Video:
+		result = "\"" + result + "\""
+		result = `-o ` + result
+	}
+
+	return result
 }

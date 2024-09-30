@@ -139,3 +139,69 @@ func getImagesFromURLString(filepath string) string {
 	base64EncodedImage += base64.StdEncoding.EncodeToString(bytes)
 	return base64EncodedImage
 }
+
+// Remove Characters that are not allowed in folder-names
+// Only specific fields to be handled which are used for generating folder names
+// Folder naming rules:
+// Windows (FAT32, NTFS): Any Unicode except NUL, \, /, :, *, ?, ", <, >, |. Also, no space character at the start or end, and no period at the end.
+// Mac(HFS, HFS+): Any valid Unicode except : or /
+// Linux(ext[2-4]): Any byte except NUL or /
+func removeForbiddenChars(metadata []e.MediaInformation) []e.MediaInformation {
+
+	// / = 10744
+
+	forbiddenChars := []string{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}
+	emptyString := ""
+	singleSpace := " "
+	doubleSpaces := "  "
+
+	for i := 0; i < len(metadata); i++ {
+		for _, elem := range forbiddenChars {
+
+			//handle Domain
+			if strings.Contains(metadata[i].Domain, elem) {
+				metadata[i].Domain = strings.ReplaceAll(metadata[i].Domain, elem, emptyString)
+				metadata[i].Domain = strings.TrimSpace(metadata[i].Domain)                             //Trim leading and trailing spaces
+				metadata[i].Domain = strings.TrimRight(metadata[i].Domain, ".")                        //Trim trailing period
+				metadata[i].Domain = strings.ReplaceAll(metadata[i].Domain, doubleSpaces, singleSpace) //Replace any double spaces that may have occurred as a result of removing characters
+			}
+
+			//handle Video Channel
+			if strings.Contains(metadata[i].Channel, elem) {
+				metadata[i].Channel = strings.ReplaceAll(metadata[i].Channel, elem, emptyString)
+				metadata[i].Channel = strings.TrimSpace(metadata[i].Channel)
+				metadata[i].Channel = strings.TrimRight(metadata[i].Channel, ".")
+				metadata[i].Channel = strings.ReplaceAll(metadata[i].Channel, doubleSpaces, singleSpace)
+			}
+
+			//handle Video Title
+			if strings.Contains(metadata[i].Title, elem) {
+				metadata[i].Title = strings.ReplaceAll(metadata[i].Title, elem, emptyString)
+				metadata[i].Title = strings.TrimSpace(metadata[i].Title)
+				metadata[i].Title = strings.TrimRight(metadata[i].Title, ".")
+				metadata[i].Title = strings.ReplaceAll(metadata[i].Title, doubleSpaces, singleSpace)
+			}
+
+			if strings.Contains(metadata[i].PlaylistTitle, elem) {
+				metadata[i].PlaylistTitle = strings.ReplaceAll(metadata[i].PlaylistTitle, elem, emptyString)
+				metadata[i].PlaylistTitle = strings.TrimSpace(metadata[i].PlaylistTitle)
+				metadata[i].PlaylistTitle = strings.TrimRight(metadata[i].PlaylistTitle, ".")
+				metadata[i].PlaylistTitle = strings.ReplaceAll(metadata[i].PlaylistTitle, doubleSpaces, singleSpace)
+			}
+		}
+	}
+
+	return metadata
+}
+
+func getFilepaths(playlistId int, fPath e.Filepath, pathType int) string {
+	var fp string
+
+	if playlistId < 0 {
+		fp = GetVideoFilepath(fPath, pathType)
+	} else if playlistId > 0 {
+		fp = GetPlaylistFilepath(fPath, pathType)
+	}
+
+	return fp
+}

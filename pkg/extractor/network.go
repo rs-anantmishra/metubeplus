@@ -74,6 +74,9 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 	pResult = executeProcess(stdout, false)
 	mediaInfo = parseResults(pResult, VideoMetadata)
 
+	// helper method fix
+	mediaInfo = removeForbiddenChars(mediaInfo)
+
 	////////////////////////////////////
 	//handle shortened URL /////////////
 	////////////////////////////////////
@@ -100,9 +103,9 @@ func (d *download) ExtractMediaContent(smi e.SavedInfo) int {
 		command string
 	)
 	if smi.MediaInfo.PlaylistTitle != "" && smi.PlaylistId > -1 {
-		args, command = cmdBuilderDownload(activeItem[0].VideoURL, Playlist, smi)
+		args, command = cmdBuilderDownload(activeItem[0].VideoURL, smi)
 	} else {
-		args, command = cmdBuilderDownload(activeItem[0].VideoURL, Video, smi)
+		args, command = cmdBuilderDownload(activeItem[0].VideoURL, smi)
 	}
 
 	logCommand := command + Space + args
@@ -126,153 +129,185 @@ func (d *download) ExtractMediaContent(smi e.SavedInfo) int {
 
 func (d *download) ExtractThumbnail(fPath e.Filepath, lstSavedInfo []e.SavedInfo) []e.Files {
 
-	args, command := cmdBuilderThumbnails(d.p.Indicator, lstSavedInfo[0])
-	logCommand := command + Space + args
+	//#region [download thumbnails]
 
-	//log executed command - in activity log later
-	_ = logCommand
-	cmd, stdout := buildProcess(args, GetCommandString())
+	for i := 0; i < len(lstSavedInfo); i++ {
 
-	err := cmd.Start()
-	handleErrors(err, "Thumbnail - Cmd.Start")
+		args, command := cmdBuilderThumbnails(d.p.Indicator, lstSavedInfo[i])
+		logCommand := command + Space + args
 
-	pResult := executeProcess(stdout, true)
-	_, errors, results := stripResultSections(pResult)
+		//log executed command - in activity log later
+		_ = logCommand
+		cmd, stdout := buildProcess(args, GetCommandString())
 
-	//results are not really needed - except maybe to check for errors.
-	_ = errors
-	_ = results
+		err := cmd.Start()
+		handleErrors(err, "Thumbnail - Cmd.Start")
 
-	if len(errors) > 0 {
-		//Show error on UI
-		log.Error(errors)
-		return []e.Files{}
+		pResult := executeProcess(stdout, true)
+		_, errors, results := stripResultSections(pResult)
+
+		//results are not really needed - except maybe to check for errors.
+		_ = errors
+		_ = results
+
+		if len(errors) > 0 {
+			//Show error on UI
+			log.Error(errors)
+			return []e.Files{}
+		}
 	}
+	//#endregion
 
-	///////////////////////////////////////////////////////////////////////////
-	// All unsupported symbols in folder names need to be handled here.      //
-	// Unsupported characters: \ / : * ? " < > |							 //
-	// Test Playlist: PL9xmBV_5YoZNsyqgPW-DNwUeT8F8uhWc6					 //
-	///////////////////////////////////////////////////////////////////////////
-	//Get FilePaths
-	var fp string
-	if len(lstSavedInfo) == 1 && lstSavedInfo[0].PlaylistId < 0 {
-		fp = GetVideoFilepath(fPath, e.Thumbnail)
-		fp = strings.ReplaceAll(fp, "\\\\", "\\")
-		// fp = strings.ReplaceAll(fp, "\\\\", "\\")
-	} else if len(lstSavedInfo) > 1 && lstSavedInfo[0].PlaylistId > 0 {
-		fp = GetPlaylistFilepath(fPath, e.Thumbnail)
-		fp = strings.ReplaceAll(fp, "\\\\", "\\")
-		fp = strings.ReplaceAll(fp, "//", "")
-	}
-	//fp = strings.ReplaceAll(fp, "../files/", "..\\files")
+	//Get Thumbnail FilePaths
+	fp := getFilepaths(lstSavedInfo[0].PlaylistId, fPath, e.Thumbnail)
 
-	fmt.Println(os.Getwd())
+	//read all files in the directory where the thumbnails are saved
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractThumbnail")
 
 	var files []e.Files
-	//Todo: re-write this to compare filenames after removing all special characters.
-	//if there is a match then do the assignment.
-	for i, entry := range c {
 
+	for _, entry := range c {
 		info, _ := entry.Info()
 		splits := strings.SplitN(info.Name(), ".", -1)
 		fs_filename := info.Name()
 
-		thumbnailVideoId := -1
 		thumbnailPlaylistId := lstSavedInfo[0].PlaylistId
-		//for playlists, 1st Video Id should be -1
-		if len(lstSavedInfo) > 1 && lstSavedInfo[0].PlaylistId > 0 {
-			if i > 0 {
-				thumbnailVideoId = lstSavedInfo[i-1].VideoId
-			}
-			//if VideoId doesn't exist for this thumbnail
-			//can include logic to remove thumbnail too?
-			if i > 0 && lstSavedInfo[i-1].VideoId < 0 {
-				continue
-			}
-
-			f := e.Files{
-				VideoId:      thumbnailVideoId,
-				PlaylistId:   thumbnailPlaylistId,
-				FileType:     "Thumbnail",
-				SourceId:     e.Downloaded,
-				FilePath:     fp,
-				FileName:     info.Name(),
-				Extension:    splits[len(splits)-1],
-				FileSize:     int(info.Size()),
-				FileSizeUnit: "bytes",
-				NetworkPath:  "",
-				IsDeleted:    0,
-				CreatedDate:  info.ModTime().Unix(),
-			}
-
-			files = append(files, f)
-		} else if len(lstSavedInfo) == 1 && lstSavedInfo[0].PlaylistId < 0 {
-			smiIndex := 0
-			thumbnailVideoId = lstSavedInfo[smiIndex].VideoId
-			for _, saved := range lstSavedInfo {
-				if strings.Contains(fs_filename, saved.YoutubeVideoId) {
-					f := e.Files{
-						VideoId:      thumbnailVideoId,
-						PlaylistId:   thumbnailPlaylistId,
-						FileType:     "Thumbnail",
-						SourceId:     e.Downloaded,
-						FilePath:     fp,
-						FileName:     info.Name(),
-						Extension:    splits[len(splits)-1],
-						FileSize:     int(info.Size()),
-						FileSizeUnit: "bytes",
-						NetworkPath:  "",
-						IsDeleted:    0,
-						CreatedDate:  info.ModTime().Unix(),
-					}
-					files = append(files, f)
+		for idx, saved := range lstSavedInfo {
+			if strings.Contains(fs_filename, saved.YoutubeVideoId) {
+				f := e.Files{
+					VideoId:      lstSavedInfo[idx].VideoId,
+					PlaylistId:   thumbnailPlaylistId,
+					FileType:     "Thumbnail",
+					SourceId:     e.Downloaded,
+					FilePath:     fp,
+					FileName:     info.Name(),
+					Extension:    splits[len(splits)-1],
+					FileSize:     int(info.Size()),
+					FileSizeUnit: "bytes",
+					NetworkPath:  saved.MediaInfo.ThumbnailURL,
+					IsDeleted:    0,
+					CreatedDate:  info.ModTime().Unix(),
 				}
+				files = append(files, f)
+			} else if saved.PlaylistId > 0 && strings.Contains(fs_filename, d.p.Indicator) { //order is important for short-circuiting evaluation
+				f := e.Files{
+					VideoId:      -1,
+					PlaylistId:   thumbnailPlaylistId,
+					FileType:     "Thumbnail",
+					SourceId:     e.Downloaded,
+					FilePath:     fp,
+					FileName:     info.Name(),
+					Extension:    splits[len(splits)-1],
+					FileSize:     int(info.Size()),
+					FileSizeUnit: "bytes",
+					NetworkPath:  d.p.Indicator,
+					IsDeleted:    0,
+					CreatedDate:  info.ModTime().Unix(),
+				}
+				files = append(files, f)
 			}
 		}
 	}
+
+	// for i, entry := range c {
+
+	// 	info, _ := entry.Info()
+	// 	splits := strings.SplitN(info.Name(), ".", -1)
+	// 	fs_filename := info.Name()
+
+	// 	thumbnailVideoId := -1
+	// 	thumbnailURL := ""
+	// 	thumbnailPlaylistId := lstSavedInfo[0].PlaylistId
+	// 	//for playlists, 1st Video Id should be -1
+	// 	if lstSavedInfo[0].PlaylistId > 0 {
+	// 		if i > 0 {
+	// 			thumbnailVideoId = lstSavedInfo[i-1].VideoId
+	// 			thumbnailURL = lstSavedInfo[i-1].MediaInfo.ThumbnailURL
+	// 		}
+	// 		//if VideoId doesn't exist for this thumbnail
+	// 		//can include logic to remove thumbnail too?
+	// 		if i > 0 && lstSavedInfo[i-1].VideoId < 0 {
+	// 			continue
+	// 		}
+
+	// 		//no alignment required as
+	// 		//yt-dlp, golang both sort by filename
+	// 		f := e.Files{
+	// 			VideoId:      thumbnailVideoId,
+	// 			PlaylistId:   thumbnailPlaylistId,
+	// 			FileType:     "Thumbnail",
+	// 			SourceId:     e.Downloaded,
+	// 			FilePath:     fp,
+	// 			FileName:     info.Name(),
+	// 			Extension:    splits[len(splits)-1],
+	// 			FileSize:     int(info.Size()),
+	// 			FileSizeUnit: "bytes",
+	// 			NetworkPath:  thumbnailURL,
+	// 			IsDeleted:    0,
+	// 			CreatedDate:  info.ModTime().Unix(),
+	// 		}
+
+	// 		files = append(files, f)
+	// 	} else if lstSavedInfo[0].PlaylistId < 0 {
+	// 		smiIndex := 0
+	// 		thumbnailVideoId = lstSavedInfo[smiIndex].VideoId
+	// 		for _, saved := range lstSavedInfo {
+	// 			if strings.Contains(fs_filename, saved.YoutubeVideoId) {
+	// 				f := e.Files{
+	// 					VideoId:      thumbnailVideoId,
+	// 					PlaylistId:   thumbnailPlaylistId,
+	// 					FileType:     "Thumbnail",
+	// 					SourceId:     e.Downloaded,
+	// 					FilePath:     fp,
+	// 					FileName:     info.Name(),
+	// 					Extension:    splits[len(splits)-1],
+	// 					FileSize:     int(info.Size()),
+	// 					FileSizeUnit: "bytes",
+	// 					NetworkPath:  saved.MediaInfo.ThumbnailURL,
+	// 					IsDeleted:    0,
+	// 					CreatedDate:  info.ModTime().Unix(),
+	// 				}
+	// 				files = append(files, f)
+	// 			}
+	// 		}
+	// 	}
+	// }
 	return files
 }
 
 func (d *download) ExtractSubtitles(fPath e.Filepath, lstSavedInfo []e.SavedInfo) []e.Files {
 
-	args, command := cmdBuilderSubtitles(d.p.Indicator, d.indicatorType, lstSavedInfo[0])
-	logCommand := command + Space + args
+	//#region [download thumbnails]
 
-	//log executed command - in activity log later
-	_ = logCommand
-	cmd, stdout := buildProcess(args, GetCommandString())
+	for i := 0; i < len(lstSavedInfo); i++ {
+		args, command := cmdBuilderSubtitles(d.p.Indicator, lstSavedInfo[i])
+		logCommand := command + Space + args
 
-	err := cmd.Start()
-	handleErrors(err, "Subtitles - Cmd.Start")
+		//log executed command - in activity log later
+		_ = logCommand
+		cmd, stdout := buildProcess(args, GetCommandString())
 
-	pResult := executeProcess(stdout, true)
-	_, errors, results := stripResultSections(pResult)
+		err := cmd.Start()
+		handleErrors(err, "Subtitles - Cmd.Start")
 
-	//results are not really needed - except maybe to check for errors.
-	_ = errors
-	_ = results
+		pResult := executeProcess(stdout, true)
+		_, errors, results := stripResultSections(pResult)
 
-	if len(errors) > 0 {
-		//Show error on UI
-		log.Error(errors)
-		return []e.Files{}
+		//results are not really needed - except maybe to check for errors.
+		_ = errors
+		_ = results
+
+		if len(errors) > 0 {
+			//Show error on UI
+			log.Error(errors)
+			return []e.Files{}
+		}
 	}
+	//#endregion
 
-	var fp string
-	//Get FilePaths
-	if d.indicatorType == Video {
-		fp = GetVideoFilepath(fPath, e.Subtitles)
-		fp = strings.ReplaceAll(fp, "\\\\", "\\")
-		// fp = strings.ReplaceAll(fp, "//", "")
-	} else if d.indicatorType == Playlist {
-		fp = GetPlaylistFilepath(fPath, e.Subtitles)
-		fp = strings.ReplaceAll(fp, "\\\\", "\\")
-		fp = strings.ReplaceAll(fp, "//", "")
-	}
-	// fp = strings.ReplaceAll(fp, "../files/", "..\\files")
+	//Get Subtitles FilePaths
+	fp := getFilepaths(lstSavedInfo[0].PlaylistId, fPath, e.Subtitles)
 
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractSubtitles")
@@ -312,26 +347,14 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, lstSavedInfo []e.SavedInfo
 
 func (d *download) GetDownloadedMediaFileInfo(smi e.SavedInfo, fPath e.Filepath) []e.Files {
 
-	var fp string
-	//Get FilePaths
-	if smi.PlaylistId == -1 {
-		fp = GetVideoFilepath(fPath, e.Video)
-		fp = strings.ReplaceAll(fp, "\\\\", "\\")
-		// fp = strings.ReplaceAll(fp, "//", "")
-	} else if smi.PlaylistId > -1 {
-		fp = GetPlaylistFilepath(fPath, e.Video)
-		fp = strings.ReplaceAll(fp, "\\\\", "\\")
-		fp = strings.ReplaceAll(fp, "//", "")
-	}
-	// fp = strings.ReplaceAll(fp, "../files/", "..\\files")
+	//Get Video FilePaths
+	fp := getFilepaths(smi.PlaylistId, fPath, e.Video)
 
 	c, err := os.ReadDir(fp)
 	handleErrors(err, "network - ExtractMediaContent")
 
 	smiIndex := 0
 	var files []e.Files
-	//Todo: re-write this to compare filenames after removing all special characters.
-	//if there is a match then do the assignment.
 	for _, entry := range c {
 		info, _ := entry.Info()
 		splits := strings.SplitN(info.Name(), ".", -1)
@@ -348,7 +371,7 @@ func (d *download) GetDownloadedMediaFileInfo(smi e.SavedInfo, fPath e.Filepath)
 				Extension:    splits[len(splits)-1],
 				FileSize:     int(info.Size()),
 				FileSizeUnit: "bytes",
-				NetworkPath:  "",
+				NetworkPath:  smi.MediaInfo.WebpageURL,
 				IsDeleted:    0,
 				CreatedDate:  info.ModTime().Unix(),
 			}
@@ -585,7 +608,7 @@ func parseResults(pResult []string, metadataType int) []e.MediaInformation {
 			}
 		}
 
-		if c.Config("PATCHING") == "enabled" {
+		if c.Config("PATCHING", false) == "enabled" {
 			mediaInfo = patchDataField(mediaInfo)
 		}
 

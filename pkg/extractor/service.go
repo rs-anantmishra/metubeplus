@@ -33,14 +33,18 @@ func (s *service) ExtractIngestMetadata(params e.IncomingRequest) []p.CardsInfoR
 	lstSavedInfo := s.repository.SaveMetadata(metadata, fp)
 	//error check here before continuing exec for thumbs and subs
 
-	thumbnails := s.download.ExtractThumbnail(fp, lstSavedInfo)
+	var thumbnails []e.Files
+	var subtitles []e.Files
+
+	// for k := 0; k < len(lstSavedInfo); k++ {
+	thumbnails = s.download.ExtractThumbnail(fp, lstSavedInfo)
 	s.repository.SaveThumbnail(thumbnails)
 
-	var subtitles []e.Files
 	if params.SubtitlesReq {
 		subtitles = s.download.ExtractSubtitles(fp, lstSavedInfo)
 		s.repository.SaveSubtitles(subtitles)
 	}
+	// }
 
 	response := createMetadataResponse(lstSavedInfo, subtitles, params.SubtitlesReq, thumbnails)
 	return response

@@ -50,7 +50,7 @@ func NewActiveItem() []DownloadStatus {
 
 func NewDownloadStatus() []DownloadStatus {
 
-	maxQueueLength, err := strconv.Atoi((cfg.Config("MAX_QUEUE")))
+	maxQueueLength, err := strconv.Atoi((cfg.Config("MAX_QUEUE", false)))
 	if err != nil {
 		maxQueueLength = 2000
 	}

@@ -33,7 +33,6 @@ const Categories string = `--print %(.{categories})s`
 const ChannelId string = `--print %(.{channel_id})s`
 const ChannelURL string = `--print %(.{channel_url})s`
 const PlaylistId string = `--print %(.{playlist_id})s`
-const WriteSubtitles string = `--write-auto-subs`
 
 // Added Later
 const WebpageURL string = `--print %(.{webpage_url})s`
@@ -88,17 +87,20 @@ const Plaintext_AgeLimit string = `--print before_dl:age_limit`
 const Plaintext_PlayableInEmbed string = `--print before_dl:playable_in_embed`
 
 // --Extras----------------------------------------------------------------------------------------//
+const WriteSubtitles string = `--write-auto-subs`
 const WriteThumbnail string = `--write-thumbnail`
 const SkipDownload string = `--skip-download`
 const InfoJSON string = `--write-info-json`
 const QuietDownload string = `--quiet`
 const ProgressNewline string = `--newline`
 
+// const ProgressNewline string = `--newline`
+
 // --Commands--------------------------------------------------------------------------------------//
 // Playlist: Videos, Subtitles, Thumbnails
 const OutputPlaylistVideoFile string = `-o "%(webpage_url_domain)s/%(channel)s/%(playlist)s/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
 const OutputPlaylistSubtitleFile string = `-o "subtitle:%(webpage_url_domain)s/%(channel)s/%(playlist)s/Subtitles/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
-const OutputPlaylistThumbnailFile string = `-o "%(webpage_url_domain)s/%(channel)s/%(playlist)s/Thumbnails/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
+const OutputPlaylistThumbnailFile string = `-o "thumbnail:%(webpage_url_domain)s/%(channel)s/%(playlist)s/Thumbnails/%(playlist_index)s - %(title)s [%(id)s].%(ext)s"`
 
 // Videos: Videos, Subtitles, Thumbnails
 const OutputVideoFile string = `-o "%(webpage_url_domain)s/%(channel)s/Videos/%(title)s [%(id)s].%(ext)s"`
@@ -130,7 +132,7 @@ const mediaDirectory string = `-P {{MediaDir}}`
 
 func GetMediaDirectory(keepParentDirectoryFlag bool) string {
 
-	mediaDir := strings.ReplaceAll(mediaDirectory, "{{MediaDir}}", c.Config("MEDIA_PATH"))
+	mediaDir := strings.ReplaceAll(mediaDirectory, "{{MediaDir}}", c.Config("MEDIA_PATH", true))
 	mediaDir = strings.ReplaceAll(mediaDir, "/", "\\")
 
 	if !keepParentDirectoryFlag {

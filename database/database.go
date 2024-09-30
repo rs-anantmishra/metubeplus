@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 	c "github.com/rs-anantmishra/metubeplus/config"
@@ -18,10 +20,10 @@ var DB *sql.DB
 
 func ConnectDB() {
 
-	file := c.Config("DB_NAME")
+	file := c.Config("DB_NAME", true)
 	//if db name not provided, take default.
 	if len(file) == 0 {
-		file = `../database/db/metubeplus.db`
+		file = strings.ReplaceAll(`..#database#db#streamsphere.db`, "#", string(os.PathSeparator))
 	}
 
 	db, err := sql.Open("sqlite3", file)

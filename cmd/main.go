@@ -16,11 +16,11 @@ func main() {
 		CaseSensitive: true,
 		StrictRouting: true,
 		ServerHeader:  "Fiber",
-		AppName:       "MeTube+",
+		AppName:       "Streamsphere",
 		UnescapePath:  true,
 	})
 
-	port := ":" + c.Config("APP_PORT")
+	port := ":" + c.Config("APP_PORT", false)
 
 	m.SetupMiddleware(app)
 	r.SetupRoutes(app)

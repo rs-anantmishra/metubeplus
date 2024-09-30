@@ -41,7 +41,7 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 
 	//queue downloads below
 	//global MPI
-	maxQueueLength, _ := strconv.Atoi((cfg.Config("MAX_QUEUE")))
+	maxQueueLength, _ := strconv.Atoi((cfg.Config("MAX_QUEUE", false)))
 	lstDownloads := g.NewDownloadStatus()
 	qAlive := g.NewQueueAlive()
 	currentQueueIndex := g.NewCurrentQueueIndex()
@@ -73,7 +73,7 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 
 func NetworkIngestMedia(c *fiber.Ctx) error {
 
-	maxQueueLength, _ := strconv.Atoi((cfg.Config("MAX_QUEUE")))
+	maxQueueLength, _ := strconv.Atoi((cfg.Config("MAX_QUEUE", false)))
 	//bind incoming data
 	params := new(en.QueueDownloads)
 

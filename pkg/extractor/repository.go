@@ -309,7 +309,7 @@ func (r *repository) GetVideoFileInfo(videoId int) (e.SavedInfo, e.Filepath, err
 
 	smi.VideoId = videoId
 	row := r.db.QueryRow(p.GetVideoInformationById, videoId)
-	if err := row.Scan(&smi.MediaInfo.Title, &smi.PlaylistId, &smi.MediaInfo.PlaylistTitle, &smi.MediaInfo.PlaylistIndex, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId); err != nil {
+	if err := row.Scan(&smi.MediaInfo.Title, &smi.PlaylistId, &smi.MediaInfo.PlaylistTitle, &smi.MediaInfo.PlaylistIndex, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId, &smi.MediaInfo.WebpageURL); err != nil {
 		if err == sql.ErrNoRows {
 			return smi, fPath, fmt.Errorf("VideoId %d: no such video", videoId)
 		}
