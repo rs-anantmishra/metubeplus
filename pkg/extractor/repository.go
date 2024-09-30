@@ -315,6 +315,10 @@ func (r *repository) GetVideoFileInfo(videoId int) (e.SavedInfo, e.Filepath, err
 		}
 		return smi, fPath, fmt.Errorf("VideoById %d: %v", videoId, err)
 	}
+
+	smi.MediaInfo.Domain = fPath.Domain
+	smi.MediaInfo.Channel = fPath.Channel
+
 	return smi, fPath, nil
 }
 

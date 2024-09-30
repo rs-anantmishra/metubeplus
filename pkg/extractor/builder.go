@@ -290,7 +290,7 @@ func cmdBuilderMetadata(url string) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + "/" + CommandName
+	cmd := cmdPath + CommandName
 
 	return arguments, cmd
 }
@@ -309,7 +309,7 @@ func cmdBuilderDownload(url string, savedInfo e.SavedInfo) (string, string) {
 	for _, elem := range bo {
 
 		//Handle Video
-		if elem.Group.Video.Download {
+		if elem.Group.Video.Download && savedInfo.PlaylistId < 0 {
 			switch elem.Name {
 			case "OutputVideoFile":
 				args = append(args, contentFilepath)
@@ -319,7 +319,7 @@ func cmdBuilderDownload(url string, savedInfo e.SavedInfo) (string, string) {
 		}
 
 		//Handle Playlist
-		if elem.Group.Playlist.Download {
+		if elem.Group.Playlist.Download && savedInfo.PlaylistId > 0 {
 			switch elem.Name {
 			case "OutputPlaylistVideoFile":
 				args = append(args, contentFilepath)
@@ -331,7 +331,7 @@ func cmdBuilderDownload(url string, savedInfo e.SavedInfo) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + "/" + CommandName
+	cmd := cmdPath + CommandName
 
 	return arguments, cmd
 }
@@ -349,7 +349,7 @@ func cmdBuilderSubtitles(url string, savedInfo e.SavedInfo) (string, string) {
 	for _, elem := range bo {
 
 		//Handle Video
-		if elem.Group.Video.Subtitle {
+		if elem.Group.Video.Subtitle && savedInfo.PlaylistId < 0 {
 			switch elem.Name {
 			case "OutputSubtitleFile":
 				args = append(args, subtitlesFilepath)
@@ -359,7 +359,7 @@ func cmdBuilderSubtitles(url string, savedInfo e.SavedInfo) (string, string) {
 		}
 
 		//Handle Playlist
-		if elem.Group.Playlist.Subtitle {
+		if elem.Group.Playlist.Subtitle && savedInfo.PlaylistId > 0 {
 			switch elem.Name {
 			case "OutputPlaylistSubtitleFile":
 				args = append(args, subtitlesFilepath)
@@ -371,7 +371,7 @@ func cmdBuilderSubtitles(url string, savedInfo e.SavedInfo) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + "/" + CommandName
+	cmd := cmdPath + CommandName
 
 	return arguments, cmd
 }
@@ -389,7 +389,7 @@ func cmdBuilderThumbnails(url string, savedInfo e.SavedInfo) (string, string) {
 	for _, elem := range bo {
 
 		//Handle Video
-		if elem.Group.Video.Thumbnail {
+		if elem.Group.Video.Thumbnail && savedInfo.PlaylistId < 0 {
 			switch elem.Name {
 			case "OutputThumbnailFile":
 				args = append(args, thumbnailFilepath)
@@ -399,7 +399,7 @@ func cmdBuilderThumbnails(url string, savedInfo e.SavedInfo) (string, string) {
 		}
 
 		//Handle Playlist
-		if elem.Group.Playlist.Thumbnail {
+		if elem.Group.Playlist.Thumbnail && savedInfo.PlaylistId > 0 {
 			switch elem.Name {
 			case "OutputPlaylistThumbnailFile":
 				args = append(args, thumbnailFilepath)
@@ -411,7 +411,7 @@ func cmdBuilderThumbnails(url string, savedInfo e.SavedInfo) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + "/" + CommandName
+	cmd := cmdPath + CommandName
 
 	return arguments, cmd
 }
@@ -459,7 +459,7 @@ func buildDownloadPath(savedInfo e.SavedInfo, pathType int) string {
 		result = "\"thumbnail:" + result + "\""
 		result = `-o ` + result
 	case e.Subtitles:
-		result = "\"subtitles:" + result + "\""
+		result = "\"subtitle:" + result + "\""
 		result = `-o ` + result
 	case e.Video:
 		result = "\"" + result + "\""

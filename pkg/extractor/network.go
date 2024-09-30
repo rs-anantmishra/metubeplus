@@ -50,13 +50,6 @@ func (d *download) Cleanup() {
 
 func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
-	//itemCount is {title:"value"} counts.
-	//indicatorType, itemCount := getIndicatorType(d.p.Indicator)
-	//d.indicatorType = indicatorType
-
-	////////////////////////////////////
-	// getURLDomain - UI ///////////////
-	////////////////////////////////////
 	args, command := cmdBuilderMetadata(d.p.Indicator)
 	logCommand := command + Space + args
 
@@ -81,16 +74,7 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 	//handle shortened URL /////////////
 	////////////////////////////////////
 
-	// if indicatorType == Playlist {
-	// 	pResult = executeProcess(stdout)
-	// 	playlist := parseResults(pResult, PlaylistMetadata, itemCount)
-
-	// 	fmt.Println(playlist)
-	// 	mediaInfo = playlist
-	// }
-
 	fp := e.Filepath{Domain: mediaInfo[0].Domain, Channel: mediaInfo[0].Channel, PlaylistTitle: mediaInfo[0].PlaylistTitle}
-
 	return mediaInfo, fp
 }
 
@@ -133,7 +117,8 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, lstSavedInfo []e.SavedInfo
 
 	for i := 0; i < len(lstSavedInfo); i++ {
 
-		args, command := cmdBuilderThumbnails(d.p.Indicator, lstSavedInfo[i])
+		// args, command := cmdBuilderThumbnails(d.p.Indicator, lstSavedInfo[i])
+		args, command := cmdBuilderThumbnails(lstSavedInfo[i].MediaInfo.WebpageURL, lstSavedInfo[i])
 		logCommand := command + Space + args
 
 		//log executed command - in activity log later
@@ -155,6 +140,8 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, lstSavedInfo []e.SavedInfo
 			log.Error(errors)
 			return []e.Files{}
 		}
+
+		fmt.Println("i is:", i)
 	}
 	//#endregion
 
@@ -281,7 +268,7 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, lstSavedInfo []e.SavedInfo
 	//#region [download thumbnails]
 
 	for i := 0; i < len(lstSavedInfo); i++ {
-		args, command := cmdBuilderSubtitles(d.p.Indicator, lstSavedInfo[i])
+		args, command := cmdBuilderSubtitles(lstSavedInfo[i].MediaInfo.WebpageURL, lstSavedInfo[i])
 		logCommand := command + Space + args
 
 		//log executed command - in activity log later
