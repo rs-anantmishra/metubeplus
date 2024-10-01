@@ -30,13 +30,13 @@ func NewDownloadService(r IRepository, d IDownload) IService {
 
 func (s *service) ExtractIngestMetadata(params e.IncomingRequest) []p.CardsInfoResponse {
 	metadata, fp := s.download.ExtractMetadata()
-	lstSavedInfo := s.repository.SaveMetadata(metadata, fp)
+	isSingleChannelPl := handleSingleChannelPlaylist(metadata)
+	lstSavedInfo := s.repository.SaveMetadata(metadata, fp, isSingleChannelPl)
 	//error check here before continuing exec for thumbs and subs
 
 	var thumbnails []e.Files
 	var subtitles []e.Files
 
-	// for k := 0; k < len(lstSavedInfo); k++ {
 	thumbnails = s.download.ExtractThumbnail(fp, lstSavedInfo)
 	s.repository.SaveThumbnail(thumbnails)
 
@@ -44,7 +44,6 @@ func (s *service) ExtractIngestMetadata(params e.IncomingRequest) []p.CardsInfoR
 		subtitles = s.download.ExtractSubtitles(fp, lstSavedInfo)
 		s.repository.SaveSubtitles(subtitles)
 	}
-	// }
 
 	response := createMetadataResponse(lstSavedInfo, subtitles, params.SubtitlesReq, thumbnails)
 	return response

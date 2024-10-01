@@ -238,6 +238,10 @@ func BuilderOptions() []CSwitch {
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
+		{Index: 50, Name: `UTF8EncodingExperimental`, Value: UTF8EncodingExperimental, DataField: false, Group: FxGroups{
+			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
+			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
+		},
 		//Audio only file options to be added later
 	}
 
@@ -303,7 +307,7 @@ func cmdBuilderDownload(url string, savedInfo e.SavedInfo) (string, string) {
 
 	//this is to get rid of the problem with special chars that windows does not support
 	//while maintaining the directory structure and aethetics for fs access to your data
-	contentFilepath := buildDownloadPath(savedInfo, e.Video)
+	contentFilepath, _ := buildDownloadPath(savedInfo, e.Video)
 
 	bo := BuilderOptions()
 	for _, elem := range bo {
@@ -343,7 +347,7 @@ func cmdBuilderSubtitles(url string, savedInfo e.SavedInfo) (string, string) {
 
 	//this is to get rid of the problem with special chars that windows does not support
 	//while maintaining the directory structure and aethetics for fs access to your data
-	subtitlesFilepath := buildDownloadPath(savedInfo, e.Subtitles)
+	subtitlesFilepath, _ := buildDownloadPath(savedInfo, e.Subtitles)
 
 	bo := BuilderOptions()
 	for _, elem := range bo {
@@ -383,7 +387,7 @@ func cmdBuilderThumbnails(url string, savedInfo e.SavedInfo) (string, string) {
 
 	//this is to get rid of the problem with special chars that windows does not support
 	//while maintaining the directory structure and aethetics for fs access to your data
-	thumbnailFilepath := buildDownloadPath(savedInfo, e.Thumbnail)
+	thumbnailFilepath, _ := buildDownloadPath(savedInfo, e.Thumbnail)
 
 	bo := BuilderOptions()
 	for _, elem := range bo {
@@ -416,12 +420,14 @@ func cmdBuilderThumbnails(url string, savedInfo e.SavedInfo) (string, string) {
 	return arguments, cmd
 }
 
-func buildDownloadPath(savedInfo e.SavedInfo, pathType int) string {
+func buildDownloadPath(savedInfo e.SavedInfo, pathType int) (string, string) {
 
-	result := ""
+	pathResult := ""
+	dirResultPath := ""
 	space := " "
 	sep := string(os.PathSeparator)
 
+	//Videos
 	if savedInfo.PlaylistId < 0 {
 		var directories []string
 		directories = append(directories, savedInfo.MediaInfo.Domain)
@@ -434,11 +440,13 @@ func buildDownloadPath(savedInfo e.SavedInfo, pathType int) string {
 				directories = append(directories, "Subtitles")
 			}
 		}
+		dirResultPath = GetMediaDirectory(false) + strings.Join(directories, sep) //separate result for path only
 		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
-		result = strings.Join(directories, sep)
+		pathResult = strings.Join(directories, sep)
 	}
 
-	if savedInfo.PlaylistId > 0 {
+	//Channel Playlists
+	if savedInfo.PlaylistId > 0 && savedInfo.PlaylistChannelId > 0 {
 		var directories []string
 		directories = append(directories, savedInfo.MediaInfo.Domain)
 		directories = append(directories, savedInfo.MediaInfo.Channel)
@@ -450,21 +458,40 @@ func buildDownloadPath(savedInfo e.SavedInfo, pathType int) string {
 				directories = append(directories, "Subtitles")
 			}
 		}
+		dirResultPath = GetMediaDirectory(false) + strings.Join(directories, sep) //separate result for path only
 		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
-		result = strings.Join(directories, sep)
+		pathResult = strings.Join(directories, sep)
+	}
+
+	//Personal Playlists
+	if savedInfo.PlaylistId > 0 && savedInfo.PlaylistChannelId < 0 {
+		var directories []string
+		directories = append(directories, savedInfo.MediaInfo.Domain)
+		directories = append(directories, savedInfo.MediaInfo.Channel)
+		directories = append(directories, "Videos")
+		{
+			if pathType == e.Thumbnail {
+				directories = append(directories, "Thumbnails")
+			} else if pathType == e.Subtitles {
+				directories = append(directories, "Subtitles")
+			}
+		}
+		dirResultPath = GetMediaDirectory(false) + strings.Join(directories, sep) //separate result for path only
+		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
+		pathResult = strings.Join(directories, sep)
 	}
 
 	switch pathType {
 	case e.Thumbnail:
-		result = "\"thumbnail:" + result + "\""
-		result = `-o ` + result
+		pathResult = "\"thumbnail:" + pathResult + "\""
+		pathResult = `-o ` + pathResult
 	case e.Subtitles:
-		result = "\"subtitle:" + result + "\""
-		result = `-o ` + result
+		pathResult = "\"subtitle:" + pathResult + "\""
+		pathResult = `-o ` + pathResult
 	case e.Video:
-		result = "\"" + result + "\""
-		result = `-o ` + result
+		pathResult = "\"" + pathResult + "\""
+		pathResult = `-o ` + pathResult
 	}
 
-	return result
+	return pathResult, dirResultPath
 }

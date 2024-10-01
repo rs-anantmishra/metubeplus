@@ -41,13 +41,14 @@ type MediaInformation struct {
 type Bool bool
 
 type SavedInfo struct {
-	VideoId        int
-	YoutubeVideoId string
-	PlaylistId     int
-	ChannelId      int
-	DomainId       int
-	FormatId       int
-	MediaInfo      MediaInformation
+	VideoId           int
+	YoutubeVideoId    string
+	PlaylistId        int
+	PlaylistChannelId int
+	ChannelId         int
+	DomainId          int
+	FormatId          int
+	MediaInfo         MediaInformation
 }
 
 type MinimalCardsInfo struct {

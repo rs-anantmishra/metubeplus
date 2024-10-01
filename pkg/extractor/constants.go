@@ -93,6 +93,7 @@ const SkipDownload string = `--skip-download`
 const InfoJSON string = `--write-info-json`
 const QuietDownload string = `--quiet`
 const ProgressNewline string = `--newline`
+const UTF8EncodingExperimental string = `--encoding utf8`
 
 // const ProgressNewline string = `--newline`
 
@@ -133,8 +134,6 @@ const mediaDirectory string = `-P {{MediaDir}}`
 func GetMediaDirectory(keepParentDirectoryFlag bool) string {
 
 	mediaDir := strings.ReplaceAll(mediaDirectory, "{{MediaDir}}", c.Config("MEDIA_PATH", true))
-	mediaDir = strings.ReplaceAll(mediaDir, "/", "\\")
-
 	if !keepParentDirectoryFlag {
 		mediaDir = strings.ReplaceAll(mediaDir, "-P ", "")
 	}

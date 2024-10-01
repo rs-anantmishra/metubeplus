@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS tblPlaylists(
 	Title TEXT NOT NULL DEFAULT 'Unavailable',
 	ItemCount INTEGER,
 	Directory TEXT,
-	ChannelId INTEGER,
-	ThumbnailFileId INTEGER,
+	ChannelId INTEGER,                          -- (-1) for MultiChannelPlaylists
+	ThumbnailFileId INTEGER,                    -- Set to the Id of the Video with Index 1.
 	YoutubePlaylistID INTEGER,
 	CreatedDate INTEGER NOT NULL
 );

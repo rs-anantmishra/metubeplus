@@ -10,7 +10,7 @@ import (
 )
 
 type IRepository interface {
-	SaveMetadata([]e.MediaInformation, e.Filepath) []e.SavedInfo
+	SaveMetadata([]e.MediaInformation, e.Filepath, bool) []e.SavedInfo
 	SaveThumbnail([]e.Files) []int
 	SaveSubtitles([]e.Files) []int
 	SaveMediaContent([]e.Files) []int
@@ -28,7 +28,7 @@ func NewDownloadRepo(Database *sql.DB) IRepository {
 	}
 }
 
-func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) []e.SavedInfo {
+func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath, isSingleChannelPl bool) []e.SavedInfo {
 
 	var savedInfo []e.SavedInfo
 
@@ -52,13 +52,14 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 		}
 
 		//playlist info will be same for all in the playlist.
+		playlistChannelId := getPlaylistChannelId(channelId, isSingleChannelPl, elem.PlaylistId)
 		playlistId := genericCheck(*r, elem.PlaylistId, "Playlist", p.InsertPlaylistCheck)
 		if playlistId <= 0 && (elem.PlaylistTitle != "" && elem.PlaylistCount > 0) {
 			var args []any
 			args = append(args, elem.PlaylistTitle)
 			args = append(args, elem.PlaylistCount)
 			args = append(args, GetPlaylistFilepath(fp, -1))
-			args = append(args, elem.ChannelId)
+			args = append(args, playlistChannelId)
 			args = append(args, 0)
 			args = append(args, elem.PlaylistId)
 			args = append(args, time.Now().Unix())
@@ -193,13 +194,14 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 
 		//complete result
 		savedInfo = append(savedInfo, e.SavedInfo{
-			VideoId:        ytVideoId,
-			YoutubeVideoId: elem.YoutubeVideoId,
-			PlaylistId:     playlistId,
-			ChannelId:      channelId,
-			DomainId:       domainId,
-			FormatId:       formatId,
-			MediaInfo:      elem,
+			VideoId:           ytVideoId,
+			YoutubeVideoId:    elem.YoutubeVideoId,
+			PlaylistId:        playlistId,
+			ChannelId:         channelId,
+			PlaylistChannelId: playlistChannelId,
+			DomainId:          domainId,
+			FormatId:          formatId,
+			MediaInfo:         elem,
 		})
 	}
 	return savedInfo
@@ -309,7 +311,7 @@ func (r *repository) GetVideoFileInfo(videoId int) (e.SavedInfo, e.Filepath, err
 
 	smi.VideoId = videoId
 	row := r.db.QueryRow(p.GetVideoInformationById, videoId)
-	if err := row.Scan(&smi.MediaInfo.Title, &smi.PlaylistId, &smi.MediaInfo.PlaylistTitle, &smi.MediaInfo.PlaylistIndex, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId, &smi.MediaInfo.WebpageURL); err != nil {
+	if err := row.Scan(&smi.MediaInfo.Title, &smi.PlaylistId, &smi.MediaInfo.PlaylistTitle, &smi.MediaInfo.PlaylistIndex, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId, &smi.MediaInfo.WebpageURL, &smi.PlaylistChannelId); err != nil {
 		if err == sql.ErrNoRows {
 			return smi, fPath, fmt.Errorf("VideoId %d: no such video", videoId)
 		}
@@ -435,4 +437,18 @@ func subsFilesCheck(r repository, fileType string, videoId int, filename string,
 	}
 
 	return resultId
+}
+
+func getPlaylistChannelId(channelId int, isSingleChannelPl bool, ytPlaylistId string) int {
+	result := 0
+
+	if ytPlaylistId == "" { //video
+		result = 0
+	} else if ytPlaylistId != "" && !isSingleChannelPl { //multi-channel-pl
+		result = -1
+	} else if ytPlaylistId != "" && isSingleChannelPl { //single-channel-pl
+		result = channelId
+	}
+
+	return result
 }

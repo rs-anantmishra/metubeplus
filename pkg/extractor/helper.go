@@ -67,12 +67,14 @@ func createMetadataResponse(lstSavedInfo []e.SavedInfo, subtitles []e.Files, sub
 		if lstSavedInfo[0].MediaInfo.PlaylistTitle == _blank {
 			cardMetaDataInfoList[i].Thumbnail = getImagesFromURL(thumbnails[i])
 		} else {
-			if i == 0 {
-				cardMetaDataInfoList[i].PlaylistThumbnail = getImagesFromURL(thumbnails[0])
-				continue
+			cardMetaDataInfoList[i].Thumbnail = getImagesFromURL(thumbnails[i])
+			//set playlist thumbnail whenever Video Index is 1
+			if cardMetaDataInfoList[i].PlaylistVideoIndex == 1 {
+				playlistThumbnail := getImagesFromURL(thumbnails[i])
+				for k := 0; k < len(thumbnails); k++ {
+					cardMetaDataInfoList[k].PlaylistThumbnail = playlistThumbnail
+				}
 			}
-			cardMetaDataInfoList[i-1].Thumbnail = getImagesFromURL(thumbnails[i])
-			cardMetaDataInfoList[i-1].PlaylistThumbnail = getImagesFromURL(thumbnails[0])
 		}
 	}
 
@@ -204,4 +206,27 @@ func getFilepaths(playlistId int, fPath e.Filepath, pathType int) string {
 	}
 
 	return fp
+}
+
+func handleSingleChannelPlaylist(lstSavedInfo []e.MediaInformation) bool {
+
+	//handle video
+	if len(lstSavedInfo) == 1 && lstSavedInfo[0].PlaylistId == "" {
+		return true
+	}
+
+	result := true
+	//private playlists will have videos from various channels
+	prevChannel := ""
+	currentChannel := ""
+	for chIndex := 1; chIndex < len(lstSavedInfo); chIndex++ {
+		prevChannel = lstSavedInfo[chIndex-1].Channel
+		currentChannel = lstSavedInfo[chIndex].Channel
+
+		if prevChannel != currentChannel {
+			result = false
+		}
+	}
+
+	return result
 }
