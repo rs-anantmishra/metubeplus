@@ -44,7 +44,7 @@ type SavedInfo struct {
 	VideoId           int
 	YoutubeVideoId    string
 	PlaylistId        int
-	PlaylistChannelId int
+	PlaylistChannelId string
 	ChannelId         int
 	DomainId          int
 	FormatId          int

@@ -52,7 +52,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath, 
 		}
 
 		//playlist info will be same for all in the playlist.
-		playlistChannelId := getPlaylistChannelId(channelId, isSingleChannelPl, elem.PlaylistId)
+		playlistChannelId := getPlaylistChannelId(elem.ChannelId, isSingleChannelPl, elem.PlaylistId)
 		playlistId := genericCheck(*r, elem.PlaylistId, "Playlist", p.InsertPlaylistCheck)
 		if playlistId <= 0 && (elem.PlaylistTitle != "" && elem.PlaylistCount > 0) {
 			var args []any
@@ -439,13 +439,13 @@ func subsFilesCheck(r repository, fileType string, videoId int, filename string,
 	return resultId
 }
 
-func getPlaylistChannelId(channelId int, isSingleChannelPl bool, ytPlaylistId string) int {
-	result := 0
+func getPlaylistChannelId(channelId string, isSingleChannelPl bool, ytPlaylistId string) string {
+	result := ""
 
 	if ytPlaylistId == "" { //video
-		result = 0
+		result = ""
 	} else if ytPlaylistId != "" && !isSingleChannelPl { //multi-channel-pl
-		result = -1
+		result = ""
 	} else if ytPlaylistId != "" && isSingleChannelPl { //single-channel-pl
 		result = channelId
 	}

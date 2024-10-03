@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"slices"
 	"strings"
 	"syscall"
 
@@ -135,7 +136,7 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, lstSavedInfo []e.SavedInfo
 		_, errors, results := stripResultSections(pResult)
 
 		//if no erros and it is a multi channel playlist
-		if errors == nil && lstSavedInfo[i].PlaylistId > 0 && lstSavedInfo[i].PlaylistChannelId < 0 {
+		if errors == nil && lstSavedInfo[i].PlaylistId > 0 && lstSavedInfo[i].PlaylistChannelId == "" {
 			_, dirPath := buildDownloadPath(lstSavedInfo[i], e.Thumbnail)
 			thumbnailFilePaths = append(thumbnailFilePaths, dirPath)
 		}
@@ -152,11 +153,15 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, lstSavedInfo []e.SavedInfo
 	}
 	//#endregion
 
+	//Sort & Unique thumbnailFilePaths
+	slices.Sort(thumbnailFilePaths)
+	uniqThumbnailFilePaths := slices.Compact(thumbnailFilePaths)
+
 	var result []e.Files
-	if lstSavedInfo[0].PlaylistId < 0 || (lstSavedInfo[0].PlaylistId > 0 && lstSavedInfo[0].PlaylistChannelId > 0) {
+	if lstSavedInfo[0].PlaylistId < 0 || (lstSavedInfo[0].PlaylistId > 0 && lstSavedInfo[0].PlaylistChannelId != "") {
 		result = getVideoAndSingleChannelPlaylistThumbnailFiles(fPath, lstSavedInfo, d.p.Indicator)
-	} else if lstSavedInfo[0].PlaylistId > 0 && lstSavedInfo[0].PlaylistChannelId < 0 {
-		result = getMultiChannelPlaylistThumbnailFiles(lstSavedInfo, thumbnailFilePaths)
+	} else if lstSavedInfo[0].PlaylistId > 0 && lstSavedInfo[0].PlaylistChannelId == "" {
+		result = getMultiChannelPlaylistThumbnailFiles(lstSavedInfo, uniqThumbnailFilePaths)
 	}
 
 	return result
@@ -234,19 +239,13 @@ func (d *download) ExtractSubtitles(fPath e.Filepath, lstSavedInfo []e.SavedInfo
 func (d *download) GetDownloadedMediaFileInfo(smi e.SavedInfo, fPath e.Filepath) []e.Files {
 
 	//Get Video FilePaths
-	fp := getFilepaths(smi.PlaylistId, fPath, e.Video)
-	_, dirPath := buildDownloadPath(smi, e.Thumbnail)
-
-	c, err := os.ReadDir(fp)
-	x, err := os.ReadDir(dirPath)
-
-	fmt.Println(c)
-
+	_, dirPath := buildDownloadPath(smi, e.Video)
+	c, err := os.ReadDir(dirPath)
 	handleErrors(err, "network - ExtractMediaContent")
 
 	smiIndex := 0
 	var files []e.Files
-	for _, entry := range x {
+	for _, entry := range c {
 		info, _ := entry.Info()
 		splits := strings.SplitN(info.Name(), ".", -1)
 		fs_filename := info.Name()
@@ -257,7 +256,7 @@ func (d *download) GetDownloadedMediaFileInfo(smi e.SavedInfo, fPath e.Filepath)
 				PlaylistId:   smi.PlaylistId,
 				FileType:     "Video",
 				SourceId:     e.Downloaded,
-				FilePath:     fp,
+				FilePath:     dirPath,
 				FileName:     info.Name(),
 				Extension:    splits[len(splits)-1],
 				FileSize:     int(info.Size()),

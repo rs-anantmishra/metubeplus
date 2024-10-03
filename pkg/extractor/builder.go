@@ -250,7 +250,7 @@ func BuilderOptions() []CSwitch {
 
 func GetCommandString() string {
 	cmdPath := c.Config("YTDLP_PATH", true)
-	return cmdPath + CommandName
+	return cmdPath + "\\" + CommandName
 }
 
 func GetVideoFilepath(fp e.Filepath, fType int) string {
@@ -294,7 +294,7 @@ func cmdBuilderMetadata(url string) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + CommandName
+	cmd := cmdPath + "\\" + CommandName
 
 	return arguments, cmd
 }
@@ -335,7 +335,7 @@ func cmdBuilderDownload(url string, savedInfo e.SavedInfo) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + CommandName
+	cmd := cmdPath + "\\" + CommandName
 
 	return arguments, cmd
 }
@@ -375,7 +375,7 @@ func cmdBuilderSubtitles(url string, savedInfo e.SavedInfo) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + CommandName
+	cmd := cmdPath + "\\" + CommandName
 
 	return arguments, cmd
 }
@@ -415,7 +415,7 @@ func cmdBuilderThumbnails(url string, savedInfo e.SavedInfo) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + CommandName
+	cmd := cmdPath + "\\" + CommandName
 
 	return arguments, cmd
 }
@@ -440,13 +440,13 @@ func buildDownloadPath(savedInfo e.SavedInfo, pathType int) (string, string) {
 				directories = append(directories, "Subtitles")
 			}
 		}
-		dirResultPath = GetMediaDirectory(false) + strings.Join(directories, sep) //separate result for path only
+		dirResultPath = GetMediaDirectory(false) + "\\" + strings.Join(directories, sep) //separate result for path only
 		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
 		pathResult = strings.Join(directories, sep)
 	}
 
 	//Channel Playlists
-	if savedInfo.PlaylistId > 0 && savedInfo.PlaylistChannelId > 0 {
+	if savedInfo.PlaylistId > 0 && savedInfo.PlaylistChannelId != "" {
 		var directories []string
 		directories = append(directories, savedInfo.MediaInfo.Domain)
 		directories = append(directories, savedInfo.MediaInfo.Channel)
@@ -458,13 +458,13 @@ func buildDownloadPath(savedInfo e.SavedInfo, pathType int) (string, string) {
 				directories = append(directories, "Subtitles")
 			}
 		}
-		dirResultPath = GetMediaDirectory(false) + strings.Join(directories, sep) //separate result for path only
+		dirResultPath = GetMediaDirectory(false) + "\\" + strings.Join(directories, sep) //separate result for path only
 		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
 		pathResult = strings.Join(directories, sep)
 	}
 
 	//Personal Playlists
-	if savedInfo.PlaylistId > 0 && savedInfo.PlaylistChannelId < 0 {
+	if savedInfo.PlaylistId > 0 && savedInfo.PlaylistChannelId == "" {
 		var directories []string
 		directories = append(directories, savedInfo.MediaInfo.Domain)
 		directories = append(directories, savedInfo.MediaInfo.Channel)
@@ -476,7 +476,7 @@ func buildDownloadPath(savedInfo e.SavedInfo, pathType int) (string, string) {
 				directories = append(directories, "Subtitles")
 			}
 		}
-		dirResultPath = GetMediaDirectory(false) + strings.Join(directories, sep) //separate result for path only
+		dirResultPath = GetMediaDirectory(false) + "\\" + strings.Join(directories, sep) //separate result for path only
 		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
 		pathResult = strings.Join(directories, sep)
 	}
