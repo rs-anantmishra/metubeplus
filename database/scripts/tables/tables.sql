@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS tblVideos(
 	IsFileDownloaded INTEGER NOT NULL DEFAULT 0,
 	FileId INTEGER NOT NULL DEFAULT 0,
 	ChannelId INTEGER,
-	PlayListId INTEGER,
+	PlaylistVideosId INTEGER,
 	DomainId INTEGER,
 	FormatId INTEGER,	
 	YoutubeVideoId INTEGER,
@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS tblAvailabilityType(
 
 CREATE TABLE IF NOT EXISTS tblPlaylists(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    PlaylistVideosId INTEGER,
 	Title TEXT NOT NULL DEFAULT 'Unavailable',
 	ItemCount INTEGER,
 	Directory TEXT,
