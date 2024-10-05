@@ -443,44 +443,8 @@ func buildDownloadPath(savedInfo e.SavedInfo, pathType int) (string, string) {
 	space := " "
 	sep := string(os.PathSeparator)
 
-	//Videos
-	if savedInfo.PlaylistId < 0 {
-		var directories []string
-		directories = append(directories, savedInfo.MediaInfo.Domain)
-		directories = append(directories, savedInfo.MediaInfo.Channel)
-		directories = append(directories, "Videos")
-		{
-			if pathType == e.Thumbnail {
-				directories = append(directories, "Thumbnails")
-			} else if pathType == e.Subtitles {
-				directories = append(directories, "Subtitles")
-			}
-		}
-		dirResultPath = GetMediaDirectory(false) + "\\" + strings.Join(directories, sep) //separate result for path only
-		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
-		pathResult = strings.Join(directories, sep)
-	}
-
-	//Channel Playlists
-	if savedInfo.PlaylistId > 0 && savedInfo.PlaylistChannelId != "" {
-		var directories []string
-		directories = append(directories, savedInfo.MediaInfo.Domain)
-		directories = append(directories, savedInfo.MediaInfo.Channel)
-		directories = append(directories, savedInfo.MediaInfo.PlaylistTitle)
-		{
-			if pathType == e.Thumbnail {
-				directories = append(directories, "Thumbnails")
-			} else if pathType == e.Subtitles {
-				directories = append(directories, "Subtitles")
-			}
-		}
-		dirResultPath = GetMediaDirectory(false) + "\\" + strings.Join(directories, sep) //separate result for path only
-		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
-		pathResult = strings.Join(directories, sep)
-	}
-
-	//Personal Playlists
-	if savedInfo.PlaylistId > 0 && savedInfo.PlaylistChannelId == "" {
+	//Videos - In playlists or otherwise.
+	{
 		var directories []string
 		directories = append(directories, savedInfo.MediaInfo.Domain)
 		directories = append(directories, savedInfo.MediaInfo.Channel)
