@@ -10,7 +10,7 @@ import (
 )
 
 type IRepository interface {
-	SaveMetadata([]e.MediaInformation, e.Filepath, bool) []e.SavedInfo
+	SaveMetadata([]e.MediaInformation, e.Filepath) []e.SavedInfo
 	SaveThumbnail([]e.Files) []int
 	SaveSubtitles([]e.Files) []int
 	SaveMediaContent([]e.Files) []int
@@ -28,7 +28,7 @@ func NewDownloadRepo(Database *sql.DB) IRepository {
 	}
 }
 
-func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath, isSingleChannelPl bool) []e.SavedInfo {
+func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) []e.SavedInfo {
 
 	var savedInfo []e.SavedInfo
 
@@ -52,14 +52,12 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath, 
 		}
 
 		//playlist info will be same for all in the playlist.
-		playlistChannelId := getPlaylistChannelId(elem.ChannelId, isSingleChannelPl, elem.PlaylistId)
+		//playlistChannelId := getPlaylistChannelId(elem.ChannelId, isSingleChannelPl, elem.PlaylistId) //check why this is needed and if this is numeric or yt id
 		playlistId := genericCheck(*r, elem.PlaylistId, "Playlist", p.InsertPlaylistCheck)
 		if playlistId <= 0 && (elem.PlaylistTitle != "" && elem.PlaylistCount > 0) {
 			var args []any
 			args = append(args, elem.PlaylistTitle)
 			args = append(args, elem.PlaylistCount)
-			args = append(args, GetPlaylistFilepath(fp, -1))
-			args = append(args, playlistChannelId)
 			args = append(args, 0)
 			args = append(args, elem.PlaylistId)
 			args = append(args, time.Now().Unix())
@@ -118,7 +116,6 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath, 
 			args = append(args, 0) //IsFileDownloaded
 			args = append(args, 0) //FileId
 			args = append(args, channelId)
-			args = append(args, playlistId)
 			args = append(args, domainId)
 			args = append(args, formatId)
 			args = append(args, elem.YoutubeVideoId)
@@ -128,6 +125,18 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath, 
 
 			ytVideoId = genericSave(*r, args, p.InsertMetadata)
 			sequencedVideoIds[k] = ytVideoId
+		}
+
+		//check can be used for any one-to-many tables
+		playlistVideoId := tagsOrCategoriesCheck(*r, playlistId, "PlaylistVideos", p.InsertPlaylistVideosCheck, ytVideoId)
+		if playlistVideoId <= 0 {
+			var args []any
+			args = append(args, ytVideoId)
+			args = append(args, playlistId)
+			args = append(args, time.Now().Unix())
+
+			playlistVideoId = genericSave(*r, args, p.InsertPlaylistVideos)
+			_ = playlistVideoId
 		}
 
 		//Tags will NOT be same for all items in playlist.
@@ -198,7 +207,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath, 
 			YoutubeVideoId:    elem.YoutubeVideoId,
 			PlaylistId:        playlistId,
 			ChannelId:         channelId,
-			PlaylistChannelId: playlistChannelId,
+			PlaylistChannelId: "",
 			DomainId:          domainId,
 			FormatId:          formatId,
 			MediaInfo:         elem,

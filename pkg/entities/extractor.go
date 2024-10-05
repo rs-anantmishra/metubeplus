@@ -35,6 +35,10 @@ type MediaInformation struct {
 	DislikeCount         int      `json:"dislike_count"`          //added later
 	AgeLimit             int      `json:"age_limit"`              //added later
 	PlayableInEmbed      Bool     `json:"playable_in_embed"`      //added later
+	PlaylistChannel      string   `json:"playlist_channel"`       //added later
+	PlaylistChannelId    string   `json:"playlist_channel_id"`    //added later
+	PlaylistUploader     string   `json:"playlist_uploader"`      //added later
+	PlaylistUploaderId   string   `json:"playlist_uploader_id"`   //added later
 }
 
 // helps unmarshalling unquoted true/false as bools in json

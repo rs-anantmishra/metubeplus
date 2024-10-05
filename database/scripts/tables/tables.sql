@@ -16,11 +16,9 @@ CREATE TABLE IF NOT EXISTS tblVideos(
     UploadDate TEXT,
     ReleaseTimestamp INTEGER,
     ModifiedTimestamp INTEGER,
-	PlaylistVideoIndex INTEGER,
 	IsFileDownloaded INTEGER NOT NULL DEFAULT 0,
 	FileId INTEGER NOT NULL DEFAULT 0,
 	ChannelId INTEGER,
-	PlaylistVideosId INTEGER,
 	DomainId INTEGER,
 	FormatId INTEGER,	
 	YoutubeVideoId INTEGER,
@@ -50,12 +48,14 @@ CREATE TABLE IF NOT EXISTS tblAvailabilityType(
 
 CREATE TABLE IF NOT EXISTS tblPlaylists(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    PlaylistVideosId INTEGER,
 	Title TEXT NOT NULL DEFAULT 'Unavailable',
 	ItemCount INTEGER,
-	Directory TEXT,
+    PlaylistChannel TEXT,
+    PlaylistChannelId TEXT,
+    PlaylistUploader TEXT,
+    PlaylistUploaderId TEXT,
 	ThumbnailFileId INTEGER,                    
-	YoutubePlaylistID INTEGER,
+	YoutubePlaylistId INTEGER,
 	CreatedDate INTEGER NOT NULL
 );
 
@@ -63,7 +63,8 @@ CREATE TABLE IF NOT EXISTS tblPlaylistVideos(
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	VideoId INTEGER NOT NULL,
     PlaylistId INTEGER NOT NULL,
-	Directory TEXT,
+    PlaylistVideoIndex INTEGER NOT NULL,
+	FileId INTEGER,
 	ThumbnailFileId INTEGER,                    
 	CreatedDate INTEGER NOT NULL
 );

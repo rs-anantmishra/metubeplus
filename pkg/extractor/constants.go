@@ -48,6 +48,11 @@ const DislikeCount string = `--print %(.{dislike_count})s`
 const AgeLimit string = `--print %(.{age_limit})s`
 const PlayableInEmbed string = `--print %(.{playable_in_embed})s`
 
+const PlaylistChannel string = `--print %(.{playlist_channel})s`
+const PlaylistChannelId string = `--print %(.{playlist_channel_id})s`
+const PlaylistUploader string = `--print %(.{playlist_uploader})s`
+const PlaylistUploaderId string = `--print %(.{playlist_uploader_id})s`
+
 // --Options Plaintext-----------------------------------------------------------------------------//
 const Plaintext_YoutubeVideoId string = `--print after_move:id`
 const Plaintext_Availability string = `--print after_move:availability`
@@ -85,6 +90,10 @@ const Plaintext_LikeCount string = `--print before_dl:like_count`
 const Plaintext_DislikeCount string = `--print before_dl:dislike_count`
 const Plaintext_AgeLimit string = `--print before_dl:age_limit`
 const Plaintext_PlayableInEmbed string = `--print before_dl:playable_in_embed`
+const Plaintext_PlaylistChannel string = `--print before_dl:playlist_channel`
+const Plaintext_PlaylistChannelId string = `--print before_dl:playlist_channel_id`
+const Plaintext_PlaylistUploader string = `--print before_dl:playlist_uploader`
+const Plaintext_PlaylistUploaderId string = `--print before_dl:playlist_uploader_id`
 
 // --Extras----------------------------------------------------------------------------------------//
 const WriteSubtitles string = `--write-auto-subs`

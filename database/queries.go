@@ -4,8 +4,11 @@ package database
 const InsertChannelCheck string = `Select Id From tblChannels Where YoutubeChannelId = ?`
 const InsertChannel string = `INSERT INTO tblChannels Select NULL, ?, ?, ?, ?, ?;`
 
-const InsertPlaylistCheck string = `Select Id From tblPlaylists WHERE YoutubePlaylistID = ?`
-const InsertPlaylist string = `INSERT INTO tblPlaylists Select NULL, ?, ?, ?, ?, ?, ?, ?;`
+const InsertPlaylistCheck string = `Select Id From tblPlaylists WHERE YoutubePlaylistId = ?`
+const InsertPlaylist string = `INSERT INTO tblPlaylists Select NULL, ?, ?, ?, ?, ?;`
+
+const InsertPlaylistVideosCheck string = `Select Id From tblPlaylistVideos WHERE PlaylistId = ? AND VideoId = ?`
+const InsertPlaylistVideos string = `INSERT INTO tblPlaylistVideos(Id, VideoId, PlaylistId, CreatedDate) Select NULL, ?, ?, ?;`
 
 const InsertDomainCheck string = `Select Id From tblDomains Where Domain = ?`
 const InsertDomain string = `INSERT INTO tblDomains Select NULL, ?, ?;`
@@ -32,11 +35,9 @@ const InsertMetadata string = `INSERT INTO tblVideos (
 	,UploadDate
 	,ReleaseTimestamp
 	,ModifiedTimestamp
-	,PlaylistVideoIndex
 	,IsFileDownloaded
 	,FileId
 	,ChannelId
-	,PlayListId
 	,DomainId
 	,FormatId
 	,YoutubeVideoId
@@ -44,7 +45,7 @@ const InsertMetadata string = `INSERT INTO tblVideos (
 	,IsDeleted
 	,CreatedDate
 )
-VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
+VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
 
 const InsertTagsCheck string = `Select Id From tblTags Where Name = ?`
 const InsertTags string = `INSERT INTO tblTags Select NULL, ?, ?, ?;`
