@@ -53,13 +53,17 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 
 		//playlist info will be same for all in the playlist.
 		//playlistChannelId := getPlaylistChannelId(elem.ChannelId, isSingleChannelPl, elem.PlaylistId) //check why this is needed and if this is numeric or yt id
-		playlistId := genericCheck(*r, elem.PlaylistId, "Playlist", p.InsertPlaylistCheck)
+		playlistId := genericCheck(*r, elem.YoutubePlaylistId, "Playlist", p.InsertPlaylistCheck)
 		if playlistId <= 0 && (elem.PlaylistTitle != "" && elem.PlaylistCount > 0) {
 			var args []any
 			args = append(args, elem.PlaylistTitle)
 			args = append(args, elem.PlaylistCount)
+			args = append(args, elem.PlaylistChannel)
+			args = append(args, elem.PlaylistChannelId)
+			args = append(args, elem.PlaylistUploader)
+			args = append(args, elem.PlaylistUploaderId)
 			args = append(args, 0)
-			args = append(args, elem.PlaylistId)
+			args = append(args, elem.YoutubePlaylistId)
 			args = append(args, time.Now().Unix())
 
 			playlistId = genericSave(*r, args, p.InsertPlaylist)
@@ -112,7 +116,6 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 			args = append(args, elem.UploadDate)
 			args = append(args, elem.ReleaseTimestamp)
 			args = append(args, elem.ModifiedTimestamp)
-			args = append(args, elem.PlaylistIndex)
 			args = append(args, 0) //IsFileDownloaded
 			args = append(args, 0) //FileId
 			args = append(args, channelId)
@@ -133,6 +136,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 			var args []any
 			args = append(args, ytVideoId)
 			args = append(args, playlistId)
+			args = append(args, elem.PlaylistVideoIndex)
 			args = append(args, time.Now().Unix())
 
 			playlistVideoId = genericSave(*r, args, p.InsertPlaylistVideos)
@@ -319,7 +323,7 @@ func (r *repository) GetVideoFileInfo(videoId int) (e.SavedInfo, e.Filepath, err
 
 	smi.VideoId = videoId
 	row := r.db.QueryRow(p.GetVideoInformationById, videoId)
-	if err := row.Scan(&smi.MediaInfo.Title, &smi.PlaylistId, &smi.MediaInfo.PlaylistTitle, &smi.MediaInfo.PlaylistIndex, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId, &smi.MediaInfo.WebpageURL); err != nil {
+	if err := row.Scan(&smi.MediaInfo.Title, &smi.MediaInfo.PlaylistTitle, &fPath.Channel, &fPath.Domain, &fPath.PlaylistTitle, &smi.YoutubeVideoId, &smi.MediaInfo.WebpageURL); err != nil {
 		if err == sql.ErrNoRows {
 			return smi, fPath, fmt.Errorf("VideoId %d: no such video", videoId)
 		}
@@ -445,18 +449,4 @@ func subsFilesCheck(r repository, fileType string, videoId int, filename string,
 	}
 
 	return resultId
-}
-
-func getPlaylistChannelId(channelId string, isSingleChannelPl bool, ytPlaylistId string) string {
-	result := ""
-
-	if ytPlaylistId == "" { //video
-		result = ""
-	} else if ytPlaylistId != "" && !isSingleChannelPl { //multi-channel-pl
-		result = ""
-	} else if ytPlaylistId != "" && isSingleChannelPl { //single-channel-pl
-		result = channelId
-	}
-
-	return result
 }

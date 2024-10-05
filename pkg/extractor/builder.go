@@ -329,7 +329,8 @@ func cmdBuilderDownload(url string, savedInfo e.SavedInfo) (string, string) {
 	for _, elem := range bo {
 
 		//Handle Video
-		if elem.Group.Video.Download && savedInfo.PlaylistId < 0 {
+		// if elem.Group.Video.Download && savedInfo.PlaylistId < 0 {
+		if elem.Group.Video.Download {
 			switch elem.Name {
 			case "OutputVideoFile":
 				args = append(args, contentFilepath)

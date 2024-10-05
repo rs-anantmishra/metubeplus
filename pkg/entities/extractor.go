@@ -20,10 +20,10 @@ type MediaInformation struct {
 	ChannelURL           string   `json:"channel_url"`
 	Availability         string   `json:"availability"`
 	LiveStatus           string   `json:"live_status"`
-	PlaylistId           string   `json:"playlist_id"`
+	YoutubePlaylistId    string   `json:"playlist_id"`
 	PlaylistTitle        string   `json:"playlist_title"`
 	PlaylistCount        int      `json:"playlist_count"`
-	PlaylistIndex        int      `json:"playlist_index"`
+	PlaylistVideoIndex   int      `json:"playlist_index"`
 	ThumbnailURL         string   `json:"thumbnail"`              //added later
 	License              string   `json:"license"`                //added later
 	ChannelFollowerCount int      `json:"channel_follower_count"` //added later

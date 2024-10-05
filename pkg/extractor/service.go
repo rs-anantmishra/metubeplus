@@ -30,11 +30,7 @@ func NewDownloadService(r IRepository, d IDownload) IService {
 
 func (s *service) ExtractIngestMetadata(params e.IncomingRequest) []p.CardsInfoResponse {
 	metadata, fp := s.download.ExtractMetadata()
-
-	//isSingleChannelPl := handleSingleChannelPlaylist(metadata)
-
 	lstSavedInfo := s.repository.SaveMetadata(metadata, fp)
-	// lstSavedInfo := s.repository.SaveMetadata(metadata, fp, isSingleChannelPl)
 	//error check here before continuing exec for thumbs and subs
 
 	var thumbnails []e.Files

@@ -46,7 +46,7 @@ func createMetadataResponse(lstSavedInfo []e.SavedInfo, subtitles []e.Files, sub
 		cardMetaDataInfo.MediaURL = _blank
 		cardMetaDataInfo.OriginalURL = elem.MediaInfo.OriginalURL
 		cardMetaDataInfo.Playlist = elem.MediaInfo.PlaylistTitle
-		cardMetaDataInfo.PlaylistVideoIndex = elem.MediaInfo.PlaylistIndex
+		cardMetaDataInfo.PlaylistVideoIndex = elem.MediaInfo.PlaylistVideoIndex
 		cardMetaDataInfo.Title = elem.MediaInfo.Title
 		cardMetaDataInfo.VideoFormat = elem.MediaInfo.Format
 		cardMetaDataInfo.VideoId = elem.VideoId
@@ -206,27 +206,4 @@ func getFilepaths(playlistId int, fPath e.Filepath, pathType int) string {
 	}
 
 	return fp
-}
-
-func handleSingleChannelPlaylist(lstSavedInfo []e.MediaInformation) bool {
-
-	//handle video
-	if len(lstSavedInfo) == 1 && lstSavedInfo[0].PlaylistId == "" {
-		return true
-	}
-
-	result := true
-	//private playlists will have videos from various channels
-	prevChannel := ""
-	currentChannel := ""
-	for chIndex := 1; chIndex < len(lstSavedInfo); chIndex++ {
-		prevChannel = lstSavedInfo[chIndex-1].Channel
-		currentChannel = lstSavedInfo[chIndex].Channel
-
-		if prevChannel != currentChannel {
-			result = false
-		}
-	}
-
-	return result
 }

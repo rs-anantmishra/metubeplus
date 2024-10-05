@@ -5,10 +5,10 @@ const InsertChannelCheck string = `Select Id From tblChannels Where YoutubeChann
 const InsertChannel string = `INSERT INTO tblChannels Select NULL, ?, ?, ?, ?, ?;`
 
 const InsertPlaylistCheck string = `Select Id From tblPlaylists WHERE YoutubePlaylistId = ?`
-const InsertPlaylist string = `INSERT INTO tblPlaylists Select NULL, ?, ?, ?, ?, ?;`
+const InsertPlaylist string = `INSERT INTO tblPlaylists Select NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?;`
 
 const InsertPlaylistVideosCheck string = `Select Id From tblPlaylistVideos WHERE PlaylistId = ? AND VideoId = ?`
-const InsertPlaylistVideos string = `INSERT INTO tblPlaylistVideos(Id, VideoId, PlaylistId, CreatedDate) Select NULL, ?, ?, ?;`
+const InsertPlaylistVideos string = `INSERT INTO tblPlaylistVideos(Id, VideoId, PlaylistId, PlaylistVideoIndex, CreatedDate) Select NULL, ?, ?, ?, ?;`
 
 const InsertDomainCheck string = `Select Id From tblDomains Where Domain = ?`
 const InsertDomain string = `INSERT INTO tblDomains Select NULL, ?, ?;`
@@ -67,11 +67,12 @@ const InsertFile string = `INSERT INTO tblFiles SELECT NULL, ?, ?, ?, ?, ?, ?, ?
 const InsertMediaFileCheck string = `SELECT Id From tblFiles WHERE FileType = ? AND VideoId = ? AND FileName = ?`
 
 const GetNetworkVideoURLById string = `Select WebpageURL from tblVideos Where Id = ?`
-const GetVideoInformationById string = `Select V.Title, V.PlayListId, P.Title, V.PlaylistVideoIndex, C.Name as 'Channel', D.Domain, P.Title as 'PlaylistTitle', YoutubeVideoId, V.WebpageURL
+const GetVideoInformationById string = `Select V.Title, P.Title, C.Name as 'Channel', D.Domain, P.Title as 'PlaylistTitle', YoutubeVideoId, V.WebpageURL
 										FROM tblVideos V 
 										INNER JOIN tblChannels C ON C.Id = V.ChannelId 
 										INNER JOIN tblDomains D ON D.Id = V.DomainId
-										INNER JOIN tblPlaylists P ON P.Id = V.PlayListId
+										INNER JOIN tblPlaylistVideos PV ON PV.VideoId = V.Id
+										INNER JOIN tblPlaylists P ON P.Id = PV.PlaylistId
 										WHERE V.Id = ?;`
 
 const UpdateVideoFileFields string = `UPDATE tblVideos SET IsFileDownloaded = ?, FileId = ? WHERE Id = ?;`
@@ -79,7 +80,8 @@ const UpdateVideoFileFields string = `UPDATE tblVideos SET IsFileDownloaded = ?,
 const GetAllVideos_Info string = `Select V.Id, V.Title, V.Description, V.DurationSeconds, V.OriginalURL, V.WebpageURL, V.IsFileDownloaded, V.IsDeleted, C.Name, P.Title, V.LiveStatus, D.Domain, V.Availability, F.Format, V.YoutubeVideoId, V.CreatedDate,  FIThumbnail.FilePath || '\' || FIThumbnail.FileName as 'ThumbnailFilePath', FIVideo.FilePath || '\' || FIVideo.FileName as 'VideoFilePath'
 								  FROM tblVideos V
 								  INNER JOIN tblChannels C ON V.ChannelId = C.Id
-								  INNER JOIN tblPlaylists P ON V.PlaylistId = P.Id
+								  INNER JOIN tblPlaylistVideos PV ON V.Id = PV.VideoId
+								  INNER JOIN tblPlaylists P ON PV.PlaylistId = P.Id
 								  INNER JOIN tblDomains D ON V.DomainId = D.Id
 								  INNER JOIN tblFormats F ON V.FormatId = F.Id
 								  INNER JOIN tblFiles FIThumbnail ON (V.Id = FIThumbnail.VideoId AND FIThumbnail.FileType = 'Thumbnail')

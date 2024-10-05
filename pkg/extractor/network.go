@@ -27,9 +27,8 @@ type IDownload interface {
 }
 
 type download struct {
-	p             e.IncomingRequest
-	indicatorType int
-	lstDownloads  []g.DownloadStatus
+	p            e.IncomingRequest
+	lstDownloads []g.DownloadStatus
 }
 
 func NewDownload(params e.IncomingRequest) IDownload {
@@ -52,7 +51,7 @@ func (d *download) Cleanup() {
 func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
 	args, command := cmdBuilderMetadata(d.p.Indicator)
-	logCommand := command + Space + args
+	logCommand := "chcp 65001 && " + command + Space + args
 
 	//log executed command - in activity log later
 	fmt.Println(logCommand)
@@ -118,7 +117,6 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, lstSavedInfo []e.SavedInfo
 
 	for i := 0; i < len(lstSavedInfo); i++ {
 
-		// args, command := cmdBuilderThumbnails(d.p.Indicator, lstSavedInfo[i])
 		args, command := cmdBuilderThumbnails(lstSavedInfo[i].MediaInfo.WebpageURL, lstSavedInfo[i])
 		logCommand := command + Space + args
 
@@ -154,14 +152,7 @@ func (d *download) ExtractThumbnail(fPath e.Filepath, lstSavedInfo []e.SavedInfo
 	slices.Sort(thumbnailFilePaths)
 	uniqThumbnailFilePaths := slices.Compact(thumbnailFilePaths)
 
-	var result []e.Files
-	result = getVideoThumbnailFiles(lstSavedInfo, uniqThumbnailFilePaths)
-	// if lstSavedInfo[0].PlaylistId < 0 || (lstSavedInfo[0].PlaylistId > 0 && lstSavedInfo[0].PlaylistChannelId != "") {
-	// 	result = getVideoAndSingleChannelPlaylistThumbnailFiles(fPath, lstSavedInfo, d.p.Indicator)
-	// } else if lstSavedInfo[0].PlaylistId > 0 && lstSavedInfo[0].PlaylistChannelId == "" {
-	// 	result = getMultiChannelPlaylistThumbnailFiles(lstSavedInfo, uniqThumbnailFilePaths)
-	// }
-
+	result := getVideoThumbnailFiles(lstSavedInfo, uniqThumbnailFilePaths)
 	return result
 }
 
@@ -271,26 +262,6 @@ func (d *download) GetDownloadedMediaFileInfo(smi e.SavedInfo, fPath e.Filepath)
 	return files
 }
 
-func getIndicatorType(url string) (int, int) {
-	arguments := "\"" + url + "\"" + Space + Title + Space + SkipDownload
-	cmd, stdout := buildProcess(arguments, GetCommandString())
-
-	err := cmd.Start()
-	handleErrors(err, "ValidateRequest - Cmd.Start")
-
-	pResult := executeProcess(stdout, false)
-	_, _, results := stripResultSections(pResult)
-
-	switch {
-	case len(results) == 1:
-		return Video, len(results)
-	case len(results) > 1:
-		return Playlist, len(results)
-	default:
-		return Generic, len(results)
-	}
-}
-
 // Build a Process to execute & attach pipe to it here
 func buildProcess(args string, command string) (*exec.Cmd, io.ReadCloser) {
 
@@ -332,6 +303,7 @@ func executeDownloadProcess(stdout io.ReadCloser, activeItem []g.DownloadStatus)
 
 	//Update State
 	activeItem[0].State = g.Downloading
+	arrayOffset := 2 //it was 2 now it is 1
 
 	// var result string
 	var b bytes.Buffer
@@ -344,8 +316,8 @@ func executeDownloadProcess(stdout io.ReadCloser, activeItem []g.DownloadStatus)
 		results := strings.Split(result, "\n")
 
 		//handle empty strings at the end
-		if len(results)-2 >= 0 {
-			activeItem[0].StatusMessage = results[len(results)-2]
+		if len(results)-arrayOffset >= 0 {
+			activeItem[0].StatusMessage = results[len(results)-arrayOffset]
 			log.Info("MESSAGE VALUE: ", activeItem[0].StatusMessage)
 		}
 
@@ -601,102 +573,6 @@ func patchDataField(mediaInfo e.MediaInformation) e.MediaInformation {
 }
 
 func getVideoThumbnailFiles(lstSavedInfo []e.SavedInfo, thumbnailFilePaths []string) []e.Files {
-
-	var files []e.Files
-	for pathIndex, path := range thumbnailFilePaths {
-
-		//read all files in the directory where the thumbnails are saved
-		c, err := os.ReadDir(path)
-		handleErrors(err, "network - ExtractThumbnail")
-		fmt.Println(pathIndex, path)
-
-		for k, entry := range c {
-			info, _ := entry.Info()
-			splits := strings.SplitN(info.Name(), ".", -1)
-			fs_filename := info.Name()
-
-			thumbnailPlaylistId := lstSavedInfo[k].PlaylistId
-			for idx, saved := range lstSavedInfo {
-				if strings.Contains(fs_filename, saved.YoutubeVideoId) {
-					f := e.Files{
-						VideoId:      lstSavedInfo[idx].VideoId,
-						PlaylistId:   thumbnailPlaylistId,
-						FileType:     "Thumbnail",
-						SourceId:     e.Downloaded,
-						FilePath:     path,
-						FileName:     info.Name(),
-						Extension:    splits[len(splits)-1],
-						FileSize:     int(info.Size()),
-						FileSizeUnit: "bytes",
-						NetworkPath:  saved.MediaInfo.ThumbnailURL,
-						IsDeleted:    0,
-						CreatedDate:  info.ModTime().Unix(),
-					}
-					files = append(files, f)
-				}
-			}
-		}
-
-	}
-	return files
-}
-
-func getVideoAndSingleChannelPlaylistThumbnailFiles(fPath e.Filepath, lstSavedInfo []e.SavedInfo, indicator string) []e.Files {
-	//Get Thumbnail FilePaths
-	fp := getFilepaths(lstSavedInfo[0].PlaylistId, fPath, e.Thumbnail)
-
-	//read all files in the directory where the thumbnails are saved
-	c, err := os.ReadDir(fp)
-	handleErrors(err, "network - ExtractThumbnail")
-
-	var files []e.Files
-
-	for _, entry := range c {
-		info, _ := entry.Info()
-		splits := strings.SplitN(info.Name(), ".", -1)
-		fs_filename := info.Name()
-
-		thumbnailPlaylistId := lstSavedInfo[0].PlaylistId
-		for idx, saved := range lstSavedInfo {
-			if strings.Contains(fs_filename, saved.YoutubeVideoId) {
-				f := e.Files{
-					VideoId:      lstSavedInfo[idx].VideoId,
-					PlaylistId:   thumbnailPlaylistId,
-					FileType:     "Thumbnail",
-					SourceId:     e.Downloaded,
-					FilePath:     fp,
-					FileName:     info.Name(),
-					Extension:    splits[len(splits)-1],
-					FileSize:     int(info.Size()),
-					FileSizeUnit: "bytes",
-					NetworkPath:  saved.MediaInfo.ThumbnailURL,
-					IsDeleted:    0,
-					CreatedDate:  info.ModTime().Unix(),
-				}
-				files = append(files, f)
-			} else if saved.PlaylistId > 0 && strings.Contains(fs_filename, indicator) { //order is important for short-circuiting evaluation
-				f := e.Files{
-					VideoId:      -1,
-					PlaylistId:   thumbnailPlaylistId,
-					FileType:     "Thumbnail",
-					SourceId:     e.Downloaded,
-					FilePath:     fp,
-					FileName:     info.Name(),
-					Extension:    splits[len(splits)-1],
-					FileSize:     int(info.Size()),
-					FileSizeUnit: "bytes",
-					NetworkPath:  indicator,
-					IsDeleted:    0,
-					CreatedDate:  info.ModTime().Unix(),
-				}
-				files = append(files, f)
-			}
-		}
-	}
-	return files
-}
-
-func getMultiChannelPlaylistThumbnailFiles(lstSavedInfo []e.SavedInfo, thumbnailFilePaths []string) []e.Files {
 
 	var files []e.Files
 	for pathIndex, path := range thumbnailFilePaths {
