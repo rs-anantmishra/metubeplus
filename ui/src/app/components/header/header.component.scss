@@ -9,9 +9,6 @@
     border: none;
     padding-bottom: 0.75rem;
     padding-top: 0.75rem;
-    background-color: black;
-    // background-color: #F8FAFC;
-
 }
 
 :host ::ng-deep .p-autocomplete-input {
@@ -34,5 +31,11 @@
 .nav-box {
     padding: 0px 8px;
     width: 100%;
-    max-width: 200px;
+    max-width: 225px;
+    display: flex;
+    align-items: center;
+}
+
+.theme-mode {
+    margin: 0px 10px;
 }

@@ -582,17 +582,16 @@ func getVideoThumbnailFiles(lstSavedInfo []e.SavedInfo, thumbnailFilePaths []str
 		handleErrors(err, "network - ExtractThumbnail")
 		fmt.Println(pathIndex, path)
 
-		for k, entry := range c {
+		for _, entry := range c {
 			info, _ := entry.Info()
 			splits := strings.SplitN(info.Name(), ".", -1)
 			fs_filename := info.Name()
 
-			thumbnailPlaylistId := lstSavedInfo[k].PlaylistId
 			for idx, saved := range lstSavedInfo {
 				if strings.Contains(fs_filename, saved.YoutubeVideoId) {
 					f := e.Files{
 						VideoId:      lstSavedInfo[idx].VideoId,
-						PlaylistId:   thumbnailPlaylistId,
+						PlaylistId:   saved.PlaylistId,
 						FileType:     "Thumbnail",
 						SourceId:     e.Downloaded,
 						FilePath:     path,

@@ -57,7 +57,17 @@
                         ],
                         "styles": [
                             "node_modules/plyr/dist/plyr.css",
-                            "src/styles.scss"
+                            "src/styles.scss",
+                            {
+                                "input": "src/themes/aura-dark-blue/theme.css",
+                                "bundleName": "theme-dark",
+                                "inject": false
+                            },
+                            {
+                              "input": "src/themes/aura-light-blue/theme.css",
+                              "bundleName": "theme-light",
+                              "inject": false
+                            }
                         ],
                         "scripts": [
                             "node_modules/plyr/dist/plyr.js"
@@ -123,7 +133,17 @@
                         ],
                         "styles": [
                             "node_modules/plyr/dist/plyr.css",
-                            "src/styles.scss"
+                            "src/styles.scss",
+                            {
+                                "input": "themes/aura-dark-blue/theme.css",
+                                "bundleName": "theme-dark",
+                                "inject": false
+                            },
+                            {
+                              "input": "themes/aura-light-blue/theme.css",
+                              "bundleName": "theme-light",
+                              "inject": false
+                            }
                         ],
                         "scripts": [
                             "node_modules/plyr/dist/plyr.js"

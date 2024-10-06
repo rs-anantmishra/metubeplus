@@ -30,6 +30,8 @@ func NewDownloadService(r IRepository, d IDownload) IService {
 
 func (s *service) ExtractIngestMetadata(params e.IncomingRequest) []p.CardsInfoResponse {
 	metadata, fp := s.download.ExtractMetadata()
+
+	metadata = cleanDirectoryStructureFields(metadata)
 	lstSavedInfo := s.repository.SaveMetadata(metadata, fp)
 	//error check here before continuing exec for thumbs and subs
 

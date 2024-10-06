@@ -20,8 +20,10 @@
         </span>
     </div> -->
     <!-- <div style="position: fixed; top: 22px; right: 8px;"> -->
-    <div class="nav-box">
+        <div class="nav-box">
+        <p-button [icon]="themeIcon" [outlined]="true" severity="contrast" size="small" [text]="true" [label]="activeIcon" class="theme-mode" [ngModel]="isDarkMode" (click)="toggleTheme()" name="theme-button" ngDefaultControl />
         <p-toast />
-        <p-splitButton size="small" label="Navigation" (onClick)="navigateToHome($event)" [model]="navigationItems" raised />
+        <p-splitButton size="small" label="Navigation" (onClick)="navigateToHome($event)" [model]="navigationItems"
+            raised />
     </div>
 </div>

@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { Breadcrumb, BreadcrumbModule } from 'primeng/breadcrumb';
 import { SplitButtonModule } from 'primeng/splitbutton';
@@ -8,6 +8,7 @@ import { FilterService, SelectItemGroup } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 // interface AutoCompleteCompleteEvent {
 //     originalEvent: Event;
@@ -17,12 +18,34 @@ import { Router, RouterModule } from '@angular/router';
 @Component({
     selector: 'app-header',
     standalone: true,
-    imports: [CommonModule, SplitButtonModule, ToastModule, BreadcrumbModule, FormsModule],
+    imports: [InputSwitchModule, CommonModule, SplitButtonModule, ToastModule, BreadcrumbModule, FormsModule],
     providers: [MessageService, Router],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit {
+
+    #document = inject(DOCUMENT);
+    isDarkMode = false;
+    themeIcon = ''
+    activeIcon = '#dark'
+    toggleTheme() {
+        const linkElement = this.#document.getElementById('app-theme',) as HTMLLinkElement;
+        const bodyElement = this.#document.getElementById('app-dlbg',) as HTMLBodyElement;
+        if (linkElement.href.includes('light')) {
+            linkElement.href = 'themes/aura-dark-blue/theme.css';
+            bodyElement.className = "downloads-bg-dark"
+            //this.themeIcon = 'pi pi-moon'
+            this.activeIcon = '#dark'
+            this.isDarkMode = true;
+        } else {
+            linkElement.href = 'themes/aura-light-blue/theme.css';
+            bodyElement.className = "downloads-bg-light"
+            //this.themeIcon = 'pi pi-sun'
+            this.activeIcon = '#light'
+            this.isDarkMode = false;
+        }
+    }
 
 
     //search-bar

@@ -77,7 +77,7 @@ const GetVideoInformationById string = `Select V.Title, P.Title, C.Name as 'Chan
 
 const UpdateVideoFileFields string = `UPDATE tblVideos SET IsFileDownloaded = ?, FileId = ? WHERE Id = ?;`
 
-const GetAllVideos_Info string = `Select V.Id, V.Title, V.Description, V.DurationSeconds, V.OriginalURL, V.WebpageURL, V.IsFileDownloaded, V.IsDeleted, C.Name, P.Title, V.LiveStatus, D.Domain, V.Availability, F.Format, V.YoutubeVideoId, V.CreatedDate,  FIThumbnail.FilePath || '\' || FIThumbnail.FileName as 'ThumbnailFilePath', FIVideo.FilePath || '\' || FIVideo.FileName as 'VideoFilePath'
+const GetAllVideos_Info string = `Select DISTINCT V.Id, V.Title, V.Description, V.DurationSeconds, V.OriginalURL, V.WebpageURL, V.IsFileDownloaded, V.IsDeleted, C.Name, V.LiveStatus, D.Domain, V.Availability, F.Format, V.YoutubeVideoId, V.CreatedDate,  FIThumbnail.FilePath || '\' || FIThumbnail.FileName as 'ThumbnailFilePath', FIVideo.FilePath || '\' || FIVideo.FileName as 'VideoFilePath'
 								  FROM tblVideos V
 								  INNER JOIN tblChannels C ON V.ChannelId = C.Id
 								  INNER JOIN tblPlaylistVideos PV ON V.Id = PV.VideoId
@@ -85,7 +85,7 @@ const GetAllVideos_Info string = `Select V.Id, V.Title, V.Description, V.Duratio
 								  INNER JOIN tblDomains D ON V.DomainId = D.Id
 								  INNER JOIN tblFormats F ON V.FormatId = F.Id
 								  INNER JOIN tblFiles FIThumbnail ON (V.Id = FIThumbnail.VideoId AND FIThumbnail.FileType = 'Thumbnail')
-								  INNER JOIN tblFiles FIVideo ON (V.Id = FIVideo.VideoId AND FIVideo.FileType = 'Video');`
+								  INNER JOIN tblFiles FIVideo ON (V.Id = FIVideo.VideoId AND FIVideo.FileType = 'Video') ORDER BY V.Id ASC;`
 
 const GetQueuedVideoDetailsById string = `Select V.Id, V.Title, C.Name as 'Channel', V.Description, V.DurationSeconds as 'Duration', V.WebpageURL, FIThumbnail.FilePath || '\' || FIThumbnail.FileName as 'Thumbnail'
 										  FROM tblVideos V
