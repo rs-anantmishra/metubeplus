@@ -8,7 +8,7 @@
             <div class="url-container">
                 <p-inputGroup>
                     <p-inputGroupAddon>http://</p-inputGroupAddon>
-                    <input type="text" pInputText [placeholder]="urlPlaceholder" [(ngModel)]="options.Identifier" />
+                    <input type="text" pInputText [placeholder]="urlPlaceholder" [(ngModel)]="options.Identifier" [disabled]="urlInputDisabled" />
                     <button type="button" pButton label="Get" [loading]="loading" (click)="GetMedia()"></button>
                 </p-inputGroup>
             </div>
@@ -19,7 +19,7 @@
                 <p-checkbox [(ngModel)]="options.GetSubs" label="Get Subtitles (Auto Generated - English)"
                     name="options" [value]="options.GetSubs" class="checkbox-last"
                     (onChange)="flipCheckbox($event,'GetSubs')" />
-                <p-button label="Queued" [outlined]="true" class="queued-items" (onClick)="getQueuedItems()"
+                <p-button label="Queued" [outlined]="true" class="queued-items" (onClick)="getQueuedItems(true)"
                     size="small" />
             </div>
         </div>

@@ -8,9 +8,10 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 export class SharedDataService {
 
     constructor() { }
+    isDarkMode: boolean = false;
     lstVideos: VideoData[] = [];
     isDownloadActive: boolean = false;
-    isPlaylist: boolean = false; //PL9FSW1L-cEGJWKj3lMoSGIhuvL2Eo-Qzj
+    isPlaylist: boolean = false; 
     queuedItemsMetadata: VideoData[] = [];
     activeDownloadMetadata: VideoData[] = [];
     videosPageSizeCount: number = -1;
@@ -51,6 +52,18 @@ export class SharedDataService {
         this.isDownloadActive = isActive;
 
         return this.isDownloadActive
+    }
+
+    setIsDarkMode(value: boolean) {
+        localStorage.setItem('isDarkMode', JSON.stringify(value));
+    }
+
+    getIsDarkMode(): boolean {
+        let stringResult = localStorage.getItem('isDarkMode') !== null ? localStorage.getItem('isDarkMode') : 'false'
+        let isActive = stringResult === null ? false : JSON.parse(stringResult);
+        this.isDarkMode = isActive;
+
+        return this.isDarkMode
     }
 
     setIsPlaylist(value: boolean) {

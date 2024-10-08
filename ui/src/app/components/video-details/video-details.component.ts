@@ -5,14 +5,14 @@ import { ButtonModule } from 'primeng/button';
 import { SharedDataService } from '../../services/shared-data.service';
 import { VideoData } from '../../classes/video-data';
 import { Subscription } from 'rxjs';
-import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { PanelModule } from 'primeng/panel';
 import Plyr from 'plyr';
 
 
 @Component({
     selector: 'app-video-details',
     standalone: true,
-    imports: [CommonModule, RouterModule, ButtonModule, ScrollPanelModule],
+    imports: [CommonModule, RouterModule, ButtonModule, PanelModule],
     providers: [Router],
     templateUrl: './video-details.component.html',
     styleUrl: './video-details.component.scss',
@@ -25,7 +25,7 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
     selectedVideo: VideoData = new VideoData()
 
     constructor(private svcSharedData: SharedDataService) {
-        this.player = new Plyr('#plyrID', { captions: { active: true }, loop: { active: true }, ratio: '16:9' });
+        this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9', disableContextMenu: true});
         this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
     }
     

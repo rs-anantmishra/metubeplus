@@ -31,5 +31,11 @@
     padding: 8px 36px;
     min-width: 60%;
     width: 60%;
-    height: calc(100vh - 65vh - 104px);
+    margin: 0px auto;
+    // height: calc(100vh - 65vh - 104px);
+    height: 100%;
+}
+
+.video-content * {
+    width: 100%;
 }

@@ -50,6 +50,9 @@ export class DownloadsComponent implements OnInit {
     queuedItems: VideoData[] = [new VideoData()]
     nilMetadata = new VideoData()
 
+    loading: boolean = false;
+    urlInputDisabled: boolean = false;
+
     constructor(private messageService: MessageService,
         private svcDownload: DownloadService,
         private sharedData: SharedDataService,
@@ -59,7 +62,6 @@ export class DownloadsComponent implements OnInit {
         this.serverLogs = msg.serverLogs
     }
 
-    loading: boolean = false;
     sock = webSocket(this.wsApiURL)
 
     activeDLImage = ''
@@ -132,7 +134,7 @@ export class DownloadsComponent implements OnInit {
         this.sharedData.activeDownloadMetadata = this.sharedData.getActiveDownloadMetadata()
 
         //get queued-items on reload
-        await this.getQueuedItems()
+        await this.getQueuedItems(false)
 
         //if there is an active download
         if (this.sharedData.isDownloadActive) {
@@ -153,6 +155,7 @@ export class DownloadsComponent implements OnInit {
 
     async GetMedia() {
         this.loading = true;
+        this.urlInputDisabled = true;
         let metadataRequest = await this.GetMetadataRequest(this.options)
         if (metadataRequest.Indicator === '') {
             this.showMessage('No URL or Identifier provided', 'error', 'error')
@@ -170,7 +173,6 @@ export class DownloadsComponent implements OnInit {
         }
 
         if (metadata.length > 1) {
-            // this.sharedData.setIsPlaylist(true);
             metadata.forEach(item => { item.isPlaylistVideo = true })
         }
 
@@ -186,8 +188,6 @@ export class DownloadsComponent implements OnInit {
 
         //trigger stats checker if all goes well
         setTimeout(() => { this.getDownloadStatus(); }, 500);
-        //tryout await here - see what happens?
-        //await this.getDownloadStatus();
 
         //Completion Process
         this.GetMediaCompleteResult()
@@ -198,6 +198,7 @@ export class DownloadsComponent implements OnInit {
         //Complete Result
         this.resetDownloadOptions();
         this.loading = false;
+        this.urlInputDisabled = false;
         this.showMessage('Video/Playlist queued', 'info', 'Info')
     }
 
@@ -238,8 +239,10 @@ export class DownloadsComponent implements OnInit {
         this.options.Identifier = ''
     }
 
-    async getQueuedItems() {
-        this.sidebarVisible = true
+    async getQueuedItems(openSidebar: boolean) {
+        if (openSidebar) {
+            this.sidebarVisible = true
+        }
         await this.svcDownload.getQueuedItems("queued").then(item => { this.queuedItems = item })
     }
 

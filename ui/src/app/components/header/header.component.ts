@@ -9,6 +9,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { SharedDataService } from '../../services/shared-data.service';
 
 // interface AutoCompleteCompleteEvent {
 //     originalEvent: Event;
@@ -18,35 +19,47 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 @Component({
     selector: 'app-header',
     standalone: true,
-    imports: [InputSwitchModule, CommonModule, SplitButtonModule, ToastModule, BreadcrumbModule, FormsModule],
-    providers: [MessageService, Router],
+    imports: [InputSwitchModule, CommonModule, SplitButtonModule, ToastModule, BreadcrumbModule, FormsModule,],
+    providers: [MessageService, Router, SharedDataService],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit {
 
     #document = inject(DOCUMENT);
-    isDarkMode = false;
     themeIcon = ''
     activeIcon = '#dark'
     toggleTheme() {
         const linkElement = this.#document.getElementById('app-theme',) as HTMLLinkElement;
         const bodyElement = this.#document.getElementById('app-dlbg',) as HTMLBodyElement;
+
         if (linkElement.href.includes('light')) {
-            linkElement.href = 'themes/aura-dark-blue/theme.css';
-            bodyElement.className = "downloads-bg-dark"
-            //this.themeIcon = 'pi pi-moon'
-            this.activeIcon = '#dark'
-            this.isDarkMode = true;
+            this.setDarkMode();
         } else {
-            linkElement.href = 'themes/aura-light-blue/theme.css';
-            bodyElement.className = "downloads-bg-light"
-            //this.themeIcon = 'pi pi-sun'
-            this.activeIcon = '#light'
-            this.isDarkMode = false;
+            this.setLightMode();
         }
     }
 
+
+    setLightMode() {
+        const linkElement = this.#document.getElementById('app-theme',) as HTMLLinkElement;
+        const bodyElement = this.#document.getElementById('app-dlbg',) as HTMLBodyElement;
+
+        linkElement.href = 'themes/aura-light-blue/theme.css';
+        bodyElement.className = "downloads-bg-light"
+        this.activeIcon = '#dark'
+        this.sharedDataSvc.setIsDarkMode(false)
+    }
+
+    setDarkMode() {
+        const linkElement = this.#document.getElementById('app-theme',) as HTMLLinkElement;
+        const bodyElement = this.#document.getElementById('app-dlbg',) as HTMLBodyElement;
+
+        linkElement.href = 'themes/aura-dark-blue/theme.css';
+        bodyElement.className = "downloads-bg-dark"
+        this.activeIcon = '#light'
+        this.sharedDataSvc.setIsDarkMode(true)
+    }
 
     //search-bar
     visible: string = 'hidden'
@@ -56,7 +69,20 @@ export class HeaderComponent implements OnInit {
     filteredGroups!: any[];
     groupedCities!: SelectItemGroup[];
 
-    constructor(private router: Router, private messageService: MessageService, private filterService: FilterService) {
+    constructor(private router: Router, private messageService: MessageService, private filterService: FilterService, private sharedDataSvc: SharedDataService) {
+
+        //check and set theme
+        let isDarkMode = this.sharedDataSvc.getIsDarkMode();
+        if (isDarkMode === null) {
+            this.sharedDataSvc.setIsDarkMode(true)
+        } else {
+            if (isDarkMode === true) {
+                this.setDarkMode()
+            } else if (isDarkMode === false) {
+                this.setLightMode()
+            }
+        }
+
         this.groupedCities = [
             {
                 label: 'Germany', value: 'de',

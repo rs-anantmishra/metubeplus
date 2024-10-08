@@ -7,15 +7,33 @@ p-card {
     min-width: 350px;
     max-width: 350px;
     min-height: 350px;
-    max-height: 350px;    
+    max-height: 350px;
 }
 
-.card-setting {
+.settings {
     display: flex;
-    min-width: 340px;
-    max-width: 340px;
-    min-height: 300px;
-    max-height: 300px;
+    min-width: 350px;
+    max-width: 350px;
+    min-height: 350px;
+    max-height: 350px;
+}
+
+.header-text {
+    font-size: 16px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+    padding: 0.5rem 1rem;
+}
+
+.details {
+    font-size: 14px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
 }
 
 .center-cropped {
@@ -23,21 +41,29 @@ p-card {
     height: 200px;
     background-position: center center;
     background-repeat: no-repeat;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 .zoom-img {
     overflow: hidden;
-    border: 2px transparent solid;
-    border-radius: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
 }
+
 
 .zoom-img:hover {
     overflow: hidden;
-    border: 2px #ffffff solid;
-    border-radius: 8px;
+    border-radius: 6px;
+    box-shadow: #0099FF 0px 20px 30px -10px;
 }
 
+.zoom-img-dark {
+    box-shadow: rgb(100, 151, 204) 0px 20px 100px -10px;
+}
+
+.zoom-img-dark {
+    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+}
 
 .zoom-img img {
     object-fit: cover;
@@ -47,3 +73,23 @@ p-card {
 .zoom-img img:hover {
     transform: scale(1.1);
 }
+
+:host::ng-deep .p-card .p-card-body {
+    padding: 0rem 1rem 0.5rem 1rem;
+    gap: 0rem;
+}
+
+.tooltip-text {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+}
+
+/*
+#FF0099 - 255, 0, 153 - PinkPurple
+#FF9900 - 255, 153, 0 - OrangeYellow
+#99FF00 - 153, 255, 0 - Lime Green
+
+#9900FF - 153, 0, 255 - PurpleViolet
+#0099FF - 0, 153, 255 - BlueCyan
+#00FF99 - 0, 255, 153 - Sea Green
+*/

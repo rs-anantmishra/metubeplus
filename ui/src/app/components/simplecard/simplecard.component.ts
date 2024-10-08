@@ -6,11 +6,13 @@ import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SharedDataService } from '../../services/shared-data.service';
+import { TooltipModule } from 'primeng/tooltip';
+import { TagModule } from 'primeng/tag';
 
 @Component({
     selector: 'app-simplecard',
     standalone: true,
-    imports: [ToastModule, CardModule, CommonModule],
+    imports: [ToastModule, CardModule, CommonModule, TooltipModule, TagModule],
     providers: [MessageService, Router],
     templateUrl: './simplecard.component.html',
     styleUrl: './simplecard.component.scss'
@@ -31,11 +33,20 @@ export class SimplecardComponent implements OnInit {
     selectedVideo(playVideo: VideoData) {
         playVideo.video_filepath = playVideo.video_filepath.replace(/\\/g, "/");
         playVideo.video_filepath = playVideo.video_filepath.replace('../files', 'http://localhost:3500')
-        playVideo.video_filepath = playVideo.video_filepath.replace('#','%23')
-        
+        playVideo.video_filepath = playVideo.video_filepath.replace('#', '%23')
+
         // playVideo.video_filepath = playVideo.video_filepath.replace('../files', 'http://192.168.1.10:8484')
         this.svcSharedData.setPlayVideo(playVideo);
         this.router.navigate(['/play'])
+    }
+
+    getFormattedDuration(duration: number) {
+        // Calculate minutes and seconds
+        const minutes = Math.floor(duration / 60);
+        const seconds = duration % 60;
+
+        // Format the result as MM:SS
+        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
 
 }

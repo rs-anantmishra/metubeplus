@@ -49,20 +49,8 @@ export class VideosComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-        //this.getAllVideosDelta();
         await this.getAllVideos();
         this.loadPage = 0
-    }
-
-    //check local storage or service call
-    async getAllVideosDelta() {
-        if (this.svcSharedData.getlstVideos().length == 0) {
-            let result = await this.svcVideos.getAllVideos();
-            this.svcSharedData.setlstVideos(result)
-            this.lstVideos = this.getPagedResult(this.first, this.rows);
-        } else {
-            this.lstVideos = this.getPagedResult(this.first, this.rows);
-        }
     }
 
     async getAllVideos() {
