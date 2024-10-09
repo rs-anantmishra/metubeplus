@@ -38,19 +38,23 @@ func createMetadataResponse(lstSavedInfo []e.SavedInfo, subtitles []e.Files, sub
 
 		cardMetaDataInfo.Channel = elem.MediaInfo.Channel
 		cardMetaDataInfo.CreatedDate = int(time.Now().Unix())
-		cardMetaDataInfo.Description = elem.MediaInfo.Description
 		cardMetaDataInfo.Domain = elem.MediaInfo.Domain
 		cardMetaDataInfo.Duration = elem.MediaInfo.Duration
 		cardMetaDataInfo.IsDeleted = false
-		cardMetaDataInfo.IsFileDownloaded = false
 		cardMetaDataInfo.MediaURL = _blank
-		cardMetaDataInfo.OriginalURL = elem.MediaInfo.OriginalURL
+		cardMetaDataInfo.WebpageURL = elem.MediaInfo.WebpageURL
 		cardMetaDataInfo.Playlist = elem.MediaInfo.PlaylistTitle
 		cardMetaDataInfo.PlaylistVideoIndex = elem.MediaInfo.PlaylistVideoIndex
 		cardMetaDataInfo.Title = elem.MediaInfo.Title
 		cardMetaDataInfo.VideoFormat = elem.MediaInfo.Format
 		cardMetaDataInfo.VideoId = elem.VideoId
 		cardMetaDataInfo.WatchCount = 0
+		cardMetaDataInfo.ViewsCount = elem.MediaInfo.YoutubeViewCount
+		cardMetaDataInfo.LikesCount = elem.MediaInfo.LikeCount
+		cardMetaDataInfo.FileSize = elem.MediaInfo.Filesize
+		cardMetaDataInfo.UploadDate = elem.MediaInfo.UploadDate
+		cardMetaDataInfo.Tags = elem.MediaInfo.Tags
+		cardMetaDataInfo.Categories = elem.MediaInfo.Categories
 
 		cardMetaDataInfoList = append(cardMetaDataInfoList, cardMetaDataInfo)
 	}
@@ -62,20 +66,9 @@ func createMetadataResponse(lstSavedInfo []e.SavedInfo, subtitles []e.Files, sub
 		}
 	}
 
-	//thumbnails
+	//thumbnails // playlist thumbnails can be figured out on the UI side from Video Index
 	for i := range thumbnails {
-		if lstSavedInfo[0].MediaInfo.PlaylistTitle == _blank {
-			cardMetaDataInfoList[i].Thumbnail = getImagesFromURL(thumbnails[i])
-		} else {
-			cardMetaDataInfoList[i].Thumbnail = getImagesFromURL(thumbnails[i])
-			//set playlist thumbnail whenever Video Index is 1
-			if cardMetaDataInfoList[i].PlaylistVideoIndex == 1 {
-				playlistThumbnail := getImagesFromURL(thumbnails[i])
-				for k := 0; k < len(thumbnails); k++ {
-					cardMetaDataInfoList[k].PlaylistThumbnail = playlistThumbnail
-				}
-			}
-		}
+		cardMetaDataInfoList[i].Thumbnail = getImagesFromURL(thumbnails[i])
 	}
 
 	return cardMetaDataInfoList

@@ -28,6 +28,7 @@ export class SimplecardComponent implements OnInit {
         if (this.meta.thumbnail == '') {
             this.meta.thumbnail = './noimage.png'
         }
+        console.log(this.meta)
     }
 
     selectedVideo(playVideo: VideoData) {

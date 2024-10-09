@@ -51,7 +51,7 @@ func (d *download) Cleanup() {
 func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
 	args, command := cmdBuilderMetadata(d.p.Indicator)
-	logCommand := "chcp 65001 && " + command + Space + args
+	logCommand := "chcp 850 && " + command + Space + args
 
 	//log executed command - in activity log later
 	fmt.Println(logCommand)
@@ -281,9 +281,10 @@ func executeProcess(stdout io.ReadCloser, isFileDownload bool) []string {
 	var b bytes.Buffer
 	for {
 		//Read data from pipe into temp
-		temp := make([]byte, 2048)
+		temp := make([]byte, 4096)
 		n, e := stdout.Read(temp)
 		b.WriteString(string(temp[:n]))
+
 		//terminate loop at eof
 		if e != nil {
 			log.Info("Error Reading:", e)
@@ -350,15 +351,6 @@ func sanitizeResults(b bytes.Buffer) []string {
 	for i := 0; i < len(results); i++ {
 		//valid json require keys and values to be enclosed in double quotes, not single quotes
 		results[i] = proximityQuoteReplacement(results[i])
-
-		//convert \x prefixed hex characters to utf8 (ex: \xe9)
-		{
-			data := ""
-			for k := 0; k < len(results[i]); k++ {
-				data += string(results[i][k])
-			}
-			results[i] = data
-		}
 
 		//handle description differently
 		if strings.Contains(results[i], "description") {

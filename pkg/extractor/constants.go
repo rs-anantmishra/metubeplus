@@ -102,7 +102,8 @@ const SkipDownload string = `--skip-download`
 const InfoJSON string = `--write-info-json`
 const QuietDownload string = `--quiet`
 const ProgressNewline string = `--newline`
-const UTF8EncodingExperimental string = `--encoding utf8`
+
+const EncodingExperimental string = `--encoding utf8`
 
 // const ProgressNewline string = `--newline`
 

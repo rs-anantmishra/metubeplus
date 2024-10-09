@@ -6,16 +6,16 @@ p-card {
     margin: 0.5rem;
     min-width: 350px;
     max-width: 350px;
-    min-height: 350px;
-    max-height: 350px;
+    min-height: 325px;
+    max-height: 325px;
 }
 
 .settings {
     display: flex;
     min-width: 350px;
     max-width: 350px;
-    min-height: 350px;
-    max-height: 350px;
+    min-height: 325px;
+    max-height: 325px;
 }
 
 .header-text {
@@ -25,7 +25,7 @@ p-card {
     overflow: hidden;
     white-space: nowrap;
     display: block;
-    padding: 0.5rem 1rem;
+    padding: 1rem;
 }
 
 .details {
@@ -54,15 +54,7 @@ p-card {
 .zoom-img:hover {
     overflow: hidden;
     border-radius: 6px;
-    box-shadow: #0099FF 0px 20px 30px -10px;
-}
-
-.zoom-img-dark {
-    box-shadow: rgb(100, 151, 204) 0px 20px 100px -10px;
-}
-
-.zoom-img-dark {
-    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+    box-shadow: #9900FF 0px 20px 20px -10px;
 }
 
 .zoom-img img {
@@ -79,9 +71,22 @@ p-card {
     gap: 0rem;
 }
 
+.tag-container {
+    justify-content: end;
+    display: flex;
+    margin-right: 1rem;
+    margin-top: -35px;
+}
+
 .tooltip-text {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 12px;
+}
+
+.duration {
+    background-color: black;
+    border-radius: 6px;
+    z-index: 1;
 }
 
 /*

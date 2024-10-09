@@ -49,7 +49,7 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 	if maxQueueLength-currentQueueIndex[0]-len(result) >= 0 {
 		for idx := range result {
 			lstDownloads[currentQueueIndex[0]] = g.DownloadStatus{VideoId: result[idx].VideoId,
-				VideoURL:      result[idx].OriginalURL,
+				VideoURL:      result[idx].WebpageURL,
 				StatusMessage: "",
 				State:         g.Queued,
 				Title:         result[idx].Title,
@@ -205,7 +205,7 @@ func NetworkIngestQueuedItems(c *fiber.Ctx) error {
 			queuedItems = append(queuedItems, res.LimitedCardsInfoResponse{
 				VideoId:       elem.VideoId,
 				Title:         elem.Title,
-				Description:   elem.Title,
+				Description:   elem.Description,
 				Duration:      elem.Duration,
 				WebpageURL:    elem.VideoURL,
 				Thumbnail:     elem.Thumbnail,
@@ -216,7 +216,7 @@ func NetworkIngestQueuedItems(c *fiber.Ctx) error {
 			queuedItems = append(queuedItems, res.LimitedCardsInfoResponse{
 				VideoId:       elem.VideoId,
 				Title:         elem.Title,
-				Description:   elem.Title,
+				Description:   elem.Description,
 				Duration:      elem.Duration,
 				WebpageURL:    elem.VideoURL,
 				Thumbnail:     elem.Thumbnail,

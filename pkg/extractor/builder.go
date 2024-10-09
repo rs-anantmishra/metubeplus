@@ -238,7 +238,7 @@ func BuilderOptions() []CSwitch {
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},
-		{Index: 50, Name: `UTF8EncodingExperimental`, Value: UTF8EncodingExperimental, DataField: false, Group: FxGroups{
+		{Index: 50, Name: `EncodingExperimental`, Value: EncodingExperimental, DataField: false, Group: FxGroups{
 			Playlist: Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false},
 			Video:    Functions{Metadata: true, Download: false, Subtitle: false, Thumbnail: false}},
 		},

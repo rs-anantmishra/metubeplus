@@ -8,7 +8,8 @@
             <div class="url-container">
                 <p-inputGroup>
                     <p-inputGroupAddon>http://</p-inputGroupAddon>
-                    <input type="text" pInputText [placeholder]="urlPlaceholder" [(ngModel)]="options.Identifier" [disabled]="urlInputDisabled" />
+                    <input type="text" pInputText [placeholder]="urlPlaceholder" [(ngModel)]="options.Identifier"
+                        [disabled]="urlInputDisabled" />
                     <button type="button" pButton label="Get" [loading]="loading" (click)="GetMedia()"></button>
                 </p-inputGroup>
             </div>
@@ -56,9 +57,14 @@
 </div>
 
 <div class="footer">
+    <!--  -->
     <div>
+        <a href="https://buymeacoffee.com/rsanantmisp" target="_blank">
+            <p-button icon="pi pi-microchip" label="Buy me a raspberry-pi" size="small" severity="contrast"
+                [ngStyle]="{'margin-right': '16px'}" />
+        </a>
         <a href="http://github.com/rs-anantmishra/metubeplus" target="_blank">
-            <p-button icon="pi pi-github" label="Star us on Github" size="small" severity="success"
+            <p-button icon="pi pi-github" label="Star it on Github" size="small" severity="success"
                 [ngStyle]="{'margin-right': '16px'}" />
         </a>
     </div>

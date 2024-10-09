@@ -39,7 +39,7 @@ func (r *repository) GetAllVideos() ([]entities.Videos, error) {
 		if err := rows.Scan(&v.Id, &v.Title, &v.Description, &v.DurationSeconds, &v.OriginalURL,
 			&v.WebpageURL, &v.IsFileDownloaded, &v.IsDeleted, &v.Channel.Name,
 			&v.LiveStatus, &v.Domain.Domain, &v.Availability, &v.Format.Format, &v.YoutubeVideoId,
-			&v.CreatedDate, &v.ThumbnailFilePath, &v.VideoFilePath); err != nil {
+			&v.CreatedDate, &v.ThumbnailFilePath, &v.VideoFilePath, v.Files[0].FileSize); err != nil {
 			return nil, fmt.Errorf("error fetching videos: %v", err)
 		}
 		lstVideos = append(lstVideos, v)
