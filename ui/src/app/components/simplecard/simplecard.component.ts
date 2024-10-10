@@ -8,11 +8,14 @@ import { Router } from '@angular/router';
 import { SharedDataService } from '../../services/shared-data.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { TagModule } from 'primeng/tag';
+import { RemovePrefixPipe } from '../../utilities/filesize-conversion.pipe'
+import { CommaSepStringFromArray } from '../../utilities/array-comma-sep.pipe'
+import { MinifiedViewCount } from '../../utilities/views-conversion.pipe';
 
 @Component({
     selector: 'app-simplecard',
     standalone: true,
-    imports: [ToastModule, CardModule, CommonModule, TooltipModule, TagModule],
+    imports: [ToastModule, CardModule, CommonModule, TooltipModule, TagModule, RemovePrefixPipe, CommaSepStringFromArray, MinifiedViewCount],
     providers: [MessageService, Router],
     templateUrl: './simplecard.component.html',
     styleUrl: './simplecard.component.scss'
@@ -21,22 +24,20 @@ export class SimplecardComponent implements OnInit {
 
     constructor(private router: Router, private svcSharedData: SharedDataService) {
     }
-    // meta: VideoData = new VideoData()
     @Input() meta: VideoData = new VideoData();
 
     ngOnInit(): void {
         if (this.meta.thumbnail == '') {
             this.meta.thumbnail = './noimage.png'
         }
-        console.log(this.meta)
     }
 
     selectedVideo(playVideo: VideoData) {
-        playVideo.video_filepath = playVideo.video_filepath.replace(/\\/g, "/");
-        playVideo.video_filepath = playVideo.video_filepath.replace('../files', 'http://localhost:3500')
-        playVideo.video_filepath = playVideo.video_filepath.replace('#', '%23')
+        playVideo.media_url = playVideo.media_url.replace(/\\/g, "/");
+        playVideo.media_url = playVideo.media_url.replace('http://localhost:3000', 'http://localhost:3500')
+        playVideo.media_url = playVideo.media_url.replace('#', '%23')
 
-        // playVideo.video_filepath = playVideo.video_filepath.replace('../files', 'http://192.168.1.10:8484')
+        // playVideo.media_url = playVideo.media_url.replace('../files', 'http://192.168.1.10:8484')
         this.svcSharedData.setPlayVideo(playVideo);
         this.router.navigate(['/play'])
     }
@@ -48,6 +49,18 @@ export class SimplecardComponent implements OnInit {
 
         // Format the result as MM:SS
         return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    getFormattedUploadDate(value: string) {
+        //recieved as: yyyymmdd
+        let space = ' '
+        let comma = ','
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let year = value.slice(0,4)
+        let month = parseInt(value.slice(4,6), 10)
+
+        let result = 'Uploaded' + space +  months[month] + comma + space + year
+        return result
     }
 
 }

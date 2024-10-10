@@ -227,7 +227,6 @@ func (r *repository) SaveThumbnail(file []e.Files) []int {
 		if thumbnailFileId <= 0 {
 			var args []any
 			args = append(args, elem.VideoId)
-			args = append(args, elem.PlaylistId)
 			args = append(args, elem.FileType)
 			args = append(args, elem.SourceId)
 			args = append(args, elem.FilePath)
@@ -257,7 +256,6 @@ func (r *repository) SaveSubtitles(file []e.Files) []int {
 		if subsFileId <= 0 {
 			var args []any
 			args = append(args, elem.VideoId)
-			args = append(args, elem.PlaylistId)
 			args = append(args, elem.FileType)
 			args = append(args, elem.SourceId)
 			args = append(args, elem.FilePath)
@@ -286,7 +284,6 @@ func (r *repository) SaveMediaContent(file []e.Files) []int {
 		if mediaFileId <= 0 {
 			var args []any
 			args = append(args, elem.VideoId)
-			args = append(args, elem.PlaylistId)
 			args = append(args, elem.FileType)
 			args = append(args, elem.SourceId)
 			args = append(args, elem.FilePath)

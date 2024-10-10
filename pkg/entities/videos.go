@@ -7,21 +7,31 @@ type Videos struct {
 	DurationSeconds   int
 	OriginalURL       string
 	WebpageURL        string
-	IsFileDownloaded  int
-	IsDeleted         int
-	Channel           Channel
-	Playlist          Playlist
 	LiveStatus        string
-	Domain            Domain
 	Availability      string
-	Format            Format
-	ThumbnailFilePath string
-	VideoFilePath     string
+	ViewsCount        int
+	LikesCount        int
+	DislikeCount      int
+	License           string
+	AgeLimit          int
+	PlayableInEmbed   string
+	UploadDate        string
+	ReleaseTimestamp  int
+	ModifiedTimestamp int
+	IsFileDownloaded  int
 	Files             []Files
+	Channel           Channel
+	Domain            Domain
+	Format            Format
+	Playlist          Playlist
 	Tags              []Tags
 	Categories        []Categories
+	WatchCount        int
 	YoutubeVideoId    string
+	IsDeleted         int
 	CreatedDate       int
+	//ThumbnailFilePath string
+	//VideoFilePath string
 }
 
 type Channel struct {
@@ -38,7 +48,6 @@ type Playlist struct {
 	VideoCount        int
 	Directory         string
 	ChannelId         int
-	File              Files //for thumbnail file
 	YoutubePlaylistId int
 	CreatedDate       int
 }

@@ -51,6 +51,8 @@ export class VideosComponent implements OnInit, OnDestroy {
     async ngOnInit() {
         await this.getAllVideos();
         this.loadPage = 0
+
+        console.log(this.totalRecords, "total records")
     }
 
     async getAllVideos() {
@@ -58,7 +60,8 @@ export class VideosComponent implements OnInit, OnDestroy {
         if (result !== null && result.length > 0) {
             this.svcSharedData.setlstVideos(result)
             this.lstVideos = this.getPagedResult(this.first, this.rows);
-            
+        } else if (result === null) {
+            this.totalRecords = 0
         }
     }
 

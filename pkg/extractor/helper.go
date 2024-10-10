@@ -201,12 +201,12 @@ func getFilepaths(playlistId int, fPath e.Filepath, pathType int) string {
 	return fp
 }
 
-func cleanDirectoryStructureFields(metadata []e.MediaInformation) []e.MediaInformation {
+func cleanDirectoryStructureFields(mediaInfo []e.MediaInformation) []e.MediaInformation {
 
-	for k := 0; k < len(metadata); k++ {
-		metadata[k].Domain = strings.TrimSpace(metadata[k].Domain)
-		metadata[k].Channel = strings.TrimSpace(metadata[k].Channel)
+	for k := 0; k < len(mediaInfo); k++ {
+		mediaInfo[k].Domain = strings.TrimSpace(mediaInfo[k].Domain)
+		mediaInfo[k].Channel = strings.TrimSpace(mediaInfo[k].Channel)
 	}
 
-	return metadata
+	return mediaInfo
 }

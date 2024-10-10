@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 
+	"github.com/rs-anantmishra/metubeplus/api/presenter"
 	res "github.com/rs-anantmishra/metubeplus/api/presenter"
 	cfg "github.com/rs-anantmishra/metubeplus/config"
 	sql "github.com/rs-anantmishra/metubeplus/database"
@@ -198,40 +199,30 @@ func NetworkIngestQueuedItems(c *fiber.Ctx) error {
 	state := qry["state"]
 
 	allQueueItems := g.NewDownloadStatus()
-	var queuedItems []res.LimitedCardsInfoResponse
-
+	var queuedItems []presenter.CardsInfoResponse
 	for _, elem := range allQueueItems {
 		if elem.State == g.Queued && state == "queued" {
-			queuedItems = append(queuedItems, res.LimitedCardsInfoResponse{
-				VideoId:       elem.VideoId,
-				Title:         elem.Title,
-				Description:   elem.Description,
-				Duration:      elem.Duration,
-				WebpageURL:    elem.VideoURL,
-				Thumbnail:     elem.Thumbnail,
-				VideoFilepath: "",
-				Channel:       elem.Channel,
+			queuedItems = append(queuedItems, presenter.CardsInfoResponse{
+				VideoId:     elem.VideoId,
+				Title:       elem.Title,
+				Description: elem.Description,
+				Duration:    elem.Duration,
+				WebpageURL:  elem.VideoURL,
+				Thumbnail:   elem.Thumbnail,
+				Channel:     elem.Channel,
 			})
 		} else if elem.State == g.Downloading && state == "downloading" {
-			queuedItems = append(queuedItems, res.LimitedCardsInfoResponse{
-				VideoId:       elem.VideoId,
-				Title:         elem.Title,
-				Description:   elem.Description,
-				Duration:      elem.Duration,
-				WebpageURL:    elem.VideoURL,
-				Thumbnail:     elem.Thumbnail,
-				VideoFilepath: "",
-				Channel:       elem.Channel,
+			queuedItems = append(queuedItems, presenter.CardsInfoResponse{
+				VideoId:     elem.VideoId,
+				Title:       elem.Title,
+				Description: elem.Description,
+				Duration:    elem.Duration,
+				WebpageURL:  elem.VideoURL,
+				Thumbnail:   elem.Thumbnail,
+				Channel:     elem.Channel,
 			})
 		}
 	}
-
-	//Instantiate
-	//svcDownloads := ex.NewDownload(en.IncomingRequest{})
-	//svcRepo := ex.NewDownloadRepo(sql.DB)
-	//svcVideos := ex.NewDownloadService(svcRepo, svcDownloads)
-
-	//result := svcVideos.GetQueuedItemsDetails(queuedItemsId)
 
 	return c.Status(fiber.StatusOK).JSON(queuedItems)
 }

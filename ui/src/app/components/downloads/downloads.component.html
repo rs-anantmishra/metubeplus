@@ -8,18 +8,21 @@
             <div class="url-container">
                 <p-inputGroup>
                     <p-inputGroupAddon>http://</p-inputGroupAddon>
-                    <input type="text" pInputText [placeholder]="urlPlaceholder" [(ngModel)]="options.Identifier"
-                        [disabled]="urlInputDisabled" />
+                    <input type="text" pInputText [placeholder]="urlPlaceholder"
+                        [ngModel]="this.options.Identifier | removePrefix"
+                        (ngModelChange)="this.options.Identifier=$event" [disabled]="urlInputDisabled" />
                     <button type="button" pButton label="Get" [loading]="loading" (click)="GetMedia()"></button>
                 </p-inputGroup>
             </div>
             <div class="options-container">
-                <p-checkbox [(ngModel)]="options.GetAudioOnly" label="Get Audio Only" name="options"
-                    [value]="options.GetAudioOnly" class="checkbox-first"
-                    (onChange)="flipCheckbox($event, 'GetAudioOnly')" />
-                <p-checkbox [(ngModel)]="options.GetSubs" label="Get Subtitles (Auto Generated - English)"
-                    name="options" [value]="options.GetSubs" class="checkbox-last"
-                    (onChange)="flipCheckbox($event,'GetSubs')" />
+                <div style="display: none;">
+                    <p-checkbox [(ngModel)]="options.GetAudioOnly" label="Get Audio Only" name="options"
+                        [value]="options.GetAudioOnly" class="checkbox-first"
+                        (onChange)="flipCheckbox($event, 'GetAudioOnly')" />
+                    <p-checkbox [(ngModel)]="options.GetSubs" label="Get Subtitles (Auto Generated - English)"
+                        name="options" [value]="options.GetSubs" class="checkbox-last"
+                        (onChange)="flipCheckbox($event,'GetSubs')" />
+                </div>
                 <p-button label="Queued" [outlined]="true" class="queued-items" (onClick)="getQueuedItems(true)"
                     size="small" />
             </div>

@@ -23,6 +23,7 @@ import { DownloadService } from '../../services/download.service';
 import { SimplecardComponent } from "../simplecard/simplecard.component";
 import { SharedDataService, Operation } from '../../services/shared-data.service';
 import { Messages, Severity, wsApiUrl } from '../../constants/messages'
+import { RemovePrefixPipe } from '../../utilities/remove-prefix.pipe'
 
 
 interface ExtractionOptions {
@@ -36,8 +37,8 @@ interface ExtractionOptions {
     selector: 'app-downloads',
     standalone: true,
     imports: [ToastModule, ProgressBarModule, FieldsetModule, ProgressSpinnerModule, SidebarModule, CardModule, FormsModule,
-        InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule,
-        SimplecardComponent],
+    InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule,
+    SimplecardComponent, RemovePrefixPipe],
     providers: [DownloadService, MessageService, Messages],
     templateUrl: './downloads.component.html',
     styleUrl: './downloads.component.scss'
@@ -247,8 +248,9 @@ export class DownloadsComponent implements OnInit {
     }
 
     async getAndSaveActiveDownload() {
-        await this.svcDownload.getQueuedItems("downloading").then(item => { this.sharedData.setActiveDownloadMetadata(item); })
+        await this.svcDownload.getQueuedItems("downloading").then(item => { console.log(item); this.sharedData.setActiveDownloadMetadata(item); })
     }
+
 
 
     //Toast Messages

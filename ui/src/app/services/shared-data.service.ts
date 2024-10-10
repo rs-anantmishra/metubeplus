@@ -132,7 +132,7 @@ export class SharedDataService {
     onPlayVideoChange(): Observable<VideoData> {        
         //check localstorage
         let activeVideo = this.getActivePlayerMetadata()
-        if (activeVideo.video_filepath != '') {
+        if (activeVideo.media_url != '') {
             this.setPlayVideo(activeVideo)
         }
         return this.playVideo.asObservable();

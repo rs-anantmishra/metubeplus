@@ -51,7 +51,7 @@ func (d *download) Cleanup() {
 func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
 	args, command := cmdBuilderMetadata(d.p.Indicator)
-	logCommand := "chcp 850 && " + command + Space + args
+	logCommand := command + Space + args
 
 	//log executed command - in activity log later
 	fmt.Println(logCommand)
@@ -69,6 +69,7 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
 	// helper method fix
 	mediaInfo = removeForbiddenChars(mediaInfo)
+	mediaInfo = cleanDirectoryStructureFields(mediaInfo)
 
 	////////////////////////////////////
 	//handle shortened URL /////////////
@@ -381,9 +382,6 @@ func proximityQuoteReplacement(data string) string {
 		data = strings.ToLower(data)
 	}
 
-	//replace escaped-single-quotes with single-quotes
-	data = strings.ReplaceAll(data, "\\'", "'")
-
 	dQ := []byte("\"")[0]
 	b := []byte(data)
 
@@ -411,6 +409,12 @@ func proximityQuoteReplacement(data string) string {
 	}
 
 	data = string(b)
+
+	// replace escaped-single-quotes that may appear inside data with single-quotes since it is no longer the qualifier
+	// placed at the end since, a string like -> {'channel': '/ Mad Moose Media \\\\'} <- here a backslash is escaped
+	// right before the	single quote but the single quote is not inside data and that does not need to be escaped.
+	data = strings.ReplaceAll(data, "\\'", "'")
+
 	return data
 }
 

@@ -12,13 +12,20 @@ export class VideoData {
     playlist_video_index: number = -1
     domain: string = ''
     video_format: string = ''
+    views_count: number = -1
+    likes_count: number = -1
+    filesize: number = -1
+    upload_date: string = ''
+    extension: string = ''
     watch_count: number = -1
     is_deleted: boolean = false
     created_date: number = -1
     thumbnail: string = ''
-    video_filepath: string = ''
+    media_url: string = ''
     download_status: string = ''
     isPlaylistVideo: boolean = false
+    categories: string[] = []
+    tags: string[] = []
 }
 
 export class VideoDataRequest {

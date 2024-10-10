@@ -13,7 +13,6 @@ type IService interface {
 	ExtractIngestMetadata(p e.IncomingRequest) []p.CardsInfoResponse // here we have an option to dl subs as well, when the metadata is available.
 	ExtractIngestMedia()                                             //in case it was a metadata only files, youre free to dl video at a later time.
 	ExtractSubtitlesOnly(string) bool                                // here we are navigating to a Video and downloading subs for it.
-	GetQueuedItemsDetails([]int) []p.LimitedCardsInfoResponse
 }
 
 type service struct {
@@ -29,9 +28,7 @@ func NewDownloadService(r IRepository, d IDownload) IService {
 }
 
 func (s *service) ExtractIngestMetadata(params e.IncomingRequest) []p.CardsInfoResponse {
-	metadata, fp := s.download.ExtractMetadata()
-
-	metadata = cleanDirectoryStructureFields(metadata)
+	metadata, fp := s.download.ExtractMetadata()	
 	lstSavedInfo := s.repository.SaveMetadata(metadata, fp)
 	//error check here before continuing exec for thumbs and subs
 
@@ -96,20 +93,4 @@ func (s *service) ExtractIngestMedia() {
 
 func (s *service) ExtractSubtitlesOnly(videoId string) bool {
 	return false
-}
-
-func (s *service) GetQueuedItemsDetails(videoIds []int) []p.LimitedCardsInfoResponse {
-
-	var result []p.LimitedCardsInfoResponse
-
-	for _, elem := range videoIds {
-		if elem > 0 {
-			mci, err := s.repository.GetQueuedVideoDetails(elem)
-			handleErrors(err, "GetQueuedItemsDetails")
-			result = append(result, p.LimitedCardsInfoResponse{VideoId: mci.VideoId, Title: mci.Title, Description: mci.Description, Duration: mci.Duration,
-				WebpageURL: mci.WebpageURL, Thumbnail: getImagesFromURLString(mci.Thumbnail), VideoFilepath: mci.VideoFilepath, Channel: mci.Channel})
-		}
-	}
-
-	return result
 }

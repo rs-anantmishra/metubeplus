@@ -3,7 +3,7 @@
 -- Reason: Simplification is needed as SP, Fx, etc are not available.
 
 INSERT INTO tblPlaylists
-VALUES(-1, 'No Playlist', 0, '../','Not Available', 0, 'Not Available', 0);
+VALUES(-1, 'No Playlist', 0, 'Not Available','Not Available', 'Not Available', 'Not Available', 0, 'Not Available', 1728459463);
 
 INSERT INTO tblLiveStatusType (LiveStatus)
 VALUES('not_live') UNION 
