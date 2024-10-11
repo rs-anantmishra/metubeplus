@@ -16,7 +16,7 @@ export class VideoData {
     likes_count: number = -1
     filesize: number = -1
     upload_date: string = ''
-    extension: string = ''
+    extension: string = 'not available'
     watch_count: number = -1
     is_deleted: boolean = false
     created_date: number = -1

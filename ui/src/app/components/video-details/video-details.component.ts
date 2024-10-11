@@ -13,7 +13,7 @@ import Plyr from 'plyr';
     selector: 'app-video-details',
     standalone: true,
     imports: [CommonModule, RouterModule, ButtonModule, PanelModule],
-    providers: [Router],
+    providers: [Router, SharedDataService],
     templateUrl: './video-details.component.html',
     styleUrl: './video-details.component.scss',
     encapsulation: ViewEncapsulation.None
@@ -25,23 +25,15 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
     selectedVideo: VideoData = new VideoData()
 
     constructor(private svcSharedData: SharedDataService) {
-        this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9', disableContextMenu: true});
+        this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9', autoplay: true });
         this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
     }
     
     async ngOnInit(): Promise<void> {    
         
-        //encode
-        // const enc = new TextEncoder();
-        // let array = enc.encode(this.selectedVideo.title)
-        // console.log(array)
-        
-        //decode
-        // const dec = new TextDecoder("windows-1252");
-        // this.selectedVideo.description = dec.decode(array);
-
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
+        this.svcSharedData.setBreadcrumbs('home/videos')
     }
 
     ngOnDestroy(): void {

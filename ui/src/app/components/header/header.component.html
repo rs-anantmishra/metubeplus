@@ -1,11 +1,9 @@
 <div class="header-box">
     <!-- <div style="position: fixed; top: 0px;"> -->
-    <div class="crumbs-box">
-        <p-breadcrumb class="max-w-full" [model]="crumbs" [home]="home" />
-    </div>
+    <div class="crumbs-box"></div>
 
     <!-- <div style="position: fixed; top: 24px; left: 168px;"> -->
-    <!-- <div class="search-box" [ngStyle]="{visibility: visible}">
+    <div class="search-box" [ngStyle]="{visibility: visible}">
         <span class="p-fluid">
             <p-autoComplete [(ngModel)]="selectedCity" [group]="true" [suggestions]="filteredGroups"
                 (completeMethod)="filterGroupedCity($event)" placeholder="Search" variant="filled">
@@ -18,11 +16,11 @@
                 </ng-template>
             </p-autoComplete>
         </span>
-    </div> -->
-    <!-- <div style="position: fixed; top: 22px; right: 8px;"> -->
-        <div class="nav-box">
-        <p-button [icon]="themeIcon" [outlined]="true" severity="contrast" size="small" [text]="true" [label]="activeIcon" class="theme-mode" (click)="toggleTheme()" />
+    </div>
+    <div class="nav-box">
+        <p-button [icon]="themeIcon" [outlined]="true" severity="contrast" size="small" [text]="true"
+            [label]="activeIcon" class="theme-mode" (click)="toggleTheme()" />
         <p-toast />
-        <p-splitButton size="small" label="Navigation" (onClick)="navigateToHome($event)" [model]="navigationItems" raised />
+        <p-splitButton size="small" label="Navigation" (onClick)="navigate('/home')" [model]="navItems" raised />
     </div>
 </div>

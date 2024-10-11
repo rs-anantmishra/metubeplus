@@ -1,5 +1,8 @@
 p-card {
     cursor: pointer;
+    // display: flex;
+    // margin: 0px auto;
+    // max-width: 350px;
 }
 
 .simplecard {
@@ -52,7 +55,7 @@ p-card {
 }
 
 .center-cropped {
-    width: 340px;
+    width: 350px;
     height: 200px;
     background-position: center center;
     background-repeat: no-repeat;
@@ -69,7 +72,7 @@ p-card {
 .zoom-img:hover {
     overflow: hidden;
     border-radius: 6px;
-    box-shadow: #9900FF 0px 20px 20px -10px;
+    box-shadow: #0099FF 0px 20px 30px -5px;
 }
 
 .zoom-img img {
@@ -89,6 +92,7 @@ p-card {
 .tag-container {
     justify-content: end;
     display: flex;
+    position: relative;
     margin-right: 1rem;
     margin-top: -35px;
 }

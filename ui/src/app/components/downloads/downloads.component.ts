@@ -10,11 +10,14 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { PanelModule } from 'primeng/panel';
 import { CardModule } from 'primeng/card';
 import { SidebarModule } from 'primeng/sidebar';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { FieldsetModule } from 'primeng/fieldset';
+import { DividerModule } from 'primeng/divider';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { webSocket } from 'rxjs/webSocket'
 
 //Services & Classes
@@ -23,7 +26,8 @@ import { DownloadService } from '../../services/download.service';
 import { SimplecardComponent } from "../simplecard/simplecard.component";
 import { SharedDataService, Operation } from '../../services/shared-data.service';
 import { Messages, Severity, wsApiUrl } from '../../constants/messages'
-import { RemovePrefixPipe } from '../../utilities/remove-prefix.pipe'
+import { RemovePrefixPipe } from '../../pipes/remove-prefix.pipe'
+import { Scroll } from '@angular/router';
 
 
 interface ExtractionOptions {
@@ -37,9 +41,9 @@ interface ExtractionOptions {
     selector: 'app-downloads',
     standalone: true,
     imports: [ToastModule, ProgressBarModule, FieldsetModule, ProgressSpinnerModule, SidebarModule, CardModule, FormsModule,
-    InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule,
-    SimplecardComponent, RemovePrefixPipe],
-    providers: [DownloadService, MessageService, Messages],
+        InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule,
+        SimplecardComponent, RemovePrefixPipe, ScrollPanelModule, DividerModule, OverlayPanelModule],
+    providers: [DownloadService, MessageService, Messages, SharedDataService],
     templateUrl: './downloads.component.html',
     styleUrl: './downloads.component.scss'
 })
@@ -138,10 +142,10 @@ export class DownloadsComponent implements OnInit {
         await this.getQueuedItems(false)
 
         //if there is an active download
-        if (this.sharedData.isDownloadActive) {
-            this.getDownloadStatus()
-            this.populateVideoMetadata()
-        }
+        // if (this.sharedData.isDownloadActive) {
+        this.getDownloadStatus()
+        this.populateVideoMetadata()
+        // }
     }
 
     ngOnDestroy() {
@@ -222,10 +226,11 @@ export class DownloadsComponent implements OnInit {
     populateVideoMetadata() {
         //clear previous
         this.activeDownload = new VideoData()
-
         //get ActiveDownloadMetadata
-        this.activeDownload = this.sharedData.getActiveDownloadMetadata()[0]
-        console.log('activedownload is null?', this.activeDownload)
+        if (this.sharedData.getActiveDownloadMetadata() !== null) {
+            this.activeDownload = this.sharedData.getActiveDownloadMetadata()[0]
+            console.log('activedownload is null?', this.activeDownload)
+        }
 
         this.activeDLChannel = this.activeDownload.channel
         this.activeDLTitle = this.activeDownload.title

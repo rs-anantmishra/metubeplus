@@ -79,7 +79,7 @@
 }
 
 :host ::ng-deep .queued-box {
-    min-width: 400px;
+    min-width: 436px;
 }
 
 .server-logs {
@@ -121,36 +121,23 @@
     max-width: 150px !important;
 }
 
-:host::ng-deep .p-sidebar {
-    // background-color: #13111D;
-    // border-color: #13111D;
-    // background-color: #2F1229;
-    // border-color: #2F1229;
-
-    //     background:
-    // 	linear-gradient(
-    // 		#13111D,
-    // 		transparent
-    // 	),
-    // 	linear-gradient(
-    // 		90deg,
-    // 		#2F1229,
-    // 		transparent
-    // 	),
-    // 	linear-gradient(
-    // 		-90deg,
-    // 		#1D0E2C,
-    // 		transparent
-    // 	);
-
-    // background-blend-mode: color-burn;
-}
-
 .queued-items {
     margin-left: auto;
 }
 
 .queued-heading {
-    // color: #850AC2;
-    // color: #853BCE;
+    text-align: center;
+    color: #777;
+}
+
+.sidebar-cards {
+    display: flex;
+    margin: 0px auto;
+    max-width: 350px;
+}
+
+.btn-info {
+    display: flex;
+    margin-right: auto;
+    margin-left: 8px;
 }

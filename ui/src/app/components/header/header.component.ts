@@ -1,15 +1,16 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { HostListener, Directive, Component, OnInit, inject } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { Breadcrumb, BreadcrumbModule } from 'primeng/breadcrumb';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ToastModule } from 'primeng/toast';
 import { FilterService, SelectItemGroup } from 'primeng/api';
-import { AutoCompleteModule } from 'primeng/autocomplete';
+import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { SharedDataService } from '../../services/shared-data.service';
+import { BehaviorSubject } from 'rxjs';
 
 // interface AutoCompleteCompleteEvent {
 //     originalEvent: Event;
@@ -19,7 +20,7 @@ import { SharedDataService } from '../../services/shared-data.service';
 @Component({
     selector: 'app-header',
     standalone: true,
-    imports: [InputSwitchModule, CommonModule, SplitButtonModule, ToastModule, BreadcrumbModule, FormsModule,],
+    imports: [InputSwitchModule, CommonModule, SplitButtonModule, ToastModule, FormsModule, AutoCompleteModule],
     providers: [MessageService, Router, SharedDataService],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss'
@@ -39,7 +40,6 @@ export class HeaderComponent implements OnInit {
             this.setLightMode();
         }
     }
-
 
     setLightMode() {
         const linkElement = this.#document.getElementById('app-theme',) as HTMLLinkElement;
@@ -62,9 +62,9 @@ export class HeaderComponent implements OnInit {
     }
 
     //search-bar
-    visible: string = 'hidden'
+    visible: string = 'visible'
 
-    navigationItems: MenuItem[];
+    navItems: MenuItem[];
     selectedCity: any;
     filteredGroups!: any[];
     groupedCities!: SelectItemGroup[];
@@ -113,60 +113,72 @@ export class HeaderComponent implements OnInit {
             }
         ];
 
-        this.navigationItems = [
-            { label: 'Home', routerLink: ['/home'] },
+        this.navItems = [
+            { label: 'Home', routerLink: ['/home'], command: () => { this.navigate('/home'); } },
             { separator: true },
-            { label: 'Videos', routerLink: ['/videos'] },
-            { label: 'Playlists', routerLink: ['/playlists'] },
-            { label: 'Tags', routerLink: ['/tags'] },
-            { label: 'Categories', routerLink: ['/categories'] },
+            { label: 'Videos', routerLink: ['/videos'], command: () => { this.navigate('/videos'); } },
+            { label: 'Playlists', routerLink: ['/playlists'], command: () => { this.navigate('/playlists'); } },
+            { label: 'Tags', routerLink: ['/tags'], command: () => { this.navigate('/tags'); } },
+            { label: 'Categories', routerLink: ['/categories'], command: () => { this.navigate('/categories'); } },
             // { separator: true },
             // { label: 'Pattern Matching', routerLink: ['/recursive'] },
             // { label: 'Saved Patterns', routerLink: ['/notes'] },
             // { label: 'Source RegEx', routerLink: ['/source'] },
             { separator: true },
-            { label: 'Activity Logs', routerLink: ['/activity-logs'] },
+            { label: 'Activity Logs', routerLink: ['/activity-logs'], command: () => { this.navigate('/logs'); } },
         ];
     }
 
-    navigateToHome(e: any) {
-        this.router.navigate(['/home']);
-    }
-
-    update() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Updated' });
-    }
-
-    delete() {
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Data Deleted' });
+    navigate(route: string) {
+        this.router.navigate([route]);
     }
 
     crumbs: MenuItem[] | undefined;
     home: MenuItem | undefined;
+    crumbsSubscription!: BehaviorSubject<string>;
 
     ngOnInit() {
-        this.crumbs = [
-            { label: 'Home' },
-        ];
-        this.home = { icon: 'pi pi-home', routerLink: '/home' };
+
     }
 
-    // filterGroupedCity(event: AutoCompleteCompleteEvent) {
-    //     let query = event.query;
-    //     let filteredGroups = [];
+    //combinations Alt + Shift + P = Playlists
+    //combinations Alt + Shift + V = Videos
+    //combinations Alt + Shift + C = Channels
+    //combinations Alt + Shift + L = Logs
+    @HostListener("document:keydown", ["$event"]) handleKeyboardEvent(event: KeyboardEvent) {
+        if (event.key === 'P' && event.altKey) {
+            this.navigate('/playlists')
+        }
+        if (event.key === 'V' && event.altKey) {
+            this.navigate('/videos')
+        }
+        if (event.key === 'C' && event.altKey) {
+            this.navigate('/channels')
+        }
+        if (event.key === 'L' && event.altKey) {
+            this.navigate('/logs')
+        }
+        if ((event.key === 'H' || event.key === 'D') && event.altKey) {
+            this.navigate('/home')
+        }
+    }
 
-    //     for (let optgroup of this.groupedCities) {
-    //         let filteredSubOptions = this.filterService.filter(optgroup.items, ['label'], query, "contains");
-    //         if (filteredSubOptions && filteredSubOptions.length) {
-    //             filteredGroups.push({
-    //                 label: optgroup.label,
-    //                 value: optgroup.value,
-    //                 items: filteredSubOptions
-    //             });
-    //         }
-    //     }
+    filterGroupedCity(event: AutoCompleteCompleteEvent) {
+        let query = event.query;
+        let filteredGroups = [];
 
-    //     this.filteredGroups = filteredGroups;
-    // }
+        for (let optgroup of this.groupedCities) {
+            let filteredSubOptions = this.filterService.filter(optgroup.items, ['label'], query, "contains");
+            if (filteredSubOptions && filteredSubOptions.length) {
+                filteredGroups.push({
+                    label: optgroup.label,
+                    value: optgroup.value,
+                    items: filteredSubOptions
+                });
+            }
+        }
+
+        this.filteredGroups = filteredGroups;
+    }
 
 }

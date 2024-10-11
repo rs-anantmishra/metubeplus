@@ -49,18 +49,27 @@
 
 <div>
     <p-sidebar [(visible)]="sidebarVisible" styleClass="queued-box">
-        <h3 class="queued-heading">Queued Downloads</h3>
-        <div *ngIf="this.queuedItems !== null && this.queuedItems.length > 0; else elseBlock">
-            <app-simplecard *ngFor="let metadata of this.queuedItems" [meta]="metadata"></app-simplecard>
-        </div>
-        <ng-template #elseBlock>
-            <app-simplecard [meta]="nilMetadata"></app-simplecard>
-        </ng-template>
+        <p-scrollPanel class="queued-scrollable" [style]="{ width: '100%', height: 'calc(100vh - 136px)' }">
+            <h2 class="queued-heading">Queued Downloads</h2>
+            <div *ngIf="this.queuedItems !== null && this.queuedItems.length > 0; else elseBlock">
+                <app-simplecard *ngFor="let metadata of this.queuedItems" [meta]="metadata"  class="sidebar-cards"></app-simplecard>
+            </div>
+            <ng-template #elseBlock>
+                <app-simplecard class="sidebar-cards" [meta]="nilMetadata"></app-simplecard>
+            </ng-template>
+        </p-scrollPanel>
     </p-sidebar>
 </div>
 
 <div class="footer">
-    <!--  -->
+    <p-button (onClick)="op.toggle($event)" icon="pi pi-info-circle" label="" severity="contrast" size="small" class="btn-info"/>
+    <p-overlayPanel #op>
+        <div class="card">
+            hi
+            <p-divider />
+            there
+        </div>
+    </p-overlayPanel>
     <div>
         <a href="https://buymeacoffee.com/rsanantmisp" target="_blank">
             <p-button icon="pi pi-microchip" label="Buy me a raspberry-pi" size="small" severity="contrast"

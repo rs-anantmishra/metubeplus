@@ -268,7 +268,7 @@ func buildProcess(args string, command string) (*exec.Cmd, io.ReadCloser) {
 
 	cmd := exec.Command(command)
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
-	cmd.SysProcAttr.CmdLine = command + Space + args + " --encoding utf8"
+	cmd.SysProcAttr.CmdLine = command + Space + args
 
 	stdout, err := cmd.StdoutPipe()
 	cmd.Stderr = cmd.Stdout

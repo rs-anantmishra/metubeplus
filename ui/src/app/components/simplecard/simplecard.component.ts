@@ -8,14 +8,16 @@ import { Router } from '@angular/router';
 import { SharedDataService } from '../../services/shared-data.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { TagModule } from 'primeng/tag';
-import { RemovePrefixPipe } from '../../utilities/filesize-conversion.pipe'
-import { CommaSepStringFromArray } from '../../utilities/array-comma-sep.pipe'
-import { MinifiedViewCount } from '../../utilities/views-conversion.pipe';
+import { RemovePrefixPipe } from '../../pipes/filesize-conversion.pipe'
+import { CommaSepStringFromArray } from '../../pipes/array-comma-sep.pipe'
+import { MinifiedViewCount } from '../../pipes/views-conversion.pipe';
+import { MinifiedDatePipe } from '../../pipes/formatted-date.pipe';
+import { FormattedResolutionPipe } from '../../pipes/format-resolution.pipe';
 
 @Component({
     selector: 'app-simplecard',
     standalone: true,
-    imports: [ToastModule, CardModule, CommonModule, TooltipModule, TagModule, RemovePrefixPipe, CommaSepStringFromArray, MinifiedViewCount],
+    imports: [ToastModule, CardModule, CommonModule, TooltipModule, TagModule, RemovePrefixPipe, CommaSepStringFromArray, MinifiedViewCount, MinifiedDatePipe, FormattedResolutionPipe],
     providers: [MessageService, Router],
     templateUrl: './simplecard.component.html',
     styleUrl: './simplecard.component.scss'
@@ -39,7 +41,7 @@ export class SimplecardComponent implements OnInit {
 
         // playVideo.media_url = playVideo.media_url.replace('../files', 'http://192.168.1.10:8484')
         this.svcSharedData.setPlayVideo(playVideo);
-        this.router.navigate(['/play'])
+        this.router.navigate(['/videos/play'])
     }
 
     getFormattedDuration(duration: number) {
@@ -49,18 +51,6 @@ export class SimplecardComponent implements OnInit {
 
         // Format the result as MM:SS
         return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }
-
-    getFormattedUploadDate(value: string) {
-        //recieved as: yyyymmdd
-        let space = ' '
-        let comma = ','
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        let year = value.slice(0,4)
-        let month = parseInt(value.slice(4,6), 10)
-
-        let result = 'Uploaded' + space +  months[month] + comma + space + year
-        return result
     }
 
 }

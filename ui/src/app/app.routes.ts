@@ -13,8 +13,8 @@ export const routes: Routes = [
     { path: 'videos', component: VideosComponent, title: 'Streamsphere' },
     { path: 'tags', component: TagsComponent, title: 'Streamsphere' },
     { path: 'categories', component: CategoriesComponent, title: 'Streamsphere' },
-    { path: 'play', component: VideoDetailsComponent, title: 'Streamsphere' },
+    { path: 'videos/play', component: VideoDetailsComponent, title: 'Streamsphere' },
     { path: 'playlists', component: PlaylistsComponent, title: 'Streamsphere' },
     { path: 'playlist-details', component: PlaylistDetailsComponent, title: 'Streamsphere' },
-    { path: '**', redirectTo: '/home'}
+    { path: '**', redirectTo: '/home' }
 ];

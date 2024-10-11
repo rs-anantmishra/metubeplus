@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
     selector: 'app-videos',
     standalone: true,
     imports: [SimplecardComponent, CommonModule, PaginatorModule, ButtonModule, ScrollPanelModule, RouterModule, ProgressSpinnerModule],
-    providers: [Router],
+    providers: [Router, SharedDataService],
     templateUrl: './videos.component.html',
     styleUrl: './videos.component.scss'
 })
@@ -51,8 +51,7 @@ export class VideosComponent implements OnInit, OnDestroy {
     async ngOnInit() {
         await this.getAllVideos();
         this.loadPage = 0
-
-        console.log(this.totalRecords, "total records")
+        this.svcSharedData.setBreadcrumbs('home/videos')
     }
 
     async getAllVideos() {

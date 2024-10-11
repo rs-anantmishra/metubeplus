@@ -156,6 +156,15 @@ export class SharedDataService {
     getPageSizeCount(): Observable<number> {
         return this.pageSizeCount.asObservable()
     }
+
+    private breadcrumbs: BehaviorSubject<string> = new BehaviorSubject('')
+    setBreadcrumbs(path: string): void {
+        this.breadcrumbs.next(path)
+    }
+
+    getBreadcrumbs(): Observable<string> {
+        return this.breadcrumbs.asObservable()
+    }
 }
 
 
