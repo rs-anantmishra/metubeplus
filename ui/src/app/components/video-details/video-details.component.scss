@@ -37,7 +37,7 @@
 }
 
 .video-content * {
-    width: 100%;
+    // width: 100%;
 }
 
 :host ::ng-deep .p-panel-header {
@@ -55,10 +55,10 @@
 }
 
 .micro-informations {
-    max-width: 250px;
+    display: flex;
+    white-space: nowrap;
 }
 
-:host ::ng-deep .p-chip-icon {
-    max-width: 30x;
-    margin: 0px auto;
+.info-tags {
+    margin: 0px 6px;
 }

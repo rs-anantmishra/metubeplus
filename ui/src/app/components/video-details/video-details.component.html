@@ -12,17 +12,32 @@
 
 <p-panel class="video-content">
     <ng-template pTemplate="header">
-        <div>
-            <span class="title-text">{{selectedVideo.title}}</span>
-            <h4 class="channel-text">{{selectedVideo.channel}}</h4>
+        <div style="width: 100%; display: flex;">
+            <div>
+                <span class="title-text">{{selectedVideo.title}}</span> <br />
+                <h4 class="channel-text">{{selectedVideo.channel}}</h4>
+            </div>
+
+            <div style="align-items: start; margin-right: 4px; margin-left: auto;">
+                <div class="micro-informations">
+                    <p-tag [style]="{padding:'8px', 'margin': '0px 8px'}">
+                        <span style="font-size: 14px;">
+                            <i class="pi pi-user" style="margin: 0px 3px; font-size: 14px;"></i>
+                            {{selectedVideo.views_count | minifiedViewCount}}
+                        </span>
+                    </p-tag>
+                    <p-tag [style]="{padding:'8px', 'margin': '0px 8px'}">
+                        <span style="font-size: 14px;">
+                            <i class="pi pi-thumbs-up" style="margin: 0px 3px; font-size: 14px;"></i>
+                            {{selectedVideo.likes_count | minifiedLikeCount}}
+                        </span>
+                    </p-tag>
+                    <!-- <p-button label="Download" [rounded]="true" severity="secondary" icon="pi pi-download" size="small" (click)="(selectedVideo.media_url)" /> -->
+                </div>
+            </div>
         </div>
     </ng-template>
-    <ng-template pTemplate="icons">
-        <div style="display: flex;">
-            <p-chip class="micro-informations" label="{{selectedVideo.views_count | minifiedViewCount}}" icon="pi pi-user"/>
-            <p-chip class="micro-informations" label="{{selectedVideo.likes_count | minifiedViewCount}}" icon="pi pi-thumbs-up" />
-        </div>
-    </ng-template>
+
     <ng-template pTemplate="footer">
         <div style="display: none;">
             <span>More from this Channel</span>

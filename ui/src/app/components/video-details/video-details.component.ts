@@ -11,12 +11,13 @@ import { ChipModule } from 'primeng/chip';
 import Plyr from 'plyr';
 
 import { MinifiedViewCount } from '../../utilities/pipes/views-conversion.pipe'
+import { MinifiedLikeCount } from '../../utilities/pipes/likes-conversion.pipe';
 
 
 @Component({
     selector: 'app-video-details',
     standalone: true,
-    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, TagModule, ChipModule, MinifiedViewCount],
+    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, TagModule, ChipModule, MinifiedViewCount, MinifiedLikeCount],
     providers: [Router, SharedDataService],
     templateUrl: './video-details.component.html',
     styleUrl: './video-details.component.scss',
