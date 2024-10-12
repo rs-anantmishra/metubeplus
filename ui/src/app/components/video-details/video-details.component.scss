@@ -16,21 +16,21 @@
 //setting 2
 .player-video {
     display: flex;
-    max-height: 80vh;
+    max-height: 86vh;
     width: 100%;
-} 
+}
 
 // .player-source {
-    // display: block;
-    // max-height: 50%;
-    // width: auto;
+// display: block;
+// max-height: 50%;
+// width: auto;
 // }
 
 .video-content {
     display: flex;
     padding: 8px 36px;
-    min-width: 60%;
-    width: 60%;
+    min-width: 70%;
+    width: 70%;
     margin: 0px auto;
     // height: calc(100vh - 65vh - 104px);
     height: 100%;
@@ -38,4 +38,27 @@
 
 .video-content * {
     width: 100%;
+}
+
+:host ::ng-deep .p-panel-header {
+    font-size: 21px;
+}
+
+.title-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.channel-text {
+    margin: 6px 0px;
+    font-size: 1.125rem;
+}
+
+.micro-informations {
+    max-width: 250px;
+}
+
+:host ::ng-deep .p-chip-icon {
+    max-width: 30x;
+    margin: 0px auto;
 }

@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'filesizeToMiB',
   standalone: true,
 })
-export class RemovePrefixPipe implements PipeTransform {
+export class FilesizeConversionPipe implements PipeTransform {
   transform(bytes: number, decimals = 2): string {
     //let bytes = parseInt(value, 10); //base 10 for decimal value
     if (!+bytes) return '0 Bytes'

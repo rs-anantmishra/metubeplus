@@ -6,13 +6,17 @@ import { SharedDataService } from '../../services/shared-data.service';
 import { VideoData } from '../../classes/video-data';
 import { Subscription } from 'rxjs';
 import { PanelModule } from 'primeng/panel';
+import { TagModule } from 'primeng/tag';
+import { ChipModule } from 'primeng/chip';
 import Plyr from 'plyr';
+
+import { MinifiedViewCount } from '../../utilities/pipes/views-conversion.pipe'
 
 
 @Component({
     selector: 'app-video-details',
     standalone: true,
-    imports: [CommonModule, RouterModule, ButtonModule, PanelModule],
+    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, TagModule, ChipModule, MinifiedViewCount],
     providers: [Router, SharedDataService],
     templateUrl: './video-details.component.html',
     styleUrl: './video-details.component.scss',
@@ -28,9 +32,9 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
         this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9', autoplay: true });
         this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
     }
-    
-    async ngOnInit(): Promise<void> {    
-        
+
+    async ngOnInit(): Promise<void> {
+
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
         this.svcSharedData.setBreadcrumbs('home/videos')

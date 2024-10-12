@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { VideoData, VideoDataRequest, QueueDownloads } from '../classes/video-data';
+import { VideoData, VideoDataRequest, QueueDownloads, VideoDataResponse } from '../classes/video-data';
 import { HttpClient } from '@angular/common/http';
 import { SharedDataService } from './shared-data.service';
 
@@ -13,7 +13,7 @@ export class DownloadService {
     constructor(private http: HttpClient, private sharedData: SharedDataService) { }
 
     //metadata
-    async getMetadata(request: VideoDataRequest): Promise<VideoData[]> {
+    async getMetadata(request: VideoDataRequest): Promise<VideoDataResponse> {
         let url = '/download/metadata'
 
         return fetch(apiUrl + url, {

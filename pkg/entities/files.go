@@ -22,6 +22,11 @@ type Filepath struct {
 	PlaylistTitle string
 }
 
+type StorageStatus struct {
+	StorageUsedDB int64 //`json:"storage_used_db"`
+	StorageUsedFS int64 //`json:"storage_used_fs"`
+}
+
 // FileType Constants
 const (
 	Audio     = iota

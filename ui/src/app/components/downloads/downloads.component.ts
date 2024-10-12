@@ -26,8 +26,9 @@ import { DownloadService } from '../../services/download.service';
 import { SimplecardComponent } from "../simplecard/simplecard.component";
 import { SharedDataService, Operation } from '../../services/shared-data.service';
 import { Messages, Severity, wsApiUrl } from '../../constants/messages'
-import { RemovePrefixPipe } from '../../pipes/remove-prefix.pipe'
-import { Scroll } from '@angular/router';
+import { RemovePrefixPipe } from '../../utilities/pipes/remove-prefix.pipe'
+import { FilesService } from '../../services/files.service';
+import { FilesizeConversionPipe } from '../../utilities/pipes/filesize-conversion.pipe'
 
 
 interface ExtractionOptions {
@@ -42,8 +43,8 @@ interface ExtractionOptions {
     standalone: true,
     imports: [ToastModule, ProgressBarModule, FieldsetModule, ProgressSpinnerModule, SidebarModule, CardModule, FormsModule,
         InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule,
-        SimplecardComponent, RemovePrefixPipe, ScrollPanelModule, DividerModule, OverlayPanelModule],
-    providers: [DownloadService, MessageService, Messages, SharedDataService],
+        SimplecardComponent, RemovePrefixPipe, ScrollPanelModule, DividerModule, OverlayPanelModule, FilesizeConversionPipe],
+    providers: [DownloadService, MessageService, Messages, SharedDataService, FilesService],
     templateUrl: './downloads.component.html',
     styleUrl: './downloads.component.scss'
 })
@@ -60,6 +61,7 @@ export class DownloadsComponent implements OnInit {
 
     constructor(private messageService: MessageService,
         private svcDownload: DownloadService,
+        private svcFiles: FilesService,
         private sharedData: SharedDataService,
         private msg: Messages) {
 
@@ -167,44 +169,54 @@ export class DownloadsComponent implements OnInit {
             return
         }
 
-        let metadata: VideoData[] = await this.svcDownload.getMetadata(metadataRequest)
-        let isDownloadActive = this.sharedData.getIsDownloadActive()
-        if (!isDownloadActive) {
-            await this.getAndSaveActiveDownload()
-            this.populateVideoMetadata()
+        let metadataResponse = await this.svcDownload.getMetadata(metadataRequest)
 
-            //set to true
-            this.sharedData.setIsDownloadActive(true)
-        }
-
-        if (metadata.length > 1) {
-            metadata.forEach(item => { item.isPlaylistVideo = true })
-        }
-
-        //delta update for all videos
-        let allVideos = this.sharedData.getlstVideos()
-        if (allVideos !== null) {
-            allVideos.push(...metadata)
+        if (metadataResponse.status === 'failure') {
+            this.showMessage(metadataResponse.message, 'error', 'error')
+            //Completion Process
+            this.GetMediaCompleteResult(false)
         } else {
-            allVideos = [];
-            allVideos.push(...metadata)
+            let metadata = metadataResponse.data;
+            let isDownloadActive = this.sharedData.getIsDownloadActive()
+            if (!isDownloadActive) {
+                await this.getAndSaveActiveDownload()
+                this.populateVideoMetadata()
+
+                //set to true
+                this.sharedData.setIsDownloadActive(true)
+            }
+
+            if (metadata.length > 1) {
+                metadata.forEach(item => { item.isPlaylistVideo = true })
+            }
+
+            //delta update for all videos
+            let allVideos = this.sharedData.getlstVideos()
+            if (allVideos !== null) {
+                allVideos.push(...metadata)
+            } else {
+                allVideos = [];
+                allVideos.push(...metadata)
+            }
+            this.sharedData.setlstVideos(allVideos)
+
+            //trigger stats checker if all goes well
+            setTimeout(() => { this.getDownloadStatus(); }, 250);
+
+            //Completion Process
+            this.GetMediaCompleteResult()
         }
-        this.sharedData.setlstVideos(allVideos)
-
-        //trigger stats checker if all goes well
-        setTimeout(() => { this.getDownloadStatus(); }, 500);
-
-        //Completion Process
-        this.GetMediaCompleteResult()
     }
 
-    GetMediaCompleteResult() {
+    GetMediaCompleteResult(showMessage: boolean = true) {
 
         //Complete Result
         this.resetDownloadOptions();
         this.loading = false;
         this.urlInputDisabled = false;
-        this.showMessage('Video/Playlist queued', 'info', 'Info')
+        if (showMessage) {
+            this.showMessage('Video/Playlist queued', 'info', 'Info')
+        }
     }
 
     GetMetadataRequest(options: ExtractionOptions) {
@@ -229,7 +241,6 @@ export class DownloadsComponent implements OnInit {
         //get ActiveDownloadMetadata
         if (this.sharedData.getActiveDownloadMetadata() !== null) {
             this.activeDownload = this.sharedData.getActiveDownloadMetadata()[0]
-            console.log('activedownload is null?', this.activeDownload)
         }
 
         this.activeDLChannel = this.activeDownload.channel
@@ -256,7 +267,17 @@ export class DownloadsComponent implements OnInit {
         await this.svcDownload.getQueuedItems("downloading").then(item => { console.log(item); this.sharedData.setActiveDownloadMetadata(item); })
     }
 
-
+    fsStorageStatus: number = 0
+    dbStorageStatus: number = 0
+    async getStorageStatus() {
+        try {
+            let filesResult = await this.svcFiles.getStorageStatus();
+            this.fsStorageStatus = filesResult.data.storage_used_fs;
+            this.dbStorageStatus = filesResult.data.storage_used_db;
+        } catch (e) {
+            console.log('error fetching storage status:', e);
+        }
+    }
 
     //Toast Messages
     showMessage(message: string, severity: string, summary: string) {

@@ -136,8 +136,36 @@
     max-width: 350px;
 }
 
-.btn-info {
+.informations {
     display: flex;
     margin-right: auto;
     margin-left: 8px;
+}
+
+.storage-info {
+    display: flex;
+    margin-left: 8px;
+}
+
+.storage-data {
+    font-size: 12px;
+}
+
+.footer-help {
+    font-size: 12px;
+    font-family: monospace;
+}
+
+.help-info {
+    display: flex;
+    margin-left: 8px;
+}
+
+.shortcut-keys {
+    padding: 3px;
+    border-radius: 4px;
+    border: 1px solid #777;
+    background-color: #777;
+    display: inline;
+    color: #FFFFFF;
 }

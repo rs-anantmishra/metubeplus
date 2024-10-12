@@ -1,6 +1,7 @@
 package extractor
 
 import (
+	"errors"
 	"time"
 
 	"github.com/gofiber/fiber/v2/log"
@@ -10,9 +11,9 @@ import (
 )
 
 type IService interface {
-	ExtractIngestMetadata(p e.IncomingRequest) []p.CardsInfoResponse // here we have an option to dl subs as well, when the metadata is available.
-	ExtractIngestMedia()                                             //in case it was a metadata only files, youre free to dl video at a later time.
-	ExtractSubtitlesOnly(string) bool                                // here we are navigating to a Video and downloading subs for it.
+	ExtractIngestMetadata(p e.IncomingRequest) ([]p.CardsInfoResponse, error) // here we have an option to dl subs as well, when the metadata is available.
+	ExtractIngestMedia()                                                      //in case it was a metadata only files, youre free to dl video at a later time.
+	ExtractSubtitlesOnly(string) bool                                         // here we are navigating to a Video and downloading subs for it.
 }
 
 type service struct {
@@ -27,8 +28,15 @@ func NewDownloadService(r IRepository, d IDownload) IService {
 	}
 }
 
-func (s *service) ExtractIngestMetadata(params e.IncomingRequest) []p.CardsInfoResponse {
+func (s *service) ExtractIngestMetadata(params e.IncomingRequest) ([]p.CardsInfoResponse, error) {
+	var response []p.CardsInfoResponse
+
 	metadata, fp := s.download.ExtractMetadata()
+	domainCheck := checkContentDomain(metadata) //temporary check placed
+	if !domainCheck {
+		return response, errors.New("failed: domain constraint")
+	}
+
 	lstSavedInfo := s.repository.SaveMetadata(metadata, fp)
 	//error check here before continuing exec for thumbs and subs
 
@@ -42,9 +50,9 @@ func (s *service) ExtractIngestMetadata(params e.IncomingRequest) []p.CardsInfoR
 		subtitles = s.download.ExtractSubtitles(fp, lstSavedInfo)
 		s.repository.SaveSubtitles(subtitles)
 	}
+	response = createMetadataResponse(lstSavedInfo, subtitles, params.SubtitlesReq, thumbnails)
 
-	response := createMetadataResponse(lstSavedInfo, subtitles, params.SubtitlesReq, thumbnails)
-	return response
+	return response, nil
 }
 
 func (s *service) ExtractIngestMedia() {

@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"fmt"
 
-	p "github.com/rs-anantmishra/metubeplus/database"
+	q "github.com/rs-anantmishra/metubeplus/database"
 	"github.com/rs-anantmishra/metubeplus/pkg/entities"
 )
 
 type IRepository interface {
 	GetAllVideos() ([]entities.Videos, error)
+	GetVideoSearchInfo() ([]entities.ContentSearch, error)
 }
 
 type repository struct {
@@ -27,7 +28,7 @@ func (r *repository) GetAllVideos() ([]entities.Videos, error) {
 
 	var lstVideos []entities.Videos
 
-	rows, err := r.db.Query(p.GetAllVideos_Info)
+	rows, err := r.db.Query(q.GetAllVideos_Info)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching Videos: %v", err)
 	}
@@ -49,8 +50,7 @@ func (r *repository) GetAllVideos() ([]entities.Videos, error) {
 	}
 
 	//tags
-
-	tagsRows, err := r.db.Query(p.GetVideoTags_AllVideos)
+	tagsRows, err := r.db.Query(q.GetVideoTags_AllVideos)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching tags for Video: %v", err)
 	}
@@ -75,7 +75,7 @@ func (r *repository) GetAllVideos() ([]entities.Videos, error) {
 	}
 
 	//categories
-	categoryRows, err := r.db.Query(p.GetVideoCategories_AllVideos)
+	categoryRows, err := r.db.Query(q.GetVideoCategories_AllVideos)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching categories for Video: %v", err)
 	}
@@ -100,8 +100,7 @@ func (r *repository) GetAllVideos() ([]entities.Videos, error) {
 	}
 
 	//files
-
-	filesRows, err := r.db.Query(p.GetVideoFiles_AllVideos)
+	filesRows, err := r.db.Query(q.GetVideoFiles_AllVideos)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching files for Video: %v", err)
 	}
@@ -126,4 +125,30 @@ func (r *repository) GetAllVideos() ([]entities.Videos, error) {
 	}
 
 	return lstVideos, nil
+}
+
+func (r *repository) GetVideoSearchInfo() ([]entities.ContentSearch, error) {
+
+	var lstSearchInfo []entities.ContentSearch
+
+	rows, err := r.db.Query(q.GetVideoSearchChannelTitle)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching Videos: %v", err)
+	}
+	defer rows.Close()
+
+	// Loop through rows, using Scan to assign column data to struct fields.
+	for rows.Next() {
+		var cs entities.ContentSearch
+		if err := rows.Scan(&cs.VideoId, &cs.Title, &cs.Channel); err != nil {
+			return nil, fmt.Errorf("error fetching search content: %v", err)
+		}
+		lstSearchInfo = append(lstSearchInfo, cs)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error fetching Videos: %v", err)
+	}
+
+	return lstSearchInfo, nil
 }

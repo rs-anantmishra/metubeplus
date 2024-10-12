@@ -210,3 +210,13 @@ func cleanDirectoryStructureFields(mediaInfo []e.MediaInformation) []e.MediaInfo
 
 	return mediaInfo
 }
+
+// temporarily placed to only accept yt
+func checkContentDomain(meta []e.MediaInformation) bool {
+	for _, elem := range meta {
+		if strings.TrimSpace(elem.Domain) != "youtube.com" {
+			return false
+		}
+	}
+	return true
+}

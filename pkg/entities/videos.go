@@ -67,6 +67,12 @@ type Format struct {
 	CreatedDate string
 }
 
+type ContentSearch struct {
+	VideoId int
+	Channel string
+	Title   string
+}
+
 // AvailabilityType Constants
 const (
 	Private        = iota

@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	sql "github.com/rs-anantmishra/metubeplus/database"
@@ -92,4 +94,22 @@ func GetMediaByPhysicalLocation(c *fiber.Ctx) error {
 	log.Info("Request Params:", c)
 
 	return c.Status(fiber.StatusOK).Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
+}
+
+func GetVideoSearchData(c *fiber.Ctx) error {
+	//log context
+	log.Info("Request Params:", c)
+
+	//Instantiate
+	svcRepo := videos.NewVideoRepo(sql.DB)
+	svcVideos := videos.NewVideoService(svcRepo)
+
+	result, err := svcVideos.GetVideoSearchData()
+	message := strconv.Itoa(len(result)) + ` records found`
+	status := `success`
+	if err != nil {
+		log.Info("error fetching all videos", err)
+		status = `failure`
+	}
+	return c.Status(fiber.StatusOK).Status(fiber.StatusOK).JSON(fiber.Map{"status": status, "message": message, "data": result})
 }

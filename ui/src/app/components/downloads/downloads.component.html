@@ -52,7 +52,8 @@
         <p-scrollPanel class="queued-scrollable" [style]="{ width: '100%', height: 'calc(100vh - 136px)' }">
             <h2 class="queued-heading">Queued Downloads</h2>
             <div *ngIf="this.queuedItems !== null && this.queuedItems.length > 0; else elseBlock">
-                <app-simplecard *ngFor="let metadata of this.queuedItems" [meta]="metadata"  class="sidebar-cards"></app-simplecard>
+                <app-simplecard *ngFor="let metadata of this.queuedItems" [meta]="metadata"
+                    class="sidebar-cards"></app-simplecard>
             </div>
             <ng-template #elseBlock>
                 <app-simplecard class="sidebar-cards" [meta]="nilMetadata"></app-simplecard>
@@ -62,14 +63,36 @@
 </div>
 
 <div class="footer">
-    <p-button (onClick)="op.toggle($event)" icon="pi pi-info-circle" label="" severity="contrast" size="small" class="btn-info"/>
-    <p-overlayPanel #op>
-        <div class="card">
-            hi
-            <p-divider />
-            there
+    <div class="informations">
+        <div class="help-info">
+            <p-button (onClick)="info.toggle($event)" icon="pi pi-info-circle" label="" severity="secondary"
+                size="small" />
+            <p-overlayPanel #info>
+                <h3 style="font-size: 16px;">Shortcuts</h3>
+                <div class="footer-help">
+                    <p-divider />
+                    <span class="shortcut-keys">Alt + Shift + P</span> -> Playlists
+                    <p-divider />
+                    <span class="shortcut-keys">Alt + Shift + V</span> -> Videos
+                    <p-divider />
+                    <span class="shortcut-keys">Alt + Shift + C</span> -> Channels
+                    <p-divider />
+                    <span class="shortcut-keys">Alt + Shift + L</span> -> Logs
+                </div>
+            </p-overlayPanel>
         </div>
-    </p-overlayPanel>
+        <div class="storage-info">
+            <p-button (onClick)="storage.toggle($event); this.getStorageStatus();" icon="pi pi-server"
+                label="Storage Information" severity="secondary" size="small" />
+            <p-overlayPanel #storage>
+                <div class="storage-data">
+                    <span><i class="pi pi-database"></i> Storage Used: {{fsStorageStatus | filesizeToMiB}}</span>
+                    <p-divider />
+                    <span><i class="pi pi-file"></i> Storage Used: {{dbStorageStatus | filesizeToMiB}}</span>
+                </div>
+            </p-overlayPanel>
+        </div>
+    </div>
     <div>
         <a href="https://buymeacoffee.com/rsanantmisp" target="_blank">
             <p-button icon="pi pi-microchip" label="Buy me a raspberry-pi" size="small" severity="contrast"

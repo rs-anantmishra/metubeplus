@@ -1,5 +1,12 @@
 import { Title } from "@angular/platform-browser"
 
+
+export class VideoDataResponse {
+    data: VideoData[] = [];
+    message: string = '';
+    status: string = '';
+}
+
 export class VideoData {
     video_id: number = -1
     title: string = ''

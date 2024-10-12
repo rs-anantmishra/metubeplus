@@ -10,7 +10,10 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { SharedDataService } from '../../services/shared-data.service';
+import { VideosService } from '../../services/videos.service';
 import { BehaviorSubject } from 'rxjs';
+import { ContentSearchResponse, ContentSearch } from '../../classes/search';
+import { group } from '@angular/animations';
 
 // interface AutoCompleteCompleteEvent {
 //     originalEvent: Event;
@@ -21,7 +24,7 @@ import { BehaviorSubject } from 'rxjs';
     selector: 'app-header',
     standalone: true,
     imports: [InputSwitchModule, CommonModule, SplitButtonModule, ToastModule, FormsModule, AutoCompleteModule],
-    providers: [MessageService, Router, SharedDataService],
+    providers: [MessageService, Router, SharedDataService, VideosService],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss'
 })
@@ -65,11 +68,17 @@ export class HeaderComponent implements OnInit {
     visible: string = 'visible'
 
     navItems: MenuItem[];
-    selectedCity: any;
     filteredGroups!: any[];
-    groupedCities!: SelectItemGroup[];
+    // selectedCity: any;
+    // groupedCities!: SelectItemGroup[];
+    selectedTitle: any;
+    groupedTitles!: SelectItemGroup[];
 
-    constructor(private router: Router, private messageService: MessageService, private filterService: FilterService, private sharedDataSvc: SharedDataService) {
+    constructor(private router: Router,
+        private messageService: MessageService,
+        private videosSvc: VideosService,
+        private filterService: FilterService,
+        private sharedDataSvc: SharedDataService) {
 
         //check and set theme
         let isDarkMode = this.sharedDataSvc.getIsDarkMode();
@@ -83,35 +92,35 @@ export class HeaderComponent implements OnInit {
             }
         }
 
-        this.groupedCities = [
-            {
-                label: 'Germany', value: 'de',
-                items: [
-                    { label: 'Berlin', value: 'Berlin' },
-                    { label: 'Frankfurt', value: 'Frankfurt' },
-                    { label: 'Hamburg', value: 'Hamburg' },
-                    { label: 'Munich', value: 'Munich' }
-                ]
-            },
-            {
-                label: 'USA', value: 'us',
-                items: [
-                    { label: 'Chicago', value: 'Chicago' },
-                    { label: 'Los Angeles', value: 'Los Angeles' },
-                    { label: 'New York', value: 'New York' },
-                    { label: 'San Francisco', value: 'San Francisco' }
-                ]
-            },
-            {
-                label: 'Japan', value: 'jp',
-                items: [
-                    { label: 'Kyoto', value: 'Kyoto' },
-                    { label: 'Osaka', value: 'Osaka' },
-                    { label: 'Tokyo', value: 'Tokyo' },
-                    { label: 'Yokohama', value: 'Yokohama' }
-                ]
-            }
-        ];
+        // this.groupedCities = [
+        //     {
+        //         label: 'Germany', value: 'de',
+        //         items: [
+        //             { label: 'Berlin', value: 'Berlin' },
+        //             { label: 'Frankfurt', value: 'Frankfurt' },
+        //             { label: 'Hamburg', value: 'Hamburg' },
+        //             { label: 'Munich', value: 'Munich' }
+        //         ]
+        //     },
+        //     {
+        //         label: 'USA', value: 'us',
+        //         items: [
+        //             { label: 'Chicago', value: 'Chicago' },
+        //             { label: 'Los Angeles', value: 'Los Angeles' },
+        //             { label: 'New York', value: 'New York' },
+        //             { label: 'San Francisco', value: 'San Francisco' }
+        //         ]
+        //     },
+        //     {
+        //         label: 'Japan', value: 'jp',
+        //         items: [
+        //             { label: 'Kyoto', value: 'Kyoto' },
+        //             { label: 'Osaka', value: 'Osaka' },
+        //             { label: 'Tokyo', value: 'Tokyo' },
+        //             { label: 'Yokohama', value: 'Yokohama' }
+        //         ]
+        //     }
+        // ];
 
         this.navItems = [
             { label: 'Home', routerLink: ['/home'], command: () => { this.navigate('/home'); } },
@@ -137,14 +146,33 @@ export class HeaderComponent implements OnInit {
     home: MenuItem | undefined;
     crumbsSubscription!: BehaviorSubject<string>;
 
-    ngOnInit() {
-
+    async ngOnInit(): Promise<void> {
+        let result = await this.videosSvc.getContentSearchInfo()
+        this.groupedTitles = await this.buildAutoCompleteDataset(result)
     }
 
-    //combinations Alt + Shift + P = Playlists
-    //combinations Alt + Shift + V = Videos
-    //combinations Alt + Shift + C = Channels
-    //combinations Alt + Shift + L = Logs
+    async buildAutoCompleteDataset(raw: ContentSearchResponse): Promise<SelectItemGroup[]> {
+        let content: ContentSearch[] = raw.data;
+        let result: SelectItemGroup[] = [];
+
+        //group titles by channel
+        let grouped = content.reduce(
+            (result: any, currentValue: any) => {
+                (result[currentValue['channel']] = result[currentValue['channel']] || []).push({ "label": currentValue['title'], 'value': currentValue['video_id'] });
+                return result;
+            }, {});
+
+        //format json in requires manner
+        for (let key in grouped) {
+            if (grouped.hasOwnProperty(key)) {
+                let val = {label: key, value: "", items: grouped[key] };
+                result.push(val)
+            }
+        }
+        return result;
+    }
+
+    //keyboard shortcuts
     @HostListener("document:keydown", ["$event"]) handleKeyboardEvent(event: KeyboardEvent) {
         if (event.key === 'P' && event.altKey) {
             this.navigate('/playlists')
@@ -167,7 +195,7 @@ export class HeaderComponent implements OnInit {
         let query = event.query;
         let filteredGroups = [];
 
-        for (let optgroup of this.groupedCities) {
+        for (let optgroup of this.groupedTitles) {
             let filteredSubOptions = this.filterService.filter(optgroup.items, ['label'], query, "contains");
             if (filteredSubOptions && filteredSubOptions.length) {
                 filteredGroups.push({
@@ -177,7 +205,6 @@ export class HeaderComponent implements OnInit {
                 });
             }
         }
-
         this.filteredGroups = filteredGroups;
     }
 

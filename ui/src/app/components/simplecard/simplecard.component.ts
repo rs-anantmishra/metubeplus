@@ -8,16 +8,16 @@ import { Router } from '@angular/router';
 import { SharedDataService } from '../../services/shared-data.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { TagModule } from 'primeng/tag';
-import { RemovePrefixPipe } from '../../pipes/filesize-conversion.pipe'
-import { CommaSepStringFromArray } from '../../pipes/array-comma-sep.pipe'
-import { MinifiedViewCount } from '../../pipes/views-conversion.pipe';
-import { MinifiedDatePipe } from '../../pipes/formatted-date.pipe';
-import { FormattedResolutionPipe } from '../../pipes/format-resolution.pipe';
+import { FilesizeConversionPipe } from '../../utilities/pipes/filesize-conversion.pipe'
+import { CommaSepStringFromArray } from '../../utilities/pipes/array-comma-sep.pipe'
+import { MinifiedViewCount } from '../../utilities/pipes/views-conversion.pipe';
+import { MinifiedDatePipe } from '../../utilities/pipes/formatted-date.pipe';
+import { FormattedResolutionPipe } from '../../utilities/pipes/format-resolution.pipe';
 
 @Component({
     selector: 'app-simplecard',
     standalone: true,
-    imports: [ToastModule, CardModule, CommonModule, TooltipModule, TagModule, RemovePrefixPipe, CommaSepStringFromArray, MinifiedViewCount, MinifiedDatePipe, FormattedResolutionPipe],
+    imports: [ToastModule, CardModule, CommonModule, TooltipModule, TagModule, FilesizeConversionPipe, CommaSepStringFromArray, MinifiedViewCount, MinifiedDatePipe, FormattedResolutionPipe],
     providers: [MessageService, Router],
     templateUrl: './simplecard.component.html',
     styleUrl: './simplecard.component.scss'

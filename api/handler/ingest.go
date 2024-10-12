@@ -20,6 +20,9 @@ import (
 
 func NetworkIngestMetadata(c *fiber.Ctx) error {
 
+	status := `failure`
+	message := ``
+
 	//bind incoming data
 	params := new(en.IncomingRequest)
 	if err := c.BodyParser(params); err != nil {
@@ -38,38 +41,47 @@ func NetworkIngestMetadata(c *fiber.Ctx) error {
 	// No validations for URL/Playlist are needed.
 	// If Metadata is not fetched, and there is an error message from yt-dlp
 	// just show that error on the UI
-	result := svcVideos.ExtractIngestMetadata(*params)
+	result, err := svcVideos.ExtractIngestMetadata(*params)
+	if err != nil {
+		status = `failure`
+		message = err.Error()
+	}
 
-	//queue downloads below
-	//global MPI
-	maxQueueLength, _ := strconv.Atoi((cfg.Config("MAX_QUEUE", false)))
-	lstDownloads := g.NewDownloadStatus()
-	qAlive := g.NewQueueAlive()
-	currentQueueIndex := g.NewCurrentQueueIndex()
+	if result != nil {
+		//queue downloads below
+		//global MPI
+		maxQueueLength, _ := strconv.Atoi((cfg.Config("MAX_QUEUE", false)))
+		lstDownloads := g.NewDownloadStatus()
+		qAlive := g.NewQueueAlive()
+		currentQueueIndex := g.NewCurrentQueueIndex()
 
-	if maxQueueLength-currentQueueIndex[0]-len(result) >= 0 {
-		for idx := range result {
-			lstDownloads[currentQueueIndex[0]] = g.DownloadStatus{VideoId: result[idx].VideoId,
-				VideoURL:      result[idx].WebpageURL,
-				StatusMessage: "",
-				State:         g.Queued,
-				Title:         result[idx].Title,
-				Channel:       result[idx].Channel,
-				Duration:      result[idx].Duration,
-				Thumbnail:     result[idx].Thumbnail,
+		if maxQueueLength-currentQueueIndex[0]-len(result) >= 0 {
+			for idx := range result {
+				lstDownloads[currentQueueIndex[0]] = g.DownloadStatus{VideoId: result[idx].VideoId,
+					VideoURL:      result[idx].WebpageURL,
+					StatusMessage: "",
+					State:         g.Queued,
+					Title:         result[idx].Title,
+					Channel:       result[idx].Channel,
+					Duration:      result[idx].Duration,
+					Thumbnail:     result[idx].Thumbnail,
+				}
+				currentQueueIndex[0]++
 			}
-			currentQueueIndex[0]++
+		} else {
+			//send error response that queue is full. Please wait for existing downloads to complete.
 		}
-	} else {
-		//send error response that queue is full. Please wait for existing downloads to complete.
+
+		if qAlive[0] != 1 {
+			qAlive[0] = 1
+			go svcVideos.ExtractIngestMedia()
+		}
+		status = `success`
+		message = strconv.Itoa(len(result)) + ` records added too queue.`
 	}
 
-	if qAlive[0] != 1 {
-		qAlive[0] = 1
-		go svcVideos.ExtractIngestMedia()
-	}
-
-	return c.Status(fiber.StatusOK).JSON(result)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": status, "message": message, "data": result})
+	// return c.Status(fiber.StatusOK).JSON(result)
 }
 
 func NetworkIngestMedia(c *fiber.Ctx) error {

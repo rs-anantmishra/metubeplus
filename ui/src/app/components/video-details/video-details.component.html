@@ -11,9 +11,24 @@
 </div>
 
 <p-panel class="video-content">
-    <h2>
-        {{selectedVideo.title}}
-    </h2>
-    <h3>{{selectedVideo.channel}}</h3>
-    <p [innerHTML]="selectedVideo.description"> </p>
+    <ng-template pTemplate="header">
+        <div>
+            <span class="title-text">{{selectedVideo.title}}</span>
+            <h4 class="channel-text">{{selectedVideo.channel}}</h4>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="icons">
+        <div style="display: flex;">
+            <p-chip class="micro-informations" label="{{selectedVideo.views_count | minifiedViewCount}}" icon="pi pi-user"/>
+            <p-chip class="micro-informations" label="{{selectedVideo.likes_count | minifiedViewCount}}" icon="pi pi-thumbs-up" />
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <div style="display: none;">
+            <span>More from this Channel</span>
+        </div>
+    </ng-template>
+    <div>
+        <p [innerHTML]="selectedVideo.description"> </p>
+    </div>
 </p-panel>
