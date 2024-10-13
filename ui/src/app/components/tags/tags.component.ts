@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { SharedDataService } from '../../services/shared-data.service';
@@ -15,11 +15,9 @@ import { SharedDataService } from '../../services/shared-data.service';
 export class TagsComponent implements OnInit {
 
     constructor(private svcSharedData: SharedDataService) {
-        //isHomepage
-        this.svcSharedData.setIsHomepage(false);
     }
-
+    
     ngOnInit(): void {
-    }
 
+    }
 }

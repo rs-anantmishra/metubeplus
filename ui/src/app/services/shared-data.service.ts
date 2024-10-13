@@ -1,6 +1,6 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
 import { VideoData } from '../classes/video-data';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -11,7 +11,7 @@ export class SharedDataService {
     isDarkMode: boolean = false;
     lstVideos: VideoData[] = [];
     isDownloadActive: boolean = false;
-    isPlaylist: boolean = false; 
+    isPlaylist: boolean = false;
     queuedItemsMetadata: VideoData[] = [];
     activeDownloadMetadata: VideoData[] = [];
     videosPageSizeCount: number = -1;
@@ -129,7 +129,7 @@ export class SharedDataService {
 
 
     private playVideo: BehaviorSubject<VideoData> = new BehaviorSubject(new VideoData());
-    onPlayVideoChange(): Observable<VideoData> {        
+    onPlayVideoChange(): Observable<VideoData> {
         //check localstorage
         let activeVideo = this.getActivePlayerMetadata()
         if (activeVideo.media_url != '') {
@@ -157,23 +157,15 @@ export class SharedDataService {
         return this.pageSizeCount.asObservable()
     }
 
-    private homepage: BehaviorSubject<any> = new BehaviorSubject(true)
-    setIsHomepage(isHomepage: any): void {
-        this.homepage.next(isHomepage);
-    }
 
-    getIsHomepage(): Observable<any> {
-        return this.homepage.asObservable()
-    }
-
-    isPageHome: WritableSignal<boolean> = signal(false)
-    setIsPageHome(value :boolean){
-        this.isPageHome.set(value)
-    }
-    getIsPageHome(){
-        return this.isPageHome()
-    }
     
+    private refreshAutoCompleteSubject = new BehaviorSubject(false);
+    public _refreshAutoComplete$ = this.refreshAutoCompleteSubject.asObservable()
+    setRefreshAutoCompleteValue(value: boolean) {
+        console.log('value is set')
+        this.refreshAutoCompleteSubject.next(value)
+    }
+
 }
 
 

@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
@@ -44,7 +44,7 @@ interface ExtractionOptions {
     imports: [ToastModule, ProgressBarModule, FieldsetModule, ProgressSpinnerModule, SidebarModule, CardModule, FormsModule,
         InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, CheckboxModule, PanelModule,
         SimplecardComponent, RemovePrefixPipe, ScrollPanelModule, DividerModule, OverlayPanelModule, FilesizeConversionPipe],
-    providers: [DownloadService, MessageService, Messages, SharedDataService, FilesService],
+    providers: [DownloadService, MessageService, Messages, FilesService],
     templateUrl: './downloads.component.html',
     styleUrl: './downloads.component.scss'
 })
@@ -136,10 +136,6 @@ export class DownloadsComponent implements OnInit {
 
     async ngOnInit() {
 
-        //isHomepage
-        this.sharedData.setIsHomepage(true);
-        this.sharedData.setIsPageHome(true);
-
         this.sharedData.isPlaylist = this.sharedData.getIsPlaylist()
         this.sharedData.isDownloadActive = this.sharedData.getIsDownloadActive()
         this.sharedData.activeDownloadMetadata = this.sharedData.getActiveDownloadMetadata()
@@ -182,25 +178,12 @@ export class DownloadsComponent implements OnInit {
             let isDownloadActive = this.sharedData.getIsDownloadActive()
             if (!isDownloadActive) {
                 await this.getAndSaveActiveDownload()
-                this.populateVideoMetadata()
-
-                //set to true
+                this.populateVideoMetadata()                
                 this.sharedData.setIsDownloadActive(true)
             }
 
-            if (metadata.length > 1) {
-                metadata.forEach(item => { item.isPlaylistVideo = true })
-            }
-
-            //delta update for all videos
-            let allVideos = this.sharedData.getlstVideos()
-            if (allVideos !== null) {
-                allVideos.push(...metadata)
-            } else {
-                allVideos = [];
-                allVideos.push(...metadata)
-            }
-            this.sharedData.setlstVideos(allVideos)
+            //refresh autocomplete cache
+            this.sharedData.setRefreshAutoCompleteValue(true);
 
             //trigger stats checker if all goes well
             setTimeout(() => { this.getDownloadStatus(); }, 250);
@@ -266,7 +249,7 @@ export class DownloadsComponent implements OnInit {
     }
 
     async getAndSaveActiveDownload() {
-        await this.svcDownload.getQueuedItems("downloading").then(item => { console.log(item); this.sharedData.setActiveDownloadMetadata(item); })
+        await this.svcDownload.getQueuedItems("downloading").then(item => { this.sharedData.setActiveDownloadMetadata(item); })
     }
 
     fsStorageStatus: number = 0

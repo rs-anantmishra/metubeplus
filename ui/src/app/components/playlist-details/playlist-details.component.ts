@@ -14,8 +14,7 @@ import { SharedDataService } from '../../services/shared-data.service';
 })
 export class PlaylistDetailsComponent implements OnInit {
     constructor(private svcSharedData: SharedDataService) {
-        //isHomepage
-        this.svcSharedData.setIsHomepage(false);
+
     }
 
     ngOnInit(): void {

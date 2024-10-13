@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, effect } from '@angular/core';
 import { Paginator, PaginatorModule } from 'primeng/paginator';
 import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
@@ -24,6 +24,7 @@ import { Subscription } from 'rxjs';
 export class VideosComponent implements OnInit, OnDestroy {
 
     subscription!: Subscription;
+    isHomepage = false
 
     visibility = 'visible'
     first: number = 0;
@@ -36,9 +37,6 @@ export class VideosComponent implements OnInit, OnDestroy {
     @ViewChild('paginator', { static: true }) paginator!: Paginator
 
     constructor(private svcVideos: VideosService, private svcSharedData: SharedDataService) {
-        //isHomepage
-        this.svcSharedData.setIsHomepage(false);
-
         let pageCount = -1;
         this.subscription = this.svcSharedData.getPageSizeCount().subscribe(x => pageCount = x)
         if (pageCount < 0) {

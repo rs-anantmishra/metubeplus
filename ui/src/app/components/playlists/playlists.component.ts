@@ -27,8 +27,6 @@ export class PlaylistsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        //isHomepage
-        this.svcSharedData.setIsHomepage(false);
     }
 
     visibility = 'visible'

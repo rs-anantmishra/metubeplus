@@ -31,9 +31,6 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
     selectedVideo: VideoData = new VideoData()
 
     constructor(private svcSharedData: SharedDataService) {
-        //isHomepage
-        this.svcSharedData.setIsHomepage(false);
-        
         this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9', autoplay: true });
         this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
     }

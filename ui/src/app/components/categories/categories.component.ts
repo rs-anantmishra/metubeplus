@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { SharedDataService } from '../../services/shared-data.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -15,12 +16,10 @@ import { SharedDataService } from '../../services/shared-data.service';
 })
 export class CategoriesComponent implements OnInit {
 
+    runSubscription!: Subscription;
     constructor(private svcSharedData: SharedDataService) {
     }
 
     ngOnInit(): void {
-        //isHomepage
-        this.svcSharedData.setIsHomepage(false);
     }
-
 }
