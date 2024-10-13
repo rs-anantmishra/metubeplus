@@ -1,12 +1,17 @@
 <div class="header-box">
     <!-- <div style="position: fixed; top: 0px;"> -->
-    <div class="crumbs-box"></div>
+    <div class="streams-box">
+        <div class="streams-container" *ngIf="!isHomepage" (click)="navigate('/home')">
+            <img class="streamsphere" src="smol-sphere.gif" />
+            <span class="name-box streams-text">Streamsphere</span>
+        </div>
+    </div>
 
     <!-- <div style="position: fixed; top: 24px; left: 168px;"> -->
     <div class="search-box" [ngStyle]="{visibility: visible}">
         <span class="p-fluid">
-            <p-autoComplete [(ngModel)]="selectedTitle" [group]="true" [suggestions]="filteredGroups" 
-                (completeMethod)="filterGroupedCity($event)" placeholder="search & play" variant="filled">
+            <p-autoComplete [(ngModel)]="selectedTitle" [group]="true" [suggestions]="filteredGroups"
+                (completeMethod)="filterGroupedContent($event)" placeholder="search & play" variant="filled">
                 <ng-template let-group pTemplate="group">
                     <div>
                         <!-- <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, WritableSignal, signal } from '@angular/core';
 import { VideoData } from '../classes/video-data';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
@@ -157,14 +157,23 @@ export class SharedDataService {
         return this.pageSizeCount.asObservable()
     }
 
-    private breadcrumbs: BehaviorSubject<string> = new BehaviorSubject('')
-    setBreadcrumbs(path: string): void {
-        this.breadcrumbs.next(path)
+    private homepage: BehaviorSubject<any> = new BehaviorSubject(true)
+    setIsHomepage(isHomepage: any): void {
+        this.homepage.next(isHomepage);
     }
 
-    getBreadcrumbs(): Observable<string> {
-        return this.breadcrumbs.asObservable()
+    getIsHomepage(): Observable<any> {
+        return this.homepage.asObservable()
     }
+
+    isPageHome: WritableSignal<boolean> = signal(false)
+    setIsPageHome(value :boolean){
+        this.isPageHome.set(value)
+    }
+    getIsPageHome(){
+        return this.isPageHome()
+    }
+    
 }
 
 

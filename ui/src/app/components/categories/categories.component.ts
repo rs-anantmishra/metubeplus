@@ -15,10 +15,12 @@ import { SharedDataService } from '../../services/shared-data.service';
 })
 export class CategoriesComponent implements OnInit {
 
-    constructor(private svcSharedData: SharedDataService) { }
+    constructor(private svcSharedData: SharedDataService) {
+    }
 
     ngOnInit(): void {
-        this.svcSharedData.setBreadcrumbs('home/categories')
+        //isHomepage
+        this.svcSharedData.setIsHomepage(false);
     }
-    
+
 }

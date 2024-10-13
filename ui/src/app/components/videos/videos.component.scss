@@ -2,12 +2,13 @@
     display: flex;
     flex-wrap: wrap;
     align-content: space-between;
+    justify-content: center;
 }
 
 .element {
     max-width: fit-content;
     margin-left: auto;
-    width: calc(100vw - 350px);
+    width: calc(100vw - 75px);
     margin-right: auto;
 }
 

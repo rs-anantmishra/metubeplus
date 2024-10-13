@@ -49,7 +49,7 @@
 
 <div>
     <p-sidebar [(visible)]="sidebarVisible" styleClass="queued-box">
-        <p-scrollPanel class="queued-scrollable" [style]="{ width: '100%', height: 'calc(100vh - 136px)' }">
+        <p-scrollPanel class="queued-scrollable" [style]="{ width: '100%', height: 'calc(100vh - 150px)' }">
             <h2 class="queued-heading">Queued Downloads</h2>
             <div *ngIf="this.queuedItems !== null && this.queuedItems.length > 0; else elseBlock">
                 <app-simplecard *ngFor="let metadata of this.queuedItems" [meta]="metadata"

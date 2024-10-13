@@ -13,14 +13,6 @@ p-card {
     max-height: 325px;
 }
 
-.settings {
-    display: flex;
-    min-width: 350px;
-    max-width: 350px;
-    min-height: 325px;
-    max-height: 325px;
-}
-
 .header-text {
     font-size: 16px;
     font-weight: 600;
@@ -95,6 +87,7 @@ p-card {
     position: relative;
     margin-right: 1rem;
     margin-top: -35px;
+    margin-right: 5px;
 }
 
 .tags-info {

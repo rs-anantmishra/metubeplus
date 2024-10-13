@@ -5,18 +5,20 @@ import { ButtonModule } from 'primeng/button';
 import { SharedDataService } from '../../services/shared-data.service';
 
 @Component({
-  selector: 'app-playlist-details',
-  standalone: true,
-  imports: [CommonModule, RouterModule, ButtonModule],
-  providers: [Router, SharedDataService],
-  templateUrl: './playlist-details.component.html',
-  styleUrl: './playlist-details.component.scss'
+    selector: 'app-playlist-details',
+    standalone: true,
+    imports: [CommonModule, RouterModule, ButtonModule],
+    providers: [Router, SharedDataService],
+    templateUrl: './playlist-details.component.html',
+    styleUrl: './playlist-details.component.scss'
 })
 export class PlaylistDetailsComponent implements OnInit {
-    constructor(private svcSharedData: SharedDataService) { }
+    constructor(private svcSharedData: SharedDataService) {
+        //isHomepage
+        this.svcSharedData.setIsHomepage(false);
+    }
 
     ngOnInit(): void {
-        this.svcSharedData.setBreadcrumbs('home/playlists/{{playlistname}}')
     }
 
 }

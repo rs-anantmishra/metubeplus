@@ -14,10 +14,12 @@ import { SharedDataService } from '../../services/shared-data.service';
 })
 export class TagsComponent implements OnInit {
 
-    constructor(private svcSharedData: SharedDataService) { }
+    constructor(private svcSharedData: SharedDataService) {
+        //isHomepage
+        this.svcSharedData.setIsHomepage(false);
+    }
 
     ngOnInit(): void {
-        this.svcSharedData.setBreadcrumbs('home/tags')
     }
 
 }

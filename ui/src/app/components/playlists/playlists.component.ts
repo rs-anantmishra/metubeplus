@@ -23,10 +23,12 @@ interface PageEvent {
 })
 export class PlaylistsComponent implements OnInit {
 
-    constructor(private svcSharedData: SharedDataService) { }
+    constructor(private svcSharedData: SharedDataService) {
+    }
 
     ngOnInit(): void {
-        this.svcSharedData.setBreadcrumbs('home/playlists')
+        //isHomepage
+        this.svcSharedData.setIsHomepage(false);
     }
 
     visibility = 'visible'

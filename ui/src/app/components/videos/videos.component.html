@@ -1,10 +1,10 @@
 <div [ngSwitch]="this.totalRecords">
     <!-- <div class="full-page" *ngIf="this.totalRecords > 0; else-if empty; else empty;"> -->
     <div class="full-page" *ngSwitchDefault>
-        <p-scrollPanel [style]="{ width: '100%', height: 'calc(100vh - 136px)' }">
+        <p-scrollPanel [style]="{ width: '100%', height: 'calc(100vh - 150px)' }">
             <div class="element">
                 <div class="box">
-                    <div *ngFor="let video of this.lstVideos" class="all-videos">
+                    <div *ngFor="let video of this.lstVideos">
                         <app-simplecard [meta]="video"></app-simplecard>
                     </div>
                 </div>

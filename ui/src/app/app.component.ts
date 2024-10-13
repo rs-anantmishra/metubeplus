@@ -5,12 +5,13 @@ import { MessageService } from 'primeng/api';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ToastModule } from 'primeng/toast';
 import { HeaderComponent } from './components/header/header.component';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, SplitButtonModule, ToastModule, HeaderComponent],
+  imports: [RouterOutlet, RouterLink, CommonModule, SplitButtonModule, ToastModule, HeaderComponent, ScrollPanelModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   providers: [MessageService]

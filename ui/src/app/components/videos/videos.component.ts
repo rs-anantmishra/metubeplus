@@ -36,6 +36,9 @@ export class VideosComponent implements OnInit, OnDestroy {
     @ViewChild('paginator', { static: true }) paginator!: Paginator
 
     constructor(private svcVideos: VideosService, private svcSharedData: SharedDataService) {
+        //isHomepage
+        this.svcSharedData.setIsHomepage(false);
+
         let pageCount = -1;
         this.subscription = this.svcSharedData.getPageSizeCount().subscribe(x => pageCount = x)
         if (pageCount < 0) {
@@ -51,11 +54,10 @@ export class VideosComponent implements OnInit, OnDestroy {
     async ngOnInit() {
         await this.getAllVideos();
         this.loadPage = 0
-        this.svcSharedData.setBreadcrumbs('home/videos')
     }
 
     async getAllVideos() {
-        let result = await this.svcVideos.getAllVideos();        
+        let result = await this.svcVideos.getAllVideos();
         if (result !== null && result.length > 0) {
             this.svcSharedData.setlstVideos(result)
             this.lstVideos = this.getPagedResult(this.first, this.rows);

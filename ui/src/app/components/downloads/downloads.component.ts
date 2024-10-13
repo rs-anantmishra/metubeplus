@@ -136,6 +136,10 @@ export class DownloadsComponent implements OnInit {
 
     async ngOnInit() {
 
+        //isHomepage
+        this.sharedData.setIsHomepage(true);
+        this.sharedData.setIsPageHome(true);
+
         this.sharedData.isPlaylist = this.sharedData.getIsPlaylist()
         this.sharedData.isDownloadActive = this.sharedData.getIsDownloadActive()
         this.sharedData.activeDownloadMetadata = this.sharedData.getActiveDownloadMetadata()
@@ -144,10 +148,8 @@ export class DownloadsComponent implements OnInit {
         await this.getQueuedItems(false)
 
         //if there is an active download
-        // if (this.sharedData.isDownloadActive) {
         this.getDownloadStatus()
         this.populateVideoMetadata()
-        // }
     }
 
     ngOnDestroy() {

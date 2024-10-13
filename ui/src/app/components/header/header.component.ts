@@ -1,5 +1,5 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { HostListener, Directive, Component, OnInit, inject } from '@angular/core';
+import { HostListener, Directive, Component, OnInit, inject, OnDestroy, effect } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { Breadcrumb, BreadcrumbModule } from 'primeng/breadcrumb';
 import { SplitButtonModule } from 'primeng/splitbutton';
@@ -7,11 +7,11 @@ import { ToastModule } from 'primeng/toast';
 import { FilterService, SelectItemGroup } from 'primeng/api';
 import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { SharedDataService } from '../../services/shared-data.service';
 import { VideosService } from '../../services/videos.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ContentSearchResponse, ContentSearch } from '../../classes/search';
 import { group } from '@angular/animations';
 
@@ -28,7 +28,10 @@ import { group } from '@angular/animations';
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
+
+    isHomepage = true
+    isHomepageSub!: Subscription;
 
     #document = inject(DOCUMENT);
     themeIcon = ''
@@ -69,8 +72,6 @@ export class HeaderComponent implements OnInit {
 
     navItems: MenuItem[];
     filteredGroups!: any[];
-    // selectedCity: any;
-    // groupedCities!: SelectItemGroup[];
     selectedTitle: any;
     groupedTitles!: SelectItemGroup[];
 
@@ -79,6 +80,10 @@ export class HeaderComponent implements OnInit {
         private videosSvc: VideosService,
         private filterService: FilterService,
         private sharedDataSvc: SharedDataService) {
+
+
+        //isHomepage
+        this.isHomepageSub = this.sharedDataSvc.getIsHomepage().subscribe(() => { this.setIsHomepage() })
 
         //check and set theme
         let isDarkMode = this.sharedDataSvc.getIsDarkMode();
@@ -91,36 +96,6 @@ export class HeaderComponent implements OnInit {
                 this.setLightMode()
             }
         }
-
-        // this.groupedCities = [
-        //     {
-        //         label: 'Germany', value: 'de',
-        //         items: [
-        //             { label: 'Berlin', value: 'Berlin' },
-        //             { label: 'Frankfurt', value: 'Frankfurt' },
-        //             { label: 'Hamburg', value: 'Hamburg' },
-        //             { label: 'Munich', value: 'Munich' }
-        //         ]
-        //     },
-        //     {
-        //         label: 'USA', value: 'us',
-        //         items: [
-        //             { label: 'Chicago', value: 'Chicago' },
-        //             { label: 'Los Angeles', value: 'Los Angeles' },
-        //             { label: 'New York', value: 'New York' },
-        //             { label: 'San Francisco', value: 'San Francisco' }
-        //         ]
-        //     },
-        //     {
-        //         label: 'Japan', value: 'jp',
-        //         items: [
-        //             { label: 'Kyoto', value: 'Kyoto' },
-        //             { label: 'Osaka', value: 'Osaka' },
-        //             { label: 'Tokyo', value: 'Tokyo' },
-        //             { label: 'Yokohama', value: 'Yokohama' }
-        //         ]
-        //     }
-        // ];
 
         this.navItems = [
             { label: 'Home', routerLink: ['/home'], command: () => { this.navigate('/home'); } },
@@ -136,6 +111,10 @@ export class HeaderComponent implements OnInit {
             { separator: true },
             { label: 'Activity Logs', routerLink: ['/activity-logs'], command: () => { this.navigate('/logs'); } },
         ];
+    }
+    ngOnDestroy(): void {
+        //unsubscribe
+        this.isHomepageSub.unsubscribe()
     }
 
     navigate(route: string) {
@@ -165,7 +144,7 @@ export class HeaderComponent implements OnInit {
         //format json in requires manner
         for (let key in grouped) {
             if (grouped.hasOwnProperty(key)) {
-                let val = {label: key, value: "", items: grouped[key] };
+                let val = { label: key, value: "", items: grouped[key] };
                 result.push(val)
             }
         }
@@ -191,7 +170,7 @@ export class HeaderComponent implements OnInit {
         }
     }
 
-    filterGroupedCity(event: AutoCompleteCompleteEvent) {
+    filterGroupedContent(event: AutoCompleteCompleteEvent) {
         let query = event.query;
         let filteredGroups = [];
 
@@ -208,4 +187,9 @@ export class HeaderComponent implements OnInit {
         this.filteredGroups = filteredGroups;
     }
 
+    setIsHomepage() {
+        console.log('called from header')
+        this.isHomepage = false;
+        console.log(`The current value is: ${this.sharedDataSvc.getIsPageHome()}`);
+    }
 }

@@ -12,12 +12,13 @@ import Plyr from 'plyr';
 
 import { MinifiedViewCount } from '../../utilities/pipes/views-conversion.pipe'
 import { MinifiedLikeCount } from '../../utilities/pipes/likes-conversion.pipe';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 
 
 @Component({
     selector: 'app-video-details',
     standalone: true,
-    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, TagModule, ChipModule, MinifiedViewCount, MinifiedLikeCount],
+    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, ScrollPanelModule, TagModule, ChipModule, MinifiedViewCount, MinifiedLikeCount],
     providers: [Router, SharedDataService],
     templateUrl: './video-details.component.html',
     styleUrl: './video-details.component.scss',
@@ -30,6 +31,9 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
     selectedVideo: VideoData = new VideoData()
 
     constructor(private svcSharedData: SharedDataService) {
+        //isHomepage
+        this.svcSharedData.setIsHomepage(false);
+        
         this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9', autoplay: true });
         this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
     }
@@ -38,7 +42,13 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
 
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
-        this.svcSharedData.setBreadcrumbs('home/videos')
+    }
+
+    run() {
+        this.player.on('ended', (event: any) => {
+            console.log("test");
+            this.player.restart();
+        });
     }
 
     ngOnDestroy(): void {
