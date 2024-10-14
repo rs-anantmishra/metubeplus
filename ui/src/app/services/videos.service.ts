@@ -40,4 +40,10 @@ export class VideosService {
 
     }
 
+    async download(url: string): Promise<Observable<Blob>> {
+        return this.http.get(url, {
+          responseType: 'blob'
+        })
+      }
+
 }

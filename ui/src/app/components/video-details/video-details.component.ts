@@ -13,12 +13,15 @@ import Plyr from 'plyr';
 import { MinifiedViewCount } from '../../utilities/pipes/views-conversion.pipe'
 import { MinifiedLikeCount } from '../../utilities/pipes/likes-conversion.pipe';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { CommaSepStringFromArray } from "../../utilities/pipes/array-comma-sep.pipe";
+import { FormattedResolutionPipe } from "../../utilities/pipes/format-resolution.pipe";
+import { VideosService } from '../../services/videos.service';
 
 
 @Component({
     selector: 'app-video-details',
     standalone: true,
-    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, ScrollPanelModule, TagModule, ChipModule, MinifiedViewCount, MinifiedLikeCount],
+    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, ScrollPanelModule, TagModule, ChipModule, MinifiedViewCount, MinifiedLikeCount, CommaSepStringFromArray, FormattedResolutionPipe],
     providers: [Router, SharedDataService],
     templateUrl: './video-details.component.html',
     styleUrl: './video-details.component.scss',
@@ -30,7 +33,7 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
     player: any;
     selectedVideo: VideoData = new VideoData()
 
-    constructor(private svcSharedData: SharedDataService) {
+    constructor(private svcSharedData: SharedDataService, private svcVideos: VideosService) {
         this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9', autoplay: true });
         this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
     }
@@ -41,15 +44,21 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
     }
 
-    run() {
-        this.player.on('ended', (event: any) => {
-            console.log("test");
-            this.player.restart();
-        });
-    }
-
     ngOnDestroy(): void {
         this.subscription.unsubscribe()
+    }
+
+    async download(): Promise<void> {
+        (await this.svcVideos
+            .download(this.selectedVideo.media_url))
+            .subscribe(blob => {
+                const a = document.createElement('a')
+                const objectUrl = URL.createObjectURL(blob)
+                a.href = objectUrl
+                a.download = (this.selectedVideo.title + '.' +this.selectedVideo.extension);
+                a.click();
+                URL.revokeObjectURL(objectUrl);
+            })
     }
 
     linkify(text: string) {

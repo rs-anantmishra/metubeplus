@@ -60,7 +60,12 @@ func getFilesInfo(files []entities.Files) (int, string, string, string) {
 			extension = files[idx].Extension
 		} else if files[idx].FileType == "Thumbnail" {
 			thumbnailURL := files[idx].FilePath + "\\" + files[idx].FileName
-			thumbnail = getImagesFromURL(thumbnailURL)
+			thumbnail = thumbnailURL
+			thumbnail = strings.ReplaceAll(thumbnailURL, "..\\files", "http://localhost:3500")
+			thumbnail = strings.ReplaceAll(thumbnail, "\\", "/")
+
+			//use this if you want to send the thumbnail as a base64 - uses way more data
+			// thumbnail = getImagesFromURL(thumbnailURL)
 		}
 	}
 

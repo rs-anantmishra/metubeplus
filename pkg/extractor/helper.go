@@ -69,6 +69,7 @@ func createMetadataResponse(lstSavedInfo []e.SavedInfo, subtitles []e.Files, sub
 	//thumbnails // playlist thumbnails can be figured out on the UI side from Video Index
 	for i := range thumbnails {
 		cardMetaDataInfoList[i].Thumbnail = getImagesFromURL(thumbnails[i])
+		// cardMetaDataInfoList[i].Thumbnail = thumbnails[i].FilePath + "\\" + thumbnails[i].FileName
 	}
 
 	return cardMetaDataInfoList

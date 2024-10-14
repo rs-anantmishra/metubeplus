@@ -145,7 +145,7 @@ export class DownloadsComponent implements OnInit {
 
         //if there is an active download
         this.getDownloadStatus()
-        this.populateVideoMetadata()
+        this.populateVideoMetadata('init')
     }
 
     ngOnDestroy() {
@@ -220,7 +220,7 @@ export class DownloadsComponent implements OnInit {
         return request
     }
 
-    populateVideoMetadata() {
+    populateVideoMetadata(calledFrom: string = '') {
         //clear previous
         this.activeDownload = new VideoData()
         //get ActiveDownloadMetadata
@@ -231,8 +231,9 @@ export class DownloadsComponent implements OnInit {
         this.activeDLChannel = this.activeDownload.channel
         this.activeDLTitle = this.activeDownload.title
         this.activeDLImage = this.activeDownload.thumbnail
-        this.serverLogs = ">>>waiting for server logs<<<"
 
+        //show download complete status of the last download if called from init
+        if (calledFrom !== 'init') { this.serverLogs = ">>>waiting for server logs<<<" }
     }
 
     async resetDownloadOptions() {
