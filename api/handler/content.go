@@ -30,7 +30,20 @@ func GetAllPlaylists(c *fiber.Ctx) error {
 	//log context
 	log.Info("Request Params:", c)
 
-	return c.Status(fiber.StatusOK).Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
+	status := `success`
+	message := ``
+
+	//Instantiate
+	svcRepo := videos.NewVideoRepo(sql.DB)
+	svcVideos := videos.NewVideoService(svcRepo)
+
+	result, err := svcVideos.GetPlaylists()
+	if err != nil {
+		log.Info("error fetching all playlists", err)
+		status = `failure`
+	}
+
+	return c.Status(fiber.StatusOK).Status(fiber.StatusOK).JSON(fiber.Map{"status": status, "message": message, "data": result})
 }
 
 // Get All Audios

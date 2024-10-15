@@ -29,7 +29,7 @@ type Videos struct {
 	WatchCount        int
 	YoutubeVideoId    string
 	IsDeleted         int
-	CreatedDate       int
+	CreatedDate       int64
 	//ThumbnailFilePath string
 	//VideoFilePath string
 }
@@ -39,23 +39,27 @@ type Channel struct {
 	Name             string
 	ChannelURL       string
 	YoutubeChannelId int
-	CreatedDate      int
+	CreatedDate      int64
 }
 
 type Playlist struct {
-	Id                int
-	Title             string
-	VideoCount        int
-	Directory         string
-	ChannelId         int
-	YoutubePlaylistId int
-	CreatedDate       int
+	Id                 int
+	Title              string
+	ItemCount          int
+	PlaylistChannel    string
+	PlaylistChannelId  string
+	PlaylistUploader   string
+	PlaylistUploaderId string
+	ThumbnailFileId    int
+	ThumbnailURL       string
+	YoutubePlaylistId  string
+	CreatedDate        int64
 }
 
 type Domain struct {
 	Id          int
 	Domain      string
-	CreatedDate int
+	CreatedDate int64
 }
 
 type Format struct {
@@ -64,7 +68,7 @@ type Format struct {
 	FormatNote  string
 	Resolution  string
 	StreamType  string //Audio or Video
-	CreatedDate string
+	CreatedDate int64
 }
 
 type ContentSearch struct {

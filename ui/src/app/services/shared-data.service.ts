@@ -1,5 +1,6 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
 import { VideoData } from '../classes/video-data';
+import { PlaylistsDataResponse, PlaylistsInfo } from '../classes/playlists';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 
 @Injectable({
@@ -10,11 +11,13 @@ export class SharedDataService {
     constructor() { }
     isDarkMode: boolean = false;
     lstVideos: VideoData[] = [];
+    lstPlaylists: PlaylistsInfo[] = [];
     isDownloadActive: boolean = false;
     isPlaylist: boolean = false;
     queuedItemsMetadata: VideoData[] = [];
     activeDownloadMetadata: VideoData[] = [];
     videosPageSizeCount: number = -1;
+    playlistsPageSizeCount: number = -1;
     activePlayerMetadata: VideoData = new VideoData();
 
     //add or remove from queuedItems
@@ -114,6 +117,30 @@ export class SharedDataService {
         return this.videosPageSizeCount
     }
 
+    setlstPlaylists(value: any) {
+        localStorage.setItem('lstPlaylists', JSON.stringify(value));
+    }
+
+    getlstPlaylists() {
+        let stringResult = localStorage.getItem('lstPlaylists') !== null ? localStorage.getItem('lstPlaylists') : JSON.stringify([])
+        let lstPlaylistsData = stringResult === null ? [new VideoData()] : JSON.parse(stringResult);
+        this.lstPlaylists = lstPlaylistsData;
+
+        return this.lstPlaylists
+    }
+
+    setPlaylistsPageSizeCount(value: any) {
+        localStorage.setItem('playlistsPageSizeCount', JSON.stringify(value));
+    }
+
+    getPlaylistsPageSizeCount() {
+        let stringResult = localStorage.getItem('playlistsPageSizeCount') !== null ? localStorage.getItem('playlistsPageSizeCount') : JSON.stringify('-1')
+        let pageSizeCount = stringResult === null ? -1 : JSON.parse(stringResult);
+        this.playlistsPageSizeCount = pageSizeCount;
+
+        return this.playlistsPageSizeCount
+    }
+
     setActivePlayerMetadata(value: any) {
         localStorage.setItem('activePlayerMetadata', JSON.stringify(value));
     }
@@ -157,12 +184,20 @@ export class SharedDataService {
         return this.pageSizeCount.asObservable()
     }
 
+    private pageSizeCountPlaylist: BehaviorSubject<number> = new BehaviorSubject(-1)
+    setPageSizeCountPlaylist(count: number): void {
+        this.setPlaylistsPageSizeCount(count);
+        this.pageSizeCountPlaylist.next(count);
+    }
+
+    getPageSizeCountPlaylist(): Observable<number> {
+        return this.pageSizeCountPlaylist.asObservable()
+    }
 
     
     private refreshAutoCompleteSubject = new BehaviorSubject(false);
     public _refreshAutoComplete$ = this.refreshAutoCompleteSubject.asObservable()
     setRefreshAutoCompleteValue(value: boolean) {
-        console.log('value is set')
         this.refreshAutoCompleteSubject.next(value)
     }
 

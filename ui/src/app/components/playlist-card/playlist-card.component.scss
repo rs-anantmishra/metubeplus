@@ -9,7 +9,7 @@ p-card {
     margin: 0.5rem;
     min-width: 350px;
     max-width: 350px;
-    min-height: 325px;
+    // min-height: 285px;
     max-height: 325px;
 }
 
@@ -27,8 +27,8 @@ p-card {
 .header {
     display: -moz-box;
     display: -webkit-box;
-    margin: 0.5rem 1rem 0rem 1rem;
-    min-height: 45px;
+    margin: 1rem 1rem 0rem 1rem;
+    // min-height: 25px;
     max-height: 45px;
 }
 
@@ -88,10 +88,6 @@ p-card {
     margin-right: 1rem;
     margin-top: -35px;
     margin-right: 5px;
-}
-
-.tags-info {
-    margin: 2px;
 }
 
 .tooltip-text {

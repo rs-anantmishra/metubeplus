@@ -76,6 +76,14 @@ const GetVideoInformationById string = `Select V.Title, P.Title, C.Name as 'Chan
 										WHERE V.Id = ?;`
 
 const UpdateVideoFileFields string = `UPDATE tblVideos SET IsFileDownloaded = ?, FileId = ? WHERE Id = ?;`
+const UpdatePVFFileId string = `UPDATE tblPlaylistVideoFiles SET FileId = ? WHERE VideoId = ?`
+
+//below may not be used
+const UpdatePVFThumbnailFileId string = `Select F.Id
+										 From tblFiles F
+										 INNER JOIN tblPlaylistVideoFiles PVF ON PVF.VideoId = F.VideoId
+										 WHERE PVF.PlaylistId = ? AND F.FileType = 'Thumbnail'
+										 AND F.VideoId = ?`
 
 const GetAllVideos_Info string = `Select DISTINCT V.Id, V.Title, V.Description, V.DurationSeconds, V.OriginalURL, V.WebpageURL, V.IsFileDownloaded, V.IsDeleted, C.Name, V.LiveStatus, D.Domain, V.LikeCount, V.YoutubeViewCount as 'ViewsCount', V.WatchCount, V.UploadDate, V.Availability, F.Format, V.YoutubeVideoId, V.CreatedDate
 								  FROM tblVideos V

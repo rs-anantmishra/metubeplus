@@ -30,3 +30,12 @@ type DownloadStatusResponse struct {
 	Message  string `json:"download"`
 	VideoURL string `json:"video_url"`
 }
+
+type PlaylistsInfoResponse struct {
+	PlaylistId        int    `json:"playlist_id"`
+	PlaylistTitle     string `json:"playlist_title"`
+	PlaylistUploader  string `json:"playlist_uploader"`
+	ItemCount         int    `json:"item_count"`
+	YoutubePlaylistId string `json:"yt_playlist_id"`
+	Thumbnail         string `json:"thumbnail"`
+}

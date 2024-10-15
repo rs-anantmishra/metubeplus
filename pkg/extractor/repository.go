@@ -306,6 +306,13 @@ func (r *repository) SaveMediaContent(file []e.Files) []int {
 			argsUpdate = append(argsUpdate, elem.VideoId)
 			rowsAffected := genericUpdate(*r, argsUpdate, p.UpdateVideoFileFields)
 			_ = rowsAffected // can do something with it?
+
+			//update bindings in tblPLaylistVideoFiles
+			var argsPVFUpdate []any
+			argsPVFUpdate = append(argsPVFUpdate, mediaFileId)
+			argsPVFUpdate = append(argsPVFUpdate, elem.VideoId)
+			rowsAffectedPVF := genericUpdate(*r, argsPVFUpdate, p.UpdatePVFFileId)
+			_ = rowsAffectedPVF // can do something with it?
 		}
 
 	}

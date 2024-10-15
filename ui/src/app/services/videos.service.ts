@@ -4,6 +4,7 @@ import { SharedDataService } from './shared-data.service';
 import { VideoData, VideoDataRequest, QueueDownloads } from '../classes/video-data';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs'
 import { ContentSearch, ContentSearchResponse } from '../classes/search';
+import { PlaylistsInfo, PlaylistsDataResponse } from '../classes/playlists';
 
 const apiUrl: string = 'http://localhost:3000/api'
 
@@ -17,6 +18,19 @@ export class VideosService {
     //getAllVideos
     async getAllVideos(): Promise<VideoData[]> {
         let url = '/homepage/videos'
+
+        return fetch(apiUrl + url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => { return response.json(); })
+
+    }
+
+    //getAllVideos
+    async getAllPlaylists(): Promise<PlaylistsDataResponse> {
+        let url = '/homepage/playlists'
 
         return fetch(apiUrl + url, {
             method: 'GET',
@@ -42,8 +56,8 @@ export class VideosService {
 
     async download(url: string): Promise<Observable<Blob>> {
         return this.http.get(url, {
-          responseType: 'blob'
+            responseType: 'blob'
         })
-      }
+    }
 
 }

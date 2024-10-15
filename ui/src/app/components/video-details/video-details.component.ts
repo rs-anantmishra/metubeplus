@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { PanelModule } from 'primeng/panel';
 import { TagModule } from 'primeng/tag';
 import { ChipModule } from 'primeng/chip';
+import { FieldsetModule } from 'primeng/fieldset';
 import Plyr from 'plyr';
 
 import { MinifiedViewCount } from '../../utilities/pipes/views-conversion.pipe'
@@ -16,12 +17,14 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { CommaSepStringFromArray } from "../../utilities/pipes/array-comma-sep.pipe";
 import { FormattedResolutionPipe } from "../../utilities/pipes/format-resolution.pipe";
 import { VideosService } from '../../services/videos.service';
+import { MinifiedDatePipe } from "../../utilities/pipes/formatted-date.pipe";
+import { FilesizeConversionPipe } from "../../utilities/pipes/filesize-conversion.pipe";
 
 
 @Component({
     selector: 'app-video-details',
     standalone: true,
-    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, ScrollPanelModule, TagModule, ChipModule, MinifiedViewCount, MinifiedLikeCount, CommaSepStringFromArray, FormattedResolutionPipe],
+    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, ScrollPanelModule, TagModule, ChipModule, MinifiedViewCount, MinifiedLikeCount, CommaSepStringFromArray, FormattedResolutionPipe, MinifiedDatePipe, FieldsetModule, FilesizeConversionPipe],
     providers: [Router, SharedDataService],
     templateUrl: './video-details.component.html',
     styleUrl: './video-details.component.scss',

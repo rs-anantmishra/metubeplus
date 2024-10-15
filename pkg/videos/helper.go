@@ -134,3 +134,24 @@ func getContentSearchResponse(list []entities.ContentSearch) []presenter.Content
 	}
 	return result
 }
+
+func getPlaylistsPageInfo(playlists []entities.Playlist) []presenter.PlaylistsInfoResponse {
+
+	var lstPlaylistsInfo []presenter.PlaylistsInfoResponse
+	for _, elem := range playlists {
+		var playlistInfo presenter.PlaylistsInfoResponse
+
+		playlistInfo.PlaylistId = elem.Id
+		playlistInfo.PlaylistTitle = elem.Title
+		playlistInfo.PlaylistUploader = elem.PlaylistUploader
+		playlistInfo.ItemCount = elem.ItemCount
+		playlistInfo.YoutubePlaylistId = elem.YoutubePlaylistId
+		playlistInfo.Thumbnail = elem.ThumbnailURL
+		playlistInfo.Thumbnail = strings.ReplaceAll(playlistInfo.Thumbnail, "..\\files", "http://localhost:3500")
+		playlistInfo.Thumbnail = strings.ReplaceAll(playlistInfo.Thumbnail, "\\", "/")
+
+		lstPlaylistsInfo = append(lstPlaylistsInfo, playlistInfo)
+	}
+
+	return lstPlaylistsInfo
+}

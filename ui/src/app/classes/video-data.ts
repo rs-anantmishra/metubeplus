@@ -13,6 +13,7 @@ export class VideoData {
     description: string = ''
     duration: number = -1
     original_url: string = ''
+    webpage_url: string = ''
     is_file_downloaded: boolean = false
     channel: string = ''
     playlist: string = ''

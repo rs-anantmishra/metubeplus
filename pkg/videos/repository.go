@@ -10,6 +10,7 @@ import (
 
 type IRepository interface {
 	GetAllVideos() ([]entities.Videos, error)
+	GetAllPlaylists() ([]entities.Playlist, error)
 	GetVideoSearchInfo() ([]entities.ContentSearch, error)
 }
 
@@ -125,6 +126,33 @@ func (r *repository) GetAllVideos() ([]entities.Videos, error) {
 	}
 
 	return lstVideos, nil
+}
+
+func (r *repository) GetAllPlaylists() ([]entities.Playlist, error) {
+
+	//Id, Title, PlaylistUploader, ItemCount
+	var lstPlaylists []entities.Playlist
+
+	rows, err := r.db.Query(q.GetAllPlaylists)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching playlists: %v", err)
+	}
+	defer rows.Close()
+
+	// Loop through rows, using Scan to assign column data to struct fields.
+	for rows.Next() {
+		var p entities.Playlist
+		if err := rows.Scan(&p.Id, &p.Title, &p.PlaylistUploader, &p.ItemCount, &p.YoutubePlaylistId, &p.ThumbnailURL); err != nil {
+			return nil, fmt.Errorf("error fetching playlists: %v", err)
+		}
+		lstPlaylists = append(lstPlaylists, p)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error fetching playlists: %v", err)
+	}
+
+	return lstPlaylists, nil
 }
 
 func (r *repository) GetVideoSearchInfo() ([]entities.ContentSearch, error) {
