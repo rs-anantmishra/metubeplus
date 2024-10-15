@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	q "github.com/rs-anantmishra/metubeplus/database"
+	q "github.com/rs-anantmishra/metubeplus/database/queries"
 )
 
 type IRepository interface {

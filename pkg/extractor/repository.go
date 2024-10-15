@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	p "github.com/rs-anantmishra/metubeplus/database"
+	p "github.com/rs-anantmishra/metubeplus/database/queries"
 	e "github.com/rs-anantmishra/metubeplus/pkg/entities"
 )
 

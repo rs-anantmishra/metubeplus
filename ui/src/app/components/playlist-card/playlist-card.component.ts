@@ -28,7 +28,7 @@ export class PlaylistCardComponent implements OnInit {
     }
     
     selectedPlaylist(playlist: PlaylistsInfo) {
-        console.log('clicked ', this.playlist.playlist_id)
-        this.router.navigate(['/playlist-details'])
+        //send playlistId Object
+        this.router.navigate(['/playlist-details', {data: JSON.stringify(playlist)}]);
     }
 }

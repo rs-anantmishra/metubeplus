@@ -8,7 +8,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { PlaylistCardComponent } from "../playlist-card/playlist-card.component";
 import { Subscription } from 'rxjs';
-import { VideosService } from '../../services/videos.service';
+import { PlaylistsService } from '../../services/playlists.service';
 
 
 interface PageEvent {
@@ -40,7 +40,7 @@ export class PlaylistsComponent implements OnInit {
     @ViewChild('paginator', { static: true }) paginator!: Paginator
     lstPlaylists: any
 
-    constructor(private svcVideos: VideosService, private svcSharedData: SharedDataService) {
+    constructor(private svcPlaylists: PlaylistsService, private svcSharedData: SharedDataService) {
         let pageCount = -1;
         this.subscription = this.svcSharedData.getPageSizeCountPlaylist().subscribe(x => pageCount = x)
         if (pageCount < 0) {
@@ -59,7 +59,7 @@ export class PlaylistsComponent implements OnInit {
     }
 
     async getAllPlaylists() {
-        let result = await this.svcVideos.getAllPlaylists();
+        let result = await this.svcPlaylists.getAllPlaylists();
         if (result !== null && result.data.length > 0) {
             this.svcSharedData.setlstPlaylists(result.data)
             this.lstPlaylists = this.getPagedResult(this.first, this.rows);

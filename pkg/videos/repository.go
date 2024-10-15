@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"fmt"
 
-	q "github.com/rs-anantmishra/metubeplus/database"
+	q "github.com/rs-anantmishra/metubeplus/database/queries"
 	"github.com/rs-anantmishra/metubeplus/pkg/entities"
 )
 
 type IRepository interface {
 	GetAllVideos() ([]entities.Videos, error)
+	GetPlaylistVideos(int) ([]entities.Videos, error)
 	GetAllPlaylists() ([]entities.Playlist, error)
 	GetVideoSearchInfo() ([]entities.ContentSearch, error)
 }
@@ -29,7 +30,7 @@ func (r *repository) GetAllVideos() ([]entities.Videos, error) {
 
 	var lstVideos []entities.Videos
 
-	rows, err := r.db.Query(q.GetAllVideos_Info)
+	rows, err := r.db.Query(q.GetVideoMetadata_AllVideos)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching Videos: %v", err)
 	}
@@ -126,6 +127,108 @@ func (r *repository) GetAllVideos() ([]entities.Videos, error) {
 	}
 
 	return lstVideos, nil
+}
+
+func (r *repository) GetPlaylistVideos(playlistId int) ([]entities.Videos, error) {
+	var lstPlaylistVideos []entities.Videos
+
+	rows, err := r.db.Query(q.GetVideoMetadata_Playlists, playlistId)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching Videos: %v", err)
+	}
+	defer rows.Close()
+
+	// Loop through rows, using Scan to assign column data to struct fields.
+	for rows.Next() {
+		var v entities.Videos
+		if err := rows.Scan(&v.Id, &v.Title, &v.Description, &v.DurationSeconds, &v.OriginalURL, &v.WebpageURL, &v.IsFileDownloaded,
+			&v.IsDeleted, &v.Channel.Name, &v.LiveStatus, &v.Domain.Domain, &v.LikesCount, &v.ViewsCount, &v.WatchCount, &v.UploadDate,
+			&v.Availability, &v.Format.Format, &v.YoutubeVideoId, &v.CreatedDate); err != nil {
+			return nil, fmt.Errorf("error fetching videos: %v", err)
+		}
+		lstPlaylistVideos = append(lstPlaylistVideos, v)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error fetching Videos: %v", err)
+	}
+
+	//tags
+	tagsRows, err := r.db.Query(q.GetVideoTags_Playlists, playlistId)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching tags for Video: %v", err)
+	}
+	defer tagsRows.Close()
+
+	var lstTags []entities.Tags
+	for tagsRows.Next() {
+		var tags entities.Tags
+		if err := tagsRows.Scan(&tags.Id, &tags.Name, &tags.IsUsed, &tags.CreatedDate); err != nil {
+			return nil, fmt.Errorf("error fetching tags: %v", err)
+		}
+		lstTags = append(lstTags, tags)
+	}
+
+	//assign Tags to video
+	for i := range lstPlaylistVideos {
+		for k, elem := range lstTags {
+			if lstPlaylistVideos[i].Id == lstTags[k].Id {
+				lstPlaylistVideos[i].Tags = append(lstPlaylistVideos[i].Tags, elem)
+			}
+		}
+	}
+
+	//categories
+	categoryRows, err := r.db.Query(q.GetVideoCategories_Playlists, playlistId)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching categories for Video: %v", err)
+	}
+	defer categoryRows.Close()
+
+	var lstCategories []entities.Categories
+	for categoryRows.Next() {
+		var categories entities.Categories
+		if err := categoryRows.Scan(&categories.Id, &categories.Name, &categories.IsUsed, &categories.CreatedDate); err != nil {
+			return nil, fmt.Errorf("error fetching categories: %v", err)
+		}
+		lstCategories = append(lstCategories, categories)
+	}
+
+	//assign categories to video
+	for i := range lstPlaylistVideos {
+		for k, elem := range lstCategories {
+			if lstPlaylistVideos[i].Id == lstCategories[k].Id {
+				lstPlaylistVideos[i].Categories = append(lstPlaylistVideos[i].Categories, elem)
+			}
+		}
+	}
+
+	//files
+	filesRows, err := r.db.Query(q.GetVideoFiles_Playlists, playlistId)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching files for Video: %v", err)
+	}
+	defer filesRows.Close()
+
+	var lstFiles []entities.Files
+	for filesRows.Next() {
+		var files entities.Files
+		if err := filesRows.Scan(&files.VideoId, &files.FileType, &files.FileSize, &files.Extension, &files.FilePath, &files.FileName); err != nil {
+			return nil, fmt.Errorf("error fetching files: %v", err)
+		}
+		lstFiles = append(lstFiles, files)
+	}
+
+	//assign Files to video
+	for i := range lstPlaylistVideos {
+		for k, elem := range lstFiles {
+			if lstPlaylistVideos[i].Id == lstFiles[k].VideoId {
+				lstPlaylistVideos[i].Files = append(lstPlaylistVideos[i].Files, elem)
+			}
+		}
+	}
+
+	return lstPlaylistVideos, nil
 }
 
 func (r *repository) GetAllPlaylists() ([]entities.Playlist, error) {

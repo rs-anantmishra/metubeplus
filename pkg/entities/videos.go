@@ -35,11 +35,12 @@ type Videos struct {
 }
 
 type Channel struct {
-	Id               int
-	Name             string
-	ChannelURL       string
-	YoutubeChannelId int
-	CreatedDate      int64
+	Id                   int
+	Name                 string
+	ChannelFollowerCount string
+	ChannelURL           string
+	YoutubeChannelId     int
+	CreatedDate          int64
 }
 
 type Playlist struct {

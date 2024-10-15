@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SharedDataService } from './shared-data.service';
-import { VideoData, VideoDataRequest, QueueDownloads } from '../classes/video-data';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs'
-import { ContentSearch, ContentSearchResponse } from '../classes/search';
+import { PlaylistsInfo, PlaylistsDataResponse } from '../classes/playlists';
+import { VideoData, VideoDataResponse } from '../classes/video-data';
+import { Observable } from 'rxjs';
 
 const apiUrl: string = 'http://localhost:3000/api'
 
 @Injectable({
     providedIn: 'root'
 })
-export class VideosService {
+export class PlaylistsService {
 
     constructor(private http: HttpClient, private sharedData: SharedDataService) { }
 
-    //getAllVideos
-    async getAllVideos(): Promise<VideoData[]> {
-        let url = '/homepage/videos'
+    //getAllPlaylists
+    async getAllPlaylists(): Promise<PlaylistsDataResponse> {
+        let url = '/homepage/playlists'
 
         return fetch(apiUrl + url, {
             method: 'GET',
@@ -27,9 +27,9 @@ export class VideosService {
 
     }
 
-    //getContentSearchInfo
-    async getContentSearchInfo(): Promise<ContentSearchResponse> {
-        let url = '/search/info'
+    //getPlaylistVideos
+    async getPlaylistVideos(playlistId: number): Promise<VideoDataResponse> {
+        let url = '/homepage/playlists/' + playlistId
 
         return fetch(apiUrl + url, {
             method: 'GET',
@@ -40,10 +40,10 @@ export class VideosService {
 
     }
 
+    //download video
     async download(url: string): Promise<Observable<Blob>> {
         return this.http.get(url, {
             responseType: 'blob'
         })
     }
-
 }

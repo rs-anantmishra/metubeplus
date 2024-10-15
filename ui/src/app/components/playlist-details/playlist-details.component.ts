@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { SharedDataService } from '../../services/shared-data.service';
 import { VideoData } from '../../classes/video-data';
@@ -9,40 +9,49 @@ import { PanelModule } from 'primeng/panel';
 import { TagModule } from 'primeng/tag';
 import { ChipModule } from 'primeng/chip';
 import { FieldsetModule } from 'primeng/fieldset';
-import Plyr from 'plyr';
+import { PlaylistsDataResponse, PlaylistsInfo } from '../../classes/playlists'
+var Plyr = require('plyr');
 
 import { MinifiedViewCount } from '../../utilities/pipes/views-conversion.pipe'
 import { MinifiedLikeCount } from '../../utilities/pipes/likes-conversion.pipe';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { CommaSepStringFromArray } from "../../utilities/pipes/array-comma-sep.pipe";
 import { FormattedResolutionPipe } from "../../utilities/pipes/format-resolution.pipe";
-import { VideosService } from '../../services/videos.service';
+import { PlaylistsService } from '../../services/playlists.service';
 import { MinifiedDatePipe } from "../../utilities/pipes/formatted-date.pipe";
 import { FilesizeConversionPipe } from "../../utilities/pipes/filesize-conversion.pipe";
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-playlist-details',
     standalone: true,
-    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, ScrollPanelModule, TagModule, ChipModule, MinifiedViewCount, MinifiedLikeCount, CommaSepStringFromArray, FormattedResolutionPipe, MinifiedDatePipe, FieldsetModule, FilesizeConversionPipe],
+    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, ScrollPanelModule, TagModule, ChipModule, MinifiedViewCount, MinifiedLikeCount, CommaSepStringFromArray, FormattedResolutionPipe, MinifiedDatePipe, FieldsetModule, FilesizeConversionPipe, ProgressSpinnerModule, FormsModule],
     providers: [Router, SharedDataService],
     templateUrl: './playlist-details.component.html',
     styleUrl: './playlist-details.component.scss'
 })
 export class PlaylistDetailsComponent implements OnInit {
 
-
-    subscription!: Subscription;
-    player: any;
+    media!: any;
+    data!: any;
+    // subscription!: Subscription;
+    public player!: any;
     selectedVideo: VideoData = new VideoData()
+    playlistInfo!: PlaylistsInfo;
+    playlistVideos: VideoData[] = [new VideoData()]
+    loaded = false
 
-    constructor(private svcSharedData: SharedDataService, private svcVideos: VideosService) {
+    constructor(private svcSharedData: SharedDataService, private svcPlaylists: PlaylistsService, private route: ActivatedRoute) {
+        this.playlistInfo = JSON.parse(this.route.snapshot.paramMap.get('data') || '{}');
+        this.getPlaylistsVideos(this.playlistInfo.playlist_id)
 
-
-        this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9', autoplay: true });
-        this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
+        // this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9'});
+        // this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
     }
 
     async ngOnInit(): Promise<void> {
+        this.player = new Plyr('#plyrID', { captions: { active: true }, loop: { active: true }, ratio: '16:9'});
 
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
@@ -51,8 +60,24 @@ export class PlaylistDetailsComponent implements OnInit {
     ngOnDestroy(): void {
     }
 
+    changeContent(video_id: number) {
+        this.playlistVideos.filter(x => { if (x.video_id === video_id) { this.selectedVideo = x } })
+    }
+
+    async getPlaylistsVideos(playlistId: number) {
+        let result = await this.svcPlaylists.getPlaylistVideos(playlistId);
+        if (result !== null && result.data.length > 0) {
+            //set stuff here
+            this.transformSelectedVideo(result.data)
+
+        } else if (result === null) {
+            console.error('error: recieved null instead of playlist videos.')
+        }
+        this.loaded = true
+    }
+
     async download(): Promise<void> {
-        (await this.svcVideos
+        (await this.svcPlaylists
             .download(this.selectedVideo.media_url))
             .subscribe(blob => {
                 const a = document.createElement('a')
@@ -62,6 +87,21 @@ export class PlaylistDetailsComponent implements OnInit {
                 a.click();
                 URL.revokeObjectURL(objectUrl);
             })
+    }
+
+    transformSelectedVideo(result: VideoData[]) {
+        //transforms to run video
+        result[0].media_url = result[0].media_url.replace(/\\/g, "/");
+        result[0].media_url = result[0].media_url.replace('http://localhost:3000', 'http://localhost:3500')
+        result[0].media_url = result[0].media_url.replace('#', '%23')
+
+        //assign to presenters
+        this.playlistVideos = result
+        this.selectedVideo = result[0]
+
+        //linkify
+        this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
+        this.selectedVideo.description = this.linkify(this.selectedVideo.description)
     }
 
     linkify(text: string) {

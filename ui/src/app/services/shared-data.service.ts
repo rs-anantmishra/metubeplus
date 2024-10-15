@@ -194,7 +194,6 @@ export class SharedDataService {
         return this.pageSizeCountPlaylist.asObservable()
     }
 
-    
     private refreshAutoCompleteSubject = new BehaviorSubject(false);
     public _refreshAutoComplete$ = this.refreshAutoCompleteSubject.asObservable()
     setRefreshAutoCompleteValue(value: boolean) {
