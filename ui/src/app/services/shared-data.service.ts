@@ -1,6 +1,6 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
 import { VideoData } from '../classes/video-data';
-import { PlaylistsDataResponse, PlaylistsInfo } from '../classes/playlists';
+import { PlaylistsDataResponse, PlaylistsInfo, SelectedPlaylist } from '../classes/playlists';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 
 @Injectable({
@@ -14,6 +14,7 @@ export class SharedDataService {
     lstPlaylists: PlaylistsInfo[] = [];
     isDownloadActive: boolean = false;
     isPlaylist: boolean = false;
+    playlist!: any;
     queuedItemsMetadata: VideoData[] = [];
     activeDownloadMetadata: VideoData[] = [];
     videosPageSizeCount: number = -1;
@@ -153,6 +154,17 @@ export class SharedDataService {
         return this.activePlayerMetadata
     }
 
+    setPlaylist(value: SelectedPlaylist) {
+        localStorage.setItem('playlist', JSON.stringify(value));
+    }
+
+    getPlaylist(): SelectedPlaylist {
+        let stringResult = localStorage.getItem('playlist') !== null ? localStorage.getItem('playlist') : '{}'
+        let playlist = stringResult === null ? false : JSON.parse(stringResult);
+        this.playlist = playlist;
+
+        return this.playlist
+    }
 
 
     private playVideo: BehaviorSubject<VideoData> = new BehaviorSubject(new VideoData());

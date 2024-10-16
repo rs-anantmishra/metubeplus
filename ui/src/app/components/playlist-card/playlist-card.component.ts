@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { PlaylistsDataResponse, PlaylistsInfo } from '../../classes/playlists'
+import { PlaylistsDataResponse, PlaylistsInfo, SelectedPlaylist } from '../../classes/playlists'
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -28,7 +28,10 @@ export class PlaylistCardComponent implements OnInit {
     }
     
     selectedPlaylist(playlist: PlaylistsInfo) {
+        let selected: SelectedPlaylist = new SelectedPlaylist();
+        selected.info = playlist
+        this.sharedDataSvc.setPlaylist(selected)
         //send playlistId Object
-        this.router.navigate(['/playlist-details', {data: JSON.stringify(playlist)}]);
+        this.router.navigate(['/playlist-details']);
     }
 }

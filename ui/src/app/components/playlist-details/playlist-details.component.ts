@@ -1,16 +1,15 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { SharedDataService } from '../../services/shared-data.service';
 import { VideoData } from '../../classes/video-data';
-import { Subscription } from 'rxjs';
 import { PanelModule } from 'primeng/panel';
 import { TagModule } from 'primeng/tag';
 import { ChipModule } from 'primeng/chip';
 import { FieldsetModule } from 'primeng/fieldset';
-import { PlaylistsDataResponse, PlaylistsInfo } from '../../classes/playlists'
-var Plyr = require('plyr');
+import { PlaylistsInfo, SelectedPlaylist } from '../../classes/playlists'
+import Plyr from 'plyr'
 
 import { MinifiedViewCount } from '../../utilities/pipes/views-conversion.pipe'
 import { MinifiedLikeCount } from '../../utilities/pipes/likes-conversion.pipe';
@@ -21,58 +20,97 @@ import { PlaylistsService } from '../../services/playlists.service';
 import { MinifiedDatePipe } from "../../utilities/pipes/formatted-date.pipe";
 import { FilesizeConversionPipe } from "../../utilities/pipes/filesize-conversion.pipe";
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-playlist-details',
     standalone: true,
-    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, ScrollPanelModule, TagModule, ChipModule, MinifiedViewCount, MinifiedLikeCount, CommaSepStringFromArray, FormattedResolutionPipe, MinifiedDatePipe, FieldsetModule, FilesizeConversionPipe, ProgressSpinnerModule, FormsModule],
+    imports: [CommonModule, RouterModule, ButtonModule, PanelModule, ScrollPanelModule, TagModule,
+        ChipModule, MinifiedViewCount, MinifiedLikeCount, CommaSepStringFromArray, FormattedResolutionPipe,
+        MinifiedDatePipe, FieldsetModule, FilesizeConversionPipe, ProgressSpinnerModule],
     providers: [Router, SharedDataService],
     templateUrl: './playlist-details.component.html',
     styleUrl: './playlist-details.component.scss'
 })
 export class PlaylistDetailsComponent implements OnInit {
 
+    playlist!: SelectedPlaylist;
     media!: any;
     data!: any;
     // subscription!: Subscription;
-    public player!: any;
+    player!: Plyr;
     selectedVideo: VideoData = new VideoData()
     playlistInfo!: PlaylistsInfo;
     playlistVideos: VideoData[] = [new VideoData()]
     loaded = false
 
     constructor(private svcSharedData: SharedDataService, private svcPlaylists: PlaylistsService, private route: ActivatedRoute) {
-        this.playlistInfo = JSON.parse(this.route.snapshot.paramMap.get('data') || '{}');
+        //get-playlist
+        this.playlist = this.svcSharedData.getPlaylist()
         this.getPlaylistsVideos(this.playlistInfo.playlist_id)
-
-        // this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9'});
-        // this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
+    
+        this.player = new Plyr('#plyrId', { captions: { active: true } });
     }
 
     async ngOnInit(): Promise<void> {
-        this.player = new Plyr('#plyrID', { captions: { active: true }, loop: { active: true }, ratio: '16:9'});
-
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
+    }
+
+    async playerSetup() {
+        this.player.source = {
+            type: 'video',
+            title: this.selectedVideo.title,
+            sources: [
+                {
+                    src: this.selectedVideo.media_url,
+                    type: 'video/webm',
+                }
+            ],
+            poster: this.selectedVideo.thumbnail
+        };
     }
 
     ngOnDestroy(): void {
     }
 
     changeContent(video_id: number) {
-        this.playlistVideos.filter(x => { if (x.video_id === video_id) { this.selectedVideo = x } })
+        this.playlistVideos.filter(x => {
+            if (x.video_id === video_id) {
+                this.selectedVideo = x;
+                this.updatePlayer(this.selectedVideo)
+            }
+        })
     }
 
     async getPlaylistsVideos(playlistId: number) {
-        let result = await this.svcPlaylists.getPlaylistVideos(playlistId);
-        if (result !== null && result.data.length > 0) {
-            //set stuff here
-            this.transformSelectedVideo(result.data)
 
-        } else if (result === null) {
-            console.error('error: recieved null instead of playlist videos.')
+        //check-cached
+        let playlist: SelectedPlaylist = this.svcSharedData.getPlaylist();
+        if (playlist.video_data.length > 0){
+            //there is data here
+            console.log(playlist)
+        } else {
+            let result = await this.svcPlaylists.getPlaylistVideos(playlistId);
+            if (result !== null && result.data.length > 0) {
+
+                console.log(result)
+
+                //set stuff here - handle this differently.
+                //this.transformSelectedVideo(result.data)
+    
+            } else if (result === null) {
+                console.error('error: recieved null instead of playlist videos.')
+            }
         }
+
+
+        //if (result !== null && result.data.length > 0) {
+        //    //set stuff here
+        //    this.transformSelectedVideo(result.data)
+//
+        //} else if (result === null) {
+        //    console.error('error: recieved null instead of playlist videos.')
+        //}
         this.loaded = true
     }
 
@@ -102,6 +140,21 @@ export class PlaylistDetailsComponent implements OnInit {
         //linkify
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
+    }
+
+    updatePlayer(selectedVideo: VideoData) {
+        this.player.source = {
+            type: 'video',
+            title: selectedVideo.title,
+            sources: [
+                {
+                    src: selectedVideo.media_url,
+                    type: 'video/webm',
+                    // size: 720,
+                }
+            ],
+            poster: selectedVideo.thumbnail
+        };
     }
 
     linkify(text: string) {

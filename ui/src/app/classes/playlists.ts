@@ -1,3 +1,5 @@
+import { VideoData } from "./video-data";
+
 export class PlaylistsDataResponse {
     data: PlaylistsInfo[] = [];
     message: string = '';
@@ -11,5 +13,10 @@ export class PlaylistsInfo {
     item_count: number = -1
     yt_playlist_id: string = ''
     thumbnail: string = ''
+}
 
+export class SelectedPlaylist {
+    info: PlaylistsInfo = new PlaylistsInfo()
+    active_video: number = -1
+    video_data: VideoData[] = []
 }

@@ -70,7 +70,7 @@
                             }
                         ],
                         "scripts": [
-                            "node_modules/plyr/dist/plyr.js"
+                            "node_modules/plyr/dist/"
                         ]
                     },
                     "configurations": {

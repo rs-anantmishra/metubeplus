@@ -5,10 +5,10 @@
             <a routerLink="/home" class="p-button font-bold" size="small">Router</a>
         </div>
         <div class="video-frame">
-            <video id='plyrID' controls crossorigin playsinline [poster]="selectedVideo.thumbnail" class="player-video">
-                <source class="player-source" src='{{selectedVideo.media_url}}' type='video/webm'>
+            <video id='plyrId' controls crossorigin playsinline loop autoplay class="player-video" [poster]="selectedVideo.thumbnail">
+                <source class="player-source" [src]="this.selectedVideo.media_url">
                 <!-- Fallback for browsers that don't support the <video> element -->
-                <a href='{{selectedVideo.media_url}}' download>Download</a>
+                <a [href]='selectedVideo.media_url' download>Download</a>
             </video>
         </div>
 
