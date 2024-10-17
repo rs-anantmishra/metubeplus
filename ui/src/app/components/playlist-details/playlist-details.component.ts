@@ -33,8 +33,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 })
 export class PlaylistDetailsComponent implements OnInit {
 
+    isDarkMode!: boolean;
     playlist!: SelectedPlaylist;
-    media!: any;
     data!: any;
     // subscription!: Subscription;
     player!: Plyr;
@@ -43,75 +43,75 @@ export class PlaylistDetailsComponent implements OnInit {
     playlistVideos: VideoData[] = [new VideoData()]
     loaded = false
 
-    constructor(private svcSharedData: SharedDataService, private svcPlaylists: PlaylistsService, private route: ActivatedRoute) {
-        //get-playlist
-        this.playlist = this.svcSharedData.getPlaylist()
-        this.getPlaylistsVideos(this.playlistInfo.playlist_id)
-    
-        this.player = new Plyr('#plyrId', { captions: { active: true } });
+    constructor(private svcSharedData: SharedDataService, private svcPlaylists: PlaylistsService, private router: Router) {
+
     }
 
     async ngOnInit(): Promise<void> {
+        this.isDarkMode = this.svcSharedData.getIsDarkMode()
+
+        this.playlist = this.svcSharedData.getPlaylist()
+        this.playlist.video_data = await this.getPlaylistsVideos(this.playlist.info.playlist_id);
+        //assign selected video
+        this.playlistVideos = this.playlist.video_data
+
+        if (this.playlist.active_video === -1) {
+            //set 1st video as active 
+            this.playlist.active_video = this.playlist.video_data[0].video_id
+            this.selectedVideo = this.playlist.video_data[0]
+        } else {
+            //find active-video and assign it
+            this.playlist.video_data.forEach((item) => {
+                if (item.video_id === this.playlist.active_video) {
+                    this.selectedVideo = item
+                }
+            });
+        }
+
+        //linkify
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
-    }
-
-    async playerSetup() {
-        this.player.source = {
-            type: 'video',
-            title: this.selectedVideo.title,
-            sources: [
-                {
-                    src: this.selectedVideo.media_url,
-                    type: 'video/webm',
-                }
-            ],
-            poster: this.selectedVideo.thumbnail
-        };
-    }
-
-    ngOnDestroy(): void {
+        try {
+            this.player = new Plyr('#plyrId', { captions: { active: true }, debug: true });
+        } catch (e) {
+            console.log(e)
+        }
+        this.loaded = true
     }
 
     changeContent(video_id: number) {
-        this.playlistVideos.filter(x => {
-            if (x.video_id === video_id) {
-                this.selectedVideo = x;
-                this.updatePlayer(this.selectedVideo)
+        this.player.pause()
+        this.loaded = false
+        this.playlist.active_video = video_id
+        this.svcSharedData.setPlaylist(this.playlist)
+
+        this.playlist.video_data.forEach((item) => {
+            if (item.video_id === this.playlist.active_video) {
+                this.selectedVideo = item
             }
-        })
+        });
+
+        window.location.reload()
     }
 
-    async getPlaylistsVideos(playlistId: number) {
+    async getPlaylistsVideos(playlistId: number): Promise<VideoData[]> {
+
+        let result!: VideoData[];
 
         //check-cached
-        let playlist: SelectedPlaylist = this.svcSharedData.getPlaylist();
-        if (playlist.video_data.length > 0){
-            //there is data here
-            console.log(playlist)
+        let playlist: SelectedPlaylist = await this.svcSharedData.getPlaylist();
+        if (playlist.video_data.length > 0) {
+            result = playlist.video_data
         } else {
-            let result = await this.svcPlaylists.getPlaylistVideos(playlistId);
-            if (result !== null && result.data.length > 0) {
-
-                console.log(result)
-
-                //set stuff here - handle this differently.
-                //this.transformSelectedVideo(result.data)
-    
-            } else if (result === null) {
+            //get from service
+            let response = await this.svcPlaylists.getPlaylistVideos(playlistId);
+            if (response !== null && response.data.length > 0) {
+                result = await this.transformSelectedVideo(response.data)
+            } else if (response === null) {
                 console.error('error: recieved null instead of playlist videos.')
             }
         }
-
-
-        //if (result !== null && result.data.length > 0) {
-        //    //set stuff here
-        //    this.transformSelectedVideo(result.data)
-//
-        //} else if (result === null) {
-        //    console.error('error: recieved null instead of playlist videos.')
-        //}
-        this.loaded = true
+        return result
     }
 
     async download(): Promise<void> {
@@ -127,34 +127,14 @@ export class PlaylistDetailsComponent implements OnInit {
             })
     }
 
-    transformSelectedVideo(result: VideoData[]) {
+    async transformSelectedVideo(response: VideoData[]): Promise<VideoData[]> {
         //transforms to run video
-        result[0].media_url = result[0].media_url.replace(/\\/g, "/");
-        result[0].media_url = result[0].media_url.replace('http://localhost:3000', 'http://localhost:3500')
-        result[0].media_url = result[0].media_url.replace('#', '%23')
-
-        //assign to presenters
-        this.playlistVideos = result
-        this.selectedVideo = result[0]
-
-        //linkify
-        this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
-        this.selectedVideo.description = this.linkify(this.selectedVideo.description)
-    }
-
-    updatePlayer(selectedVideo: VideoData) {
-        this.player.source = {
-            type: 'video',
-            title: selectedVideo.title,
-            sources: [
-                {
-                    src: selectedVideo.media_url,
-                    type: 'video/webm',
-                    // size: 720,
-                }
-            ],
-            poster: selectedVideo.thumbnail
-        };
+        response.forEach(item => {
+            item.media_url = item.media_url.replace(/\\/g, "/");
+            item.media_url = item.media_url.replace('http://localhost:3000', 'http://localhost:3500')
+            item.media_url = item.media_url.replace('#', '%23')
+        })
+        return response
     }
 
     linkify(text: string) {

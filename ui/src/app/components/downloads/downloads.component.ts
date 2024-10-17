@@ -178,7 +178,7 @@ export class DownloadsComponent implements OnInit {
             let isDownloadActive = this.sharedData.getIsDownloadActive()
             if (!isDownloadActive) {
                 await this.getAndSaveActiveDownload()
-                this.populateVideoMetadata()                
+                this.populateVideoMetadata()
                 this.sharedData.setIsDownloadActive(true)
             }
 
@@ -221,17 +221,19 @@ export class DownloadsComponent implements OnInit {
     }
 
     populateVideoMetadata(calledFrom: string = '') {
-        //clear previous
-        this.activeDownload = new VideoData()
         //get ActiveDownloadMetadata
         if (this.sharedData.getActiveDownloadMetadata() !== null) {
             this.activeDownload = this.sharedData.getActiveDownloadMetadata()[0]
         }
+        
+        if (this.activeDownload === undefined) {
+            this.activeDownload = new VideoData()
+        } 
 
         this.activeDLChannel = this.activeDownload.channel
         this.activeDLTitle = this.activeDownload.title
         this.activeDLImage = this.activeDownload.thumbnail
-
+        
         //show download complete status of the last download if called from init
         if (calledFrom !== 'init') { this.serverLogs = ">>>waiting for server logs<<<" }
     }

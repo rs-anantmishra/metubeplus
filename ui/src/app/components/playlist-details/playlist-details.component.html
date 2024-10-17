@@ -5,10 +5,10 @@
             <a routerLink="/home" class="p-button font-bold" size="small">Router</a>
         </div>
         <div class="video-frame">
-            <video id='plyrId' controls crossorigin playsinline loop autoplay class="player-video" [poster]="selectedVideo.thumbnail">
-                <source class="player-source" [src]="this.selectedVideo.media_url">
+            <video id="plyrId" controls crossorigin playsinline loop class="player-video" data-poster="{{selectedVideo.thumbnail}}">
+                <source class="player-source" src="{{this.selectedVideo.media_url}}" type="video/webm" sizes="1080">
                 <!-- Fallback for browsers that don't support the <video> element -->
-                <a [href]='selectedVideo.media_url' download>Download</a>
+                <a [href]="selectedVideo.media_url" download>Download</a>
             </video>
         </div>
 
@@ -57,12 +57,13 @@
                 <div class="content-extras">
                     <p-fieldset [toggleable]="true">
                         <ng-template pTemplate="header">
-                            <span class="fieldset-header">{{this.playlistInfo.playlist_title}}</span>
+                            <span class="fieldset-header">{{this.playlist.info.playlist_title}}</span>
                         </ng-template>
                         <div class="playlist-container">
-                            <p-scrollPanel [style]="{ 'width': '100%', 'max-height': '400px' }">
+                            <p-scrollPanel [style]="{ 'width': '100%', 'max-height': '400px', 'height': '400px' }">
                                 @for (video of playlistVideos; track video.video_id) {
-                                <div class="fieldset-playlist-content" (click)="changeContent(video.video_id)">
+                                <!-- <div class="fieldset-playlist-content" (click)="changeContent(video.video_id)" [ngClass]="((this.selectedVideo.video_id === video.video_id) && this.isDarkMode) ? 'selected-video-dark' : 'selected-video-light'"> -->
+                                <div class="fieldset-playlist-content" (click)="changeContent(video.video_id)" [ngClass]="{'selected-video-light':(this.selectedVideo.video_id === video.video_id && !this.isDarkMode), 'selected-video-dark': (this.selectedVideo.video_id === video.video_id && this.isDarkMode)}">
                                     <div class="image-container">
                                         <img [src]="video.thumbnail" class="info-image-size" />
                                     </div>
