@@ -12,6 +12,7 @@ import { SharedDataService } from '../../services/shared-data.service';
 import { VideosService } from '../../services/videos.service';
 import { ContentSearchResponse, ContentSearch } from '../../classes/search';
 import { Subscription } from 'rxjs';
+import { VideoData, VideoDataResponse } from '../../classes/video-data';
 
 @Component({
     selector: 'app-header',
@@ -197,6 +198,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
         } else {
             this.isHomepage = true
         }
+    }
+
+    async navigateToVideo(selected: any) {
+
+        //click on an empty search field
+        if (selected === undefined) {
+            return
+        }
+        let result = await this.videosSvc.getContentById(selected.value)
+        this.selectedVideo(result.data[0])
+    }
+
+    selectedVideo(playVideo: VideoData) {
+        playVideo.media_url = playVideo.media_url.replace(/\\/g, "/");
+        playVideo.media_url = playVideo.media_url.replace('http://localhost:3000', 'http://localhost:3500')
+
+        playVideo.media_url = playVideo.media_url.replaceAll('#', '%23')
+        playVideo.thumbnail = playVideo.thumbnail.replaceAll('#', '%23')
+        playVideo.webpage_url = playVideo.webpage_url.replaceAll('#', '%23')
+
+        // playVideo.media_url = playVideo.media_url.replace('../files', 'http://192.168.1.10:8484')
+        this.sharedDataSvc.setPlayVideo(playVideo);
+        this.router.navigate(['/videos/play'])
     }
 
 }

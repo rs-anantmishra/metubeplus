@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, Scroll } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { SharedDataService } from '../../services/shared-data.service';
 import { VideoData } from '../../classes/video-data';
@@ -13,13 +13,14 @@ import Plyr from 'plyr'
 
 import { MinifiedViewCount } from '../../utilities/pipes/views-conversion.pipe'
 import { MinifiedLikeCount } from '../../utilities/pipes/likes-conversion.pipe';
-import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { ScrollPanel, ScrollPanelModule } from 'primeng/scrollpanel';
 import { CommaSepStringFromArray } from "../../utilities/pipes/array-comma-sep.pipe";
 import { FormattedResolutionPipe } from "../../utilities/pipes/format-resolution.pipe";
 import { PlaylistsService } from '../../services/playlists.service';
 import { MinifiedDatePipe } from "../../utilities/pipes/formatted-date.pipe";
 import { FilesizeConversionPipe } from "../../utilities/pipes/filesize-conversion.pipe";
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-playlist-details',
@@ -27,12 +28,13 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     imports: [CommonModule, RouterModule, ButtonModule, PanelModule, ScrollPanelModule, TagModule,
         ChipModule, MinifiedViewCount, MinifiedLikeCount, CommaSepStringFromArray, FormattedResolutionPipe,
         MinifiedDatePipe, FieldsetModule, FilesizeConversionPipe, ProgressSpinnerModule],
-    providers: [Router, SharedDataService],
+    providers: [Router],
     templateUrl: './playlist-details.component.html',
     styleUrl: './playlist-details.component.scss'
 })
 export class PlaylistDetailsComponent implements OnInit {
 
+    fieldsetVideoClass = ''
     isDarkMode!: boolean;
     playlist!: SelectedPlaylist;
     data!: any;
@@ -44,7 +46,6 @@ export class PlaylistDetailsComponent implements OnInit {
     loaded = false
 
     constructor(private svcSharedData: SharedDataService, private svcPlaylists: PlaylistsService, private router: Router) {
-
     }
 
     async ngOnInit(): Promise<void> {
@@ -132,9 +133,30 @@ export class PlaylistDetailsComponent implements OnInit {
         response.forEach(item => {
             item.media_url = item.media_url.replace(/\\/g, "/");
             item.media_url = item.media_url.replace('http://localhost:3000', 'http://localhost:3500')
-            item.media_url = item.media_url.replace('#', '%23')
+            item.media_url = item.media_url.replaceAll('#', '%23')
+            item.thumbnail = item.thumbnail.replaceAll('#', '%23')
+            item.webpage_url = item.webpage_url.replaceAll('#', '%23')
         })
         return response
+    }
+
+    getClass(video: VideoData): string {
+        let result = ''
+        this.isDarkMode = this.svcSharedData.getIsDarkMode()
+        if(this.isDarkMode) {
+            result = 'fieldset-playlist-content-dark'
+        } else if (!this.isDarkMode) {
+            result = 'fieldset-playlist-content-light'
+        }
+        //video is selected
+        if (this.selectedVideo.video_id === video.video_id && !this.isDarkMode) {
+            result = 'fieldset-playlist-content-light selected-video-light'
+        } else if (this.selectedVideo.video_id === video.video_id && this.isDarkMode) {
+            result = 'fieldset-playlist-content-dark selected-video-dark'
+        }
+
+
+        return result
     }
 
     linkify(text: string) {

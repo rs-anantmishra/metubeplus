@@ -166,7 +166,6 @@ export class SharedDataService {
         return this.playlist
     }
 
-
     private playVideo: BehaviorSubject<VideoData> = new BehaviorSubject(new VideoData());
     onPlayVideoChange(): Observable<VideoData> {
         //check localstorage

@@ -37,14 +37,25 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
     selectedVideo: VideoData = new VideoData()
 
     constructor(private svcSharedData: SharedDataService, private svcVideos: VideosService) {
-        this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, ratio: '16:9', autoplay: true });
-        this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => this.selectedVideo = selectedVideo);
+        this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => {
+            selectedVideo.thumbnail = selectedVideo.thumbnail.replaceAll('#', '%23')
+            selectedVideo.media_url = selectedVideo.media_url.replaceAll('#', '%23')
+            selectedVideo.webpage_url = selectedVideo.webpage_url.replaceAll('#', '%23')
+            this.selectedVideo = selectedVideo;
+        });
     }
-
+    
     async ngOnInit(): Promise<void> {
-
+        
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
+        // this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, autoplay: true });
+        
+        try {
+            this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, autoplay: true });
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     ngOnDestroy(): void {
@@ -58,7 +69,7 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
                 const a = document.createElement('a')
                 const objectUrl = URL.createObjectURL(blob)
                 a.href = objectUrl
-                a.download = (this.selectedVideo.title + '.' +this.selectedVideo.extension);
+                a.download = (this.selectedVideo.title + '.' + this.selectedVideo.extension);
                 a.click();
                 URL.revokeObjectURL(objectUrl);
             })

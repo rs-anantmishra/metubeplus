@@ -49,7 +49,7 @@ func GetAllPlaylists(c *fiber.Ctx) error {
 // Get All Playlists
 func GetPlaylistsVideo(c *fiber.Ctx) error {
 	//log context
-	id, err := c.ParamsInt("id") // int 123 and no error
+	id, _ := c.ParamsInt("id") // int 123 and no error
 	log.Info("Request Params:", id)
 
 	status := `success`
@@ -62,6 +62,27 @@ func GetPlaylistsVideo(c *fiber.Ctx) error {
 	result, err := svcVideos.GetPlaylistVideos(id)
 	if err != nil {
 		log.Info("error fetching all playlists", err)
+		status = `failure`
+	}
+
+	return c.Status(fiber.StatusOK).Status(fiber.StatusOK).JSON(fiber.Map{"status": status, "message": message, "data": result})
+}
+
+// Get Video by Id
+func GetContentById(c *fiber.Ctx) error {
+	//log context
+	id, _ := c.ParamsInt("id") // int 123 and no error
+	log.Info("Request Params:", id)
+
+	status := `success`
+	message := ``
+
+	svcRepo := videos.NewVideoRepo(sql.DB)
+	svcVideos := videos.NewVideoService(svcRepo)
+
+	result, err := svcVideos.GetContentById(id)
+	if err != nil {
+		log.Info("error fetching video", err)
 		status = `failure`
 	}
 

@@ -30,6 +30,7 @@ func SetupRoutes(app *fiber.App) {
 	//Todo: Homepage
 	homepage := api.Group("/homepage", logger.New())
 	homepage.Get("/videos", handler.GetAllVideos)
+	homepage.Get("/video/:id", handler.GetContentById)
 	homepage.Get("/audios", handler.GetAllAudios)
 
 	//playlist

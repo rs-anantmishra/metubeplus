@@ -7,6 +7,7 @@ import (
 // Service is an interface from which our api module can access our repository of all our models
 type IService interface {
 	GetVideos() ([]presenter.CardsInfoResponse, error)
+	GetContentById(int) ([]presenter.CardsInfoResponse, error)
 	GetPlaylistVideos(int) ([]presenter.CardsInfoResponse, error)
 	GetPlaylists() ([]presenter.PlaylistsInfoResponse, error)
 	GetVideoSearchData() ([]presenter.ContentSearchResponse, error)
@@ -65,5 +66,15 @@ func (s *service) GetVideoSearchData() ([]presenter.ContentSearchResponse, error
 	}
 
 	result := getContentSearchResponse(searchInfo)
+	return result, nil
+}
+
+func (s *service) GetContentById(contentId int) ([]presenter.CardsInfoResponse, error) {
+	content, err := s.repository.GetContentById(contentId)
+	if err != nil {
+		return nil, err
+	}
+	result := getVideosPageInfo(content)
+
 	return result, nil
 }

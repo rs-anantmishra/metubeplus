@@ -60,10 +60,10 @@
                             <span class="fieldset-header">{{this.playlist.info.playlist_title}}</span>
                         </ng-template>
                         <div class="playlist-container">
-                            <p-scrollPanel [style]="{ 'width': '100%', 'max-height': '400px', 'height': '400px' }">
+                            <p-scrollPanel [style]="{ 'width': '100%', 'max-height': '400px', 'height': '400px' }" >
                                 @for (video of playlistVideos; track video.video_id) {
                                 <!-- <div class="fieldset-playlist-content" (click)="changeContent(video.video_id)" [ngClass]="((this.selectedVideo.video_id === video.video_id) && this.isDarkMode) ? 'selected-video-dark' : 'selected-video-light'"> -->
-                                <div class="fieldset-playlist-content" (click)="changeContent(video.video_id)" [ngClass]="{'selected-video-light':(this.selectedVideo.video_id === video.video_id && !this.isDarkMode), 'selected-video-dark': (this.selectedVideo.video_id === video.video_id && this.isDarkMode)}">
+                                <div (click)="changeContent(video.video_id);" [ngClass]="this.getClass(video)">
                                     <div class="image-container">
                                         <img [src]="video.thumbnail" class="info-image-size" />
                                     </div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SharedDataService } from './shared-data.service';
-import { VideoData, VideoDataRequest, QueueDownloads } from '../classes/video-data';
+import { VideoData, VideoDataRequest, QueueDownloads, VideoDataResponse } from '../classes/video-data';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs'
 import { ContentSearch, ContentSearchResponse } from '../classes/search';
 
@@ -30,6 +30,19 @@ export class VideosService {
     //getContentSearchInfo
     async getContentSearchInfo(): Promise<ContentSearchResponse> {
         let url = '/search/info'
+
+        return fetch(apiUrl + url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => { return response.json(); })
+
+    }
+
+    //getPlaylistVideos
+    async getContentById(contentId: number): Promise<VideoDataResponse> {
+        let url = '/homepage/video/' + contentId
 
         return fetch(apiUrl + url, {
             method: 'GET',

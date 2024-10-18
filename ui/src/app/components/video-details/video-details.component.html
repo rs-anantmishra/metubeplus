@@ -18,7 +18,6 @@
                 </span> <br />
                 <div style="display: flex;">
                     <h4 class="channel-text">{{selectedVideo.channel}}</h4>
-                    <span class="upload-text">{{selectedVideo.upload_date | minifiedDate}}</span>
                 </div>
             </div>
 
@@ -47,6 +46,7 @@
     </ng-template>
     <div class="content-section">
         <div class="content-description">
+            <span class="upload-text">{{selectedVideo.upload_date | minifiedDate}}</span>
             <p [innerHTML]="selectedVideo.description"> </p>
         </div>
         <div class="content-extras">

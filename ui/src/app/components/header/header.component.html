@@ -11,7 +11,7 @@
     <div class="search-box" [ngStyle]="{visibility: visible}">
         <span class="p-fluid">
             <p-autoComplete [(ngModel)]="selectedTitle" [group]="true" [suggestions]="filteredGroups"
-                (completeMethod)="filterGroupedContent($event)" placeholder="search & play" variant="filled">
+                (completeMethod)="filterGroupedContent($event)" placeholder="search & play" variant="filled" (click)="navigateToVideo(selectedTitle)">
                 <ng-template let-group pTemplate="group">
                     <div>
                         <!-- <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
