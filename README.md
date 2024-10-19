@@ -5,14 +5,5 @@ It serves as a media library that you can build from yt. It is a front-end for y
 
 ## Interface
 
-
-<table>
-  <tr>
-    <td> <img src="./screenshots/downloading.png"> </td>
-    <td> <img src="./screenshots/videos.png"> </td>
-  </tr>  
-  <tr>
-    <td> <img src="./screenshots/playlists.png"> </td>
-    <td> <img src="./screenshots/playlist-player.png"> </td>
-  </tr>
-</table>
+![Alakh Niranjan](./screenshots/downloading.png)
+![Playlists](./screenshots/playlists.png)
