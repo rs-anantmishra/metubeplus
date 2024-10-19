@@ -4,5 +4,5 @@ It serves as a media library that you can build from yt. It is a front-end for y
 > *Note: The tool is under active development. Please see open tickets for upcoming features.* 
 
 ## Interface
-Here is it
-![Streamsphere](./streamsphere.gif)
+
+![Downloading](./screenshots/downloading.png)
