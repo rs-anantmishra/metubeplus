@@ -5,4 +5,4 @@ It serves as a media library that you can build from yt. It is a front-end for y
 
 ## Interface
 
-![Downloading](./screenshots/downloading.png)
+![alt Alakh-Niranjan](./screenshots/downloading.png)
