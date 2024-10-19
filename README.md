@@ -6,7 +6,13 @@ It serves as a media library that you can build from yt. It is a front-end for y
 ## Interface
 
 
------------------------------------------------------------ | ----------------------------------------------------------- 
-| ![alt Alakh-Niranjan](./screenshots/downloading.png)      | ![alt Videos](./screenshots/videos.png)                   | 
-| ![alt Alakh-Niranjan](./screenshots/playlists.png)        | ![alt Alakh-Niranjan](./screenshots/playlist-player.png)  | 
-
+<table>
+  <tr>
+    <td>![alt Alakh-Niranjan](./screenshots/downloading.png)</td>
+    <td>![alt Videos](./screenshots/videos.png) </td>
+  </tr>  
+  <tr>
+    <td>![alt Alakh-Niranjan](./screenshots/playlists.png)</td>
+    <td>![alt Alakh-Niranjan](./screenshots/playlist-player.png)</td>
+  </tr>
+</table>
