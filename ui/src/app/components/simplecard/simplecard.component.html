@@ -1,29 +1,29 @@
-<div class="simplecard details" (click)="selectedVideo(meta)">
+<div class="simplecard details" (click)="selectedVideo(metadata)">
     <p-card subheader="" styleClass="settings">
         <ng-template pTemplate="header">
             <!-- card-image -->
             <div class="zoom-img">
-                <img [src]="meta.thumbnail" class="center-cropped" />
+                <img [src]="metadata.thumbnail" class="center-cropped" />
             </div>
             <!-- duration -->
             <div class="tag-container">
-                <p-tag icon="pi pi-clock" severity="secondary" value="{{getFormattedDuration(meta.duration)}}" />
+                <p-tag icon="pi pi-clock" severity="secondary" value="{{getFormattedDuration(metadata.duration)}}" />
             </div>
             <!-- title and its tooltip -->
             <span class="header header-text" [pTooltip]="hdrtooltipContent" tooltipPosition="bottom"
-                showDelay="500">{{meta.title}}</span>
+                showDelay="500">{{metadata.title}}</span>
             <ng-template #hdrtooltipContent>
                 <div class="tooltip-text">
-                    <span> {{meta.title}} </span>
+                    <span> {{metadata.title}} </span>
                 </div>
             </ng-template>
         </ng-template>
 
         <div class="content-section">
-            <span *ngIf="meta.title === ''">No queued downloads.</span>
+            <span *ngIf="metadata.title === ''">No queued downloads.</span>
             <div style="display: flex;">
-                <span>{{meta.channel}} </span><br />
-                <span style="margin-left: auto;">{{meta.upload_date | minifiedDate}}</span>
+                <span>{{metadata.channel}} </span><br />
+                <span style="margin-left: auto;">{{metadata.upload_date | minifiedDate}}</span>
             </div>
         </div>
         <ng-template pTemplate="footer">
@@ -34,7 +34,7 @@
                         tooltipPosition="bottom" />
                     <ng-template #tooltipCategory>
                         <div class="tooltip-text">
-                            <span> {{meta.categories | commaSepStringFromArray: false}} </span>
+                            <span> {{metadata.categories | commaSepStringFromArray: false}} </span>
                         </div>
                     </ng-template>
                     <!-- video-format -->
@@ -42,7 +42,7 @@
                         tooltipPosition="bottom" />
                     <ng-template #tooltipFormat>
                         <div class="tooltip-text">
-                            <span> {{meta.video_format | formattedResolution}} </span>
+                            <span> {{metadata.video_format | formattedResolution}} </span>
                         </div>
                     </ng-template>
                     <!-- filesize -->
@@ -50,7 +50,7 @@
                         tooltipPosition="bottom" />
                     <ng-template #tooltipStorage>
                         <div class="tooltip-text">
-                            <span> {{meta.filesize | filesizeToMiB: 2}} </span>
+                            <span> {{metadata.filesize | filesizeToMiB: 2}} </span>
                         </div>
                     </ng-template>
                     <!-- file extension -->
@@ -58,7 +58,7 @@
                         tooltipPosition="bottom" />
                     <ng-template #tooltipExtension>
                         <div class="tooltip-text">
-                            <span> {{meta.extension}} </span>
+                            <span> {{metadata.extension}} </span>
                         </div>
                     </ng-template>
                     <!-- video-tags -->
@@ -66,11 +66,11 @@
                         tooltipPosition="bottom" />
                     <ng-template #tooltipTags>
                         <div class="tooltip-text">
-                            <span> {{meta.tags | commaSepStringFromArray: true}} </span>
+                            <span> {{metadata.tags | commaSepStringFromArray: true}} </span>
                         </div>
                     </ng-template>
                 </div>
-                <span style="margin-left: auto;">{{meta.views_count | minifiedViewCount}}</span>
+                <span style="margin-left: auto;">{{metadata.views_count | minifiedViewCount}}</span>
             </div>
         </ng-template>
     </p-card>

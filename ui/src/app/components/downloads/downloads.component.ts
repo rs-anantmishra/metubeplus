@@ -53,7 +53,7 @@ export class DownloadsComponent implements OnInit {
     wsApiURL: string = wsApiUrl
     wsMessage: string;
     serverLogs: string;
-    queuedItems: VideoData[] = [new VideoData()]
+    queuedItems: VideoData[] = []
     nilMetadata = new VideoData()
 
     loading: boolean = false;
@@ -110,6 +110,9 @@ export class DownloadsComponent implements OnInit {
         if (log.download === this.msg.downloadComplete) {
             this.serverLogs = log.download
             this.sharedData.setIsDownloadActive(false)
+            await setTimeout(() => {
+                this.sharedData.setRefreshAutoCompleteValue(true);
+            }, 500);
         } else if (this.serverLogs === this.msg.downloadComplete) {
             this.serverLogs = this.serverLogs + ' ' + log.download
         } else if (log.download.indexOf(this.msg.downloadInfoIdentifier) !== -1) {
@@ -168,7 +171,6 @@ export class DownloadsComponent implements OnInit {
         }
 
         let metadataResponse = await this.svcDownload.getMetadata(metadataRequest)
-
         if (metadataResponse.status === 'failure') {
             this.showMessage(metadataResponse.message, 'error', 'error')
             //Completion Process
@@ -248,7 +250,7 @@ export class DownloadsComponent implements OnInit {
         if (openSidebar) {
             this.sidebarVisible = true
         }
-        await this.svcDownload.getQueuedItems("queued").then(item => { this.queuedItems = item })
+        await this.svcDownload.getQueuedItems("queued").then(item => { this.queuedItems = item; })
     }
 
     async getAndSaveActiveDownload() {

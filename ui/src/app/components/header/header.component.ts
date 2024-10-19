@@ -140,10 +140,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     //keyboard shortcuts
     @HostListener("document:keydown", ["$event"]) handleKeyboardEvent(event: KeyboardEvent) {
-        if (event.key === 'P' && event.altKey) {
+        if (event.key === 'P') {
             this.navigate('/playlists')
         }
-        if (event.key === 'V' && event.altKey) {
+        if (event.key === 'V') {
             this.navigate('/videos')
         }
         if (event.key === 'C' && event.altKey) {
@@ -152,7 +152,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (event.key === 'L' && event.altKey) {
             this.navigate('/logs')
         }
-        if ((event.key === 'H' || event.key === 'D') && event.altKey) {
+        if ((event.key === 'H' || event.key === 'D')) {
             this.navigate('/home')
         }
     }
@@ -180,14 +180,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
             { separator: true },
             { label: 'Videos', routerLink: ['/videos'], command: () => { this.navigate('/videos'); } },
             { label: 'Playlists', routerLink: ['/playlists'], command: () => { this.navigate('/playlists'); } },
-            { label: 'Tags', routerLink: ['/tags'], command: () => { this.navigate('/tags'); } },
-            { label: 'Categories', routerLink: ['/categories'], command: () => { this.navigate('/categories'); } },
+            // { label: 'Tags', routerLink: ['/tags'], command: () => { this.navigate('/tags'); } },
+            // { label: 'Categories', routerLink: ['/categories'], command: () => { this.navigate('/categories'); } },
             // { separator: true },
             // { label: 'Pattern Matching', routerLink: ['/recursive'] },
             // { label: 'Saved Patterns', routerLink: ['/notes'] },
             // { label: 'Source RegEx', routerLink: ['/source'] },
-            { separator: true },
-            { label: 'Activity Logs', routerLink: ['/activity-logs'], command: () => { this.navigate('/logs'); } },
+            
+            // { separator: true },
+            // { label: 'Activity Logs', routerLink: ['/activity-logs'], command: () => { this.navigate('/logs'); } },
         ];
     }
 
@@ -201,13 +202,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     async navigateToVideo(selected: any) {
-
         //click on an empty search field
-        if (selected === undefined) {
-            return
+        if (selected !== undefined) {
+            let result = await this.videosSvc.getContentById(selected.value)
+            if (result.data != null) {
+                this.selectedVideo(result.data[0])
+            }
         }
-        let result = await this.videosSvc.getContentById(selected.value)
-        this.selectedVideo(result.data[0])
     }
 
     selectedVideo(playVideo: VideoData) {

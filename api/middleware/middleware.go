@@ -26,8 +26,8 @@ func SetupMiddleware(app *fiber.App) {
 
 	//Rate-Limiter
 	app.Use(limiter.New(limiter.Config{
-		Max:               30,
-		Expiration:        30 * time.Second,
+		Max:               500,
+		Expiration:        10 * time.Second,
 		LimiterMiddleware: limiter.SlidingWindow{},
 	}))
 

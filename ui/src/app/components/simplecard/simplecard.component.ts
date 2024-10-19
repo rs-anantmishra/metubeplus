@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { VideoData } from '../../classes/video-data'
@@ -24,21 +24,22 @@ import { FormattedResolutionPipe } from '../../utilities/pipes/format-resolution
 })
 export class SimplecardComponent implements OnInit {
 
+    @Input() metadata!: VideoData;
     constructor(private router: Router, private svcSharedData: SharedDataService) {
     }
-    @Input() meta: VideoData = new VideoData();
 
     ngOnInit(): void {
-        if (this.meta.thumbnail == '') {
-            this.meta.thumbnail = './noimage.png'
+        if (this.metadata.thumbnail == '') {
+            this.metadata.thumbnail = './noimage.png'
         }
 
-        this.meta.media_url = this.meta.media_url.replaceAll('#', '%23')
-        this.meta.thumbnail = this.meta.thumbnail.replaceAll('#', '%23')
-        this.meta.webpage_url = this.meta.webpage_url.replaceAll('#', '%23')
+        this.metadata.media_url = this.metadata.media_url.replaceAll('#', '%23')
+        this.metadata.thumbnail = this.metadata.thumbnail.replaceAll('#', '%23')
+        this.metadata.webpage_url = this.metadata.webpage_url.replaceAll('#', '%23')
     }
 
     selectedVideo(playVideo: VideoData) {
+
         playVideo.media_url = playVideo.media_url.replace(/\\/g, "/");
         playVideo.media_url = playVideo.media_url.replace('http://localhost:3000', 'http://localhost:3500')
 

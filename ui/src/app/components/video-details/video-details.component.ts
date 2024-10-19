@@ -32,25 +32,23 @@ import { FilesizeConversionPipe } from "../../utilities/pipes/filesize-conversio
 })
 export class VideoDetailsComponent implements OnInit, OnDestroy {
 
-    subscription!: Subscription;
+    // subscription!: Subscription;
     player: any;
     selectedVideo: VideoData = new VideoData()
 
     constructor(private svcSharedData: SharedDataService, private svcVideos: VideosService) {
-        this.subscription = this.svcSharedData.onPlayVideoChange().subscribe(selectedVideo => {
-            selectedVideo.thumbnail = selectedVideo.thumbnail.replaceAll('#', '%23')
-            selectedVideo.media_url = selectedVideo.media_url.replaceAll('#', '%23')
-            selectedVideo.webpage_url = selectedVideo.webpage_url.replaceAll('#', '%23')
-            this.selectedVideo = selectedVideo;
-        });
     }
-    
+
     async ngOnInit(): Promise<void> {
-        
+        this.selectedVideo = this.svcSharedData.getActivePlayerMetadata();
+        this.selectedVideo.thumbnail = this.selectedVideo.thumbnail.replaceAll('#', '%23')
+        this.selectedVideo.media_url = this.selectedVideo.media_url.replaceAll('#', '%23')
+        this.selectedVideo.webpage_url = this.selectedVideo.webpage_url.replaceAll('#', '%23')
+
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
         // this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, autoplay: true });
-        
+
         try {
             this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, autoplay: true });
         } catch (e) {
@@ -59,7 +57,7 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.subscription.unsubscribe()
+        // this.subscription.unsubscribe()
     }
 
     async download(): Promise<void> {

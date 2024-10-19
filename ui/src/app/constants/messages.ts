@@ -5,7 +5,7 @@ export class Messages {
     //literals
     wsMessage: string = 'no active downloads'
     serverLogs: string = 'no logs available'
-    downloadComplete: string = 'download complete'
+    downloadComplete: string = 'Download completed successfully.'
     triggerDownloadApiSuccessResponse: string = 'Item added to download queue successfully.'
     downloadInfoIdentifier: string = '[download]'
 }

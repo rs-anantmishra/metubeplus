@@ -37,7 +37,6 @@ export class VideosService {
                 'Content-Type': 'application/json'
             }
         }).then(response => { return response.json(); })
-
     }
 
     //getPlaylistVideos
