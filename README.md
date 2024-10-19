@@ -5,5 +5,5 @@ It serves as a media library that you can build from yt. It is a front-end for y
 
 ## Interface
 
-![Alakh Niranjan](./screenshots/downloading.png)
-![Playlists](./screenshots/playlists.png)
+![alt text](./screenshots/downloading.png Alakh Niranjan)
+![alt text](./screenshots/playlists.png Playlists)
