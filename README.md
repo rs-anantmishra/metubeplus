@@ -9,10 +9,10 @@ It serves as a media library that you can build from yt. It is a front-end for y
 <table>
   <tr>
     <td> <img src="./screenshots/downloading.png"> </td>
-    <td> ![alt Videos](./screenshots/videos.png) </td>
+    <td> <img src="./screenshots/videos.png"> </td>
   </tr>  
   <tr>
-    <td> ![alt Alakh-Niranjan](./screenshots/playlists.png) </td>
-    <td> ![alt Alakh-Niranjan](./screenshots/playlist-player.png) </td>
+    <td> <img src="./screenshots/playlists.png"> </td>
+    <td> <img src="./screenshots/playlist-player.png"> </td>
   </tr>
 </table>
