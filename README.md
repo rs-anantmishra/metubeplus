@@ -1,3 +1,3 @@
 # Streamsphere
 ---
-Anant Mishra
+It is a media library as well as a front end for yt-dlp
