@@ -8,7 +8,7 @@ It serves as a media library that you can build from yt. It is a front-end for y
 
 <table>
   <tr>
-    <td> ![alt Alakh-Niranjan](./screenshots/downloading.png) </td>
+    <td> <img src="./screenshots/downloading.png"> </td>
     <td> ![alt Videos](./screenshots/videos.png) </td>
   </tr>  
   <tr>
