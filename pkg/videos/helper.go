@@ -2,7 +2,6 @@ package videos
 
 import (
 	"encoding/base64"
-	"fmt"
 	"os"
 	"strings"
 
@@ -169,8 +168,6 @@ func getPlaylistsPageInfo(playlists []entities.Playlist) []presenter.PlaylistsIn
 }
 
 func urlTransforms(url string) string {
-	fmt.Println(url, "incoming")
-
 	filesHost := config.Config("FILE_HOSTING", false)
 	defaultFilesPath := config.Config("MEDIA_PATH", true)
 
@@ -180,7 +177,5 @@ func urlTransforms(url string) string {
 	//these chars will not be handled by webserver in file names
 	//chars: # = %23
 	url = strings.ReplaceAll(url, "#", "%23")
-	fmt.Println(url, "transformed")
-
 	return url
 }

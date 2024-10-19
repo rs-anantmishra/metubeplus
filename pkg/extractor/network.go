@@ -52,9 +52,7 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 
 	args, command := cmdBuilderMetadata(d.p.Indicator)
 	logCommand := command + Space + args
-
-	//log executed command - in activity log later
-	fmt.Println(logCommand)
+	_ = logCommand //log executed command - in activity log later
 
 	cmd, stdout := buildProcess(args, GetCommandString())
 
@@ -293,12 +291,6 @@ func executeProcess(stdout io.ReadCloser, isFileDownload bool) []string {
 		}
 	}
 
-	fmt.Println(" ")
-	fmt.Println(" ")
-	fmt.Println(" ")
-	fmt.Println("START:")
-	fmt.Println(b.String())
-	fmt.Println("END:")
 	//sanitize and return
 	var results []string
 	if !isFileDownload {
@@ -467,8 +459,8 @@ func parseResults(pResult []string, metadataType int) []e.MediaInformation {
 		lstMediaInfo = append(lstMediaInfo, mediaInfo)
 	}
 
-	//Print Properties that were bound
-	fmt.Println(lstMediaInfo)
+	// log Properties that were bound \
+	// lstMediaInfo
 
 	return lstMediaInfo
 }
@@ -577,12 +569,11 @@ func patchDataField(mediaInfo e.MediaInformation) e.MediaInformation {
 func getVideoThumbnailFiles(lstSavedInfo []e.SavedInfo, thumbnailFilePaths []string) []e.Files {
 
 	var files []e.Files
-	for pathIndex, path := range thumbnailFilePaths {
+	for _, path := range thumbnailFilePaths {
 
 		//read all files in the directory where the thumbnails are saved
 		c, err := os.ReadDir(path)
 		handleErrors(err, "network - ExtractThumbnail")
-		fmt.Println(pathIndex, path)
 
 		for _, entry := range c {
 			info, _ := entry.Info()

@@ -107,7 +107,7 @@ export class PlaylistDetailsComponent implements OnInit {
             //get from service
             let response = await this.svcPlaylists.getPlaylistVideos(playlistId);
             if (response !== null && response.data.length > 0) {
-                result = await this.transformSelectedVideo(response.data)
+                result = response.data
             } else if (response === null) {
                 console.error('error: recieved null instead of playlist videos.')
             }
@@ -126,18 +126,6 @@ export class PlaylistDetailsComponent implements OnInit {
                 a.click();
                 URL.revokeObjectURL(objectUrl);
             })
-    }
-
-    async transformSelectedVideo(response: VideoData[]): Promise<VideoData[]> {
-        //transforms to run video
-        response.forEach(item => {
-            item.media_url = item.media_url.replace(/\\/g, "/");
-            item.media_url = item.media_url.replace('http://localhost:3000', 'http://localhost:3500')
-            item.media_url = item.media_url.replaceAll('#', '%23')
-            item.thumbnail = item.thumbnail.replaceAll('#', '%23')
-            item.webpage_url = item.webpage_url.replaceAll('#', '%23')
-        })
-        return response
     }
 
     getClass(video: VideoData): string {

@@ -212,16 +212,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     selectedVideo(playVideo: VideoData) {
-        playVideo.media_url = playVideo.media_url.replace(/\\/g, "/");
-        playVideo.media_url = playVideo.media_url.replace('http://localhost:3000', 'http://localhost:3500')
-
-        playVideo.media_url = playVideo.media_url.replaceAll('#', '%23')
-        playVideo.thumbnail = playVideo.thumbnail.replaceAll('#', '%23')
-        playVideo.webpage_url = playVideo.webpage_url.replaceAll('#', '%23')
-
-        // playVideo.media_url = playVideo.media_url.replace('../files', 'http://192.168.1.10:8484')
-        this.sharedDataSvc.setPlayVideo(playVideo);
         this.selectedTitle = ''
+        this.sharedDataSvc.setPlayVideo(playVideo);
         this.router.navigate(['/videos/play'])
     }
 

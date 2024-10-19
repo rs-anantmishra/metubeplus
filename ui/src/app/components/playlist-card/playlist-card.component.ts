@@ -23,7 +23,7 @@ export class PlaylistCardComponent implements OnInit {
     
     ngOnInit(): void {
         if (this.playlist.thumbnail == '') {
-            this.playlist.thumbnail = './noimage.png'
+            this.playlist.thumbnail = './asstes/noimage.png'
         }
     }
     
