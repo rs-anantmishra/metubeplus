@@ -266,17 +266,17 @@ func BuilderOptions() []CSwitch {
 
 func GetCommandString() string {
 	cmdPath := c.Config("YTDLP_PATH", true)
-	return cmdPath + "\\" + CommandName
+	return cmdPath + string(os.PathSeparator) + GetCommandName()
 }
 
 func GetVideoFilepath(fp e.Filepath, fType int) string {
 	var result string
 	if fType == e.Thumbnail {
-		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, "Videos", "Thumbnails"}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, "Videos", "Thumbnails"}, string(os.PathSeparator))
 	} else if fType == e.Subtitles {
-		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, "Videos", "Subtitles"}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, "Videos", "Subtitles"}, string(os.PathSeparator))
 	} else {
-		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, "Videos"}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, "Videos"}, string(os.PathSeparator))
 	}
 	return result
 }
@@ -285,11 +285,11 @@ func GetPlaylistFilepath(fp e.Filepath, fType int) string {
 
 	var result string
 	if fType == e.Thumbnail {
-		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, fp.PlaylistTitle, "Thumbnails"}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, fp.PlaylistTitle, "Thumbnails"}, string(os.PathSeparator))
 	} else if fType == e.Subtitles {
-		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, fp.PlaylistTitle, "Subtitles"}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, fp.PlaylistTitle, "Subtitles"}, string(os.PathSeparator))
 	} else {
-		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, fp.PlaylistTitle}, "\\")
+		result = strings.Join([]string{GetMediaDirectory(false), fp.Domain, fp.Channel, fp.PlaylistTitle}, string(os.PathSeparator))
 	}
 	return result
 }
@@ -309,8 +309,9 @@ func cmdBuilderMetadata(url string) (string, string) {
 	}
 
 	arguments := strings.Join(args, Space)
+
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + "\\" + CommandName
+	cmd := cmdPath + string(os.PathSeparator) + GetCommandName()
 
 	return arguments, cmd
 }
@@ -352,7 +353,7 @@ func cmdBuilderDownload(url string, savedInfo e.SavedInfo) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + "\\" + CommandName
+	cmd := cmdPath + string(os.PathSeparator) + GetCommandName()
 
 	return arguments, cmd
 }
@@ -392,7 +393,7 @@ func cmdBuilderSubtitles(url string, savedInfo e.SavedInfo) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + "\\" + CommandName
+	cmd := cmdPath + string(os.PathSeparator) + GetCommandName()
 
 	return arguments, cmd
 }
@@ -432,7 +433,7 @@ func cmdBuilderThumbnails(url string, savedInfo e.SavedInfo) (string, string) {
 
 	arguments := strings.Join(args, Space)
 	cmdPath := c.Config("YTDLP_PATH", true)
-	cmd := cmdPath + "\\" + CommandName
+	cmd := cmdPath + string(os.PathSeparator) + GetCommandName()
 
 	return arguments, cmd
 }
@@ -457,7 +458,7 @@ func buildDownloadPath(savedInfo e.SavedInfo, pathType int) (string, string) {
 				directories = append(directories, "Subtitles")
 			}
 		}
-		dirResultPath = GetMediaDirectory(false) + "\\" + strings.Join(directories, sep) //separate result for path only
+		dirResultPath = GetMediaDirectory(false) + string(os.PathSeparator) + strings.Join(directories, sep) //separate result for path only
 		directories = append(directories, savedInfo.MediaInfo.Title+space+"[%(id)s].%(ext)s")
 		pathResult = strings.Join(directories, sep)
 	}

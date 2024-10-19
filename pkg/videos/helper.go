@@ -2,13 +2,15 @@ package videos
 
 import (
 	"encoding/base64"
+	"fmt"
 	"os"
 	"strings"
 
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/rs-anantmishra/metubeplus/api/presenter"
+	"github.com/rs-anantmishra/metubeplus/config"
+	_ "github.com/rs-anantmishra/metubeplus/config"
 	"github.com/rs-anantmishra/metubeplus/pkg/entities"
-	"github.com/rs-anantmishra/metubeplus/pkg/extractor"
 )
 
 func getVideosPageInfo(videos []entities.Videos) []presenter.CardsInfoResponse {
@@ -37,8 +39,9 @@ func getVideosPageInfo(videos []entities.Videos) []presenter.CardsInfoResponse {
 		cardsInfo.FileSize, cardsInfo.MediaURL, cardsInfo.Thumbnail, cardsInfo.Extension = getFilesInfo(elem.Files)
 
 		//additional transforms
-		cardsInfo.MediaURL = strings.Replace(cardsInfo.MediaURL, extractor.GetMediaDirectory(false), "http://localhost:3000/", -1)
-		cardsInfo.MediaURL = strings.Replace(cardsInfo.MediaURL, "\\", "/", -1)
+		cardsInfo.MediaURL = urlTransforms(cardsInfo.MediaURL)
+		//cardsInfo.MediaURL = strings.Replace(cardsInfo.MediaURL, extractor.GetMediaDirectory(false), "http://localhost:3000/", -1)
+		//cardsInfo.MediaURL = strings.Replace(cardsInfo.MediaURL, "\\", "/", -1)
 
 		lstCardsInfo = append(lstCardsInfo, cardsInfo)
 	}
@@ -56,13 +59,15 @@ func getFilesInfo(files []entities.Files) (int, string, string, string) {
 	for idx := range files {
 		if files[idx].FileType == "Video" {
 			filesize = files[idx].FileSize
-			contentFilepath = files[idx].FilePath + "\\" + files[idx].FileName
+			contentFilepath = files[idx].FilePath + string(os.PathSeparator) + files[idx].FileName
 			extension = files[idx].Extension
 		} else if files[idx].FileType == "Thumbnail" {
-			thumbnailURL := files[idx].FilePath + "\\" + files[idx].FileName
+			thumbnailURL := files[idx].FilePath + string(os.PathSeparator) + files[idx].FileName
 			thumbnail = thumbnailURL
-			thumbnail = strings.ReplaceAll(thumbnailURL, "..\\files", "http://localhost:3500")
-			thumbnail = strings.ReplaceAll(thumbnail, "\\", "/")
+
+			thumbnail = urlTransforms(thumbnailURL)
+			//thumbnail = strings.ReplaceAll(thumbnailURL, "..\\files", "http://localhost:3500")
+			//thumbnail = strings.ReplaceAll(thumbnail, "\\", "/")
 
 			//use this if you want to send the thumbnail as a base64 - uses way more data
 			// thumbnail = getImagesFromURL(thumbnailURL)
@@ -98,7 +103,13 @@ func getImagesFromURL(filepath string) string {
 	}
 
 	if len(bytes) == 0 {
-		filepath = `..\utils\noimage.png`
+		var elems []string
+		elems = append(elems, "..")
+		elems = append(elems, "utils")
+		elems = append(elems, "noimage.png")
+		filepath = strings.Join(elems, string(os.PathSeparator))
+
+		// filepath = `..\utils\noimage.png`
 		bytes, err = os.ReadFile(filepath)
 		if err != nil {
 			log.Info(err)
@@ -146,12 +157,30 @@ func getPlaylistsPageInfo(playlists []entities.Playlist) []presenter.PlaylistsIn
 		playlistInfo.PlaylistUploader = elem.PlaylistUploader
 		playlistInfo.ItemCount = elem.ItemCount
 		playlistInfo.YoutubePlaylistId = elem.YoutubePlaylistId
-		playlistInfo.Thumbnail = elem.ThumbnailURL
-		playlistInfo.Thumbnail = strings.ReplaceAll(playlistInfo.Thumbnail, "..\\files", "http://localhost:3500")
-		playlistInfo.Thumbnail = strings.ReplaceAll(playlistInfo.Thumbnail, "\\", "/")
+		//playlistInfo.Thumbnail = elem.ThumbnailURL
+		//playlistInfo.Thumbnail = strings.ReplaceAll(playlistInfo.Thumbnail, "..\\files", "http://localhost:3500")
+		//playlistInfo.Thumbnail = strings.ReplaceAll(playlistInfo.Thumbnail, "\\", "/")
+		playlistInfo.Thumbnail = urlTransforms(elem.ThumbnailURL)
 
 		lstPlaylistsInfo = append(lstPlaylistsInfo, playlistInfo)
 	}
 
 	return lstPlaylistsInfo
+}
+
+func urlTransforms(url string) string {
+	fmt.Println(url, "incoming")
+
+	filesHost := config.Config("FILE_HOSTING", false)
+	defaultFilesPath := config.Config("MEDIA_PATH", true)
+
+	//change media directory to public url
+	url = strings.ReplaceAll(url, defaultFilesPath, filesHost)
+
+	//these chars will not be handled by webserver in file names
+	//chars: # = %23
+	url = strings.ReplaceAll(url, "#", "%23")
+	fmt.Println(url, "transformed")
+
+	return url
 }

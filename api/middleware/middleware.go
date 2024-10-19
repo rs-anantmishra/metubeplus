@@ -10,13 +10,12 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/pprof"
 )
 
 func SetupMiddleware(app *fiber.App) {
 
 	//pprof
-	app.Use(pprof.New())
+	//app.Use(pprof.New())
 
 	//logger
 	app.Use(logger.New())

@@ -266,7 +266,7 @@ func (d *download) GetDownloadedMediaFileInfo(smi e.SavedInfo, fPath e.Filepath)
 // Build a Process to execute & attach pipe to it here
 func buildProcess(args string, command string) (*exec.Cmd, io.ReadCloser) {
 
-	cmd := exec.Command(command)
+	cmd := exec.Command(command, args)
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.CmdLine = command + Space + args
 
@@ -293,6 +293,12 @@ func executeProcess(stdout io.ReadCloser, isFileDownload bool) []string {
 		}
 	}
 
+	fmt.Println(" ")
+	fmt.Println(" ")
+	fmt.Println(" ")
+	fmt.Println("START:")
+	fmt.Println(b.String())
+	fmt.Println("END:")
 	//sanitize and return
 	var results []string
 	if !isFileDownload {
@@ -305,7 +311,7 @@ func executeDownloadProcess(stdout io.ReadCloser, activeItem []g.DownloadStatus)
 
 	//Update State
 	activeItem[0].State = g.Downloading
-	arrayOffset := 2 //it was 2 now it is 1
+	arrayOffset := 2
 
 	// var result string
 	var b bytes.Buffer

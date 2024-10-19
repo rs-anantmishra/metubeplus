@@ -12,10 +12,11 @@ import (
 // Config func to get env value
 
 func Config(key string, isFilePath bool) string {
-	relPath := "..\\"
+
+	relPath := ".." + string(os.PathSeparator)
 	err := godotenv.Load(filepath.Join(relPath, ".env"))
 	if err != nil {
-		fmt.Println("Error loading .env file")
+		fmt.Println("Error loading .env file", err)
 	}
 
 	//handle os specific path-separation

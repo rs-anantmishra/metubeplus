@@ -78,7 +78,7 @@ func createMetadataResponse(lstSavedInfo []e.SavedInfo, subtitles []e.Files, sub
 func getImagesFromURL(file e.Files) string {
 	var base64EncodedImage string
 
-	filepath := file.FilePath + "\\" + file.FileName
+	filepath := file.FilePath + string(os.PathSeparator) + file.FileName
 	// Read the entire file into a byte slice
 	bytes, err := os.ReadFile(filepath)
 	if err != nil {
@@ -111,7 +111,12 @@ func getImagesFromURLString(filepath string) string {
 	}
 
 	if len(bytes) == 0 {
-		filepath = `..\utils\noimage.png`
+		var elems []string
+		elems = append(elems, "..")
+		elems = append(elems, "utils")
+		elems = append(elems, "noimage.jpg")
+		filepath = strings.Join(elems, string(os.PathSeparator))
+		//filepath = `..\utils\noimage.png`
 		bytes, err = os.ReadFile(filepath)
 		if err != nil {
 			log.Info(err)

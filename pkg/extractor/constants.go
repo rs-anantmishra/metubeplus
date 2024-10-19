@@ -1,6 +1,7 @@
 package extractor
 
 import (
+	"runtime"
 	"strings"
 
 	c "github.com/rs-anantmishra/metubeplus/config"
@@ -149,4 +150,16 @@ func GetMediaDirectory(keepParentDirectoryFlag bool) string {
 	}
 
 	return mediaDir
+}
+
+func GetCommandName() string {
+	result := ""
+	if runtime.GOOS == "windows" {
+		result = c.Config("YTDLP_NAME_WINDOWS", false)
+	}
+
+	if runtime.GOOS == "linux" {
+		result = c.Config("YTDLP_NAME_LINUX", false)
+	}
+	return result
 }
