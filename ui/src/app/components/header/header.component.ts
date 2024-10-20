@@ -113,8 +113,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     async buildAutoCompleteCache() {
-        let result = await this.videosSvc.getContentSearchInfo()
-        this.groupedTitles = await this.buildAutoCompleteDataset(result)
+        let result = await this.videosSvc.getContentSearchInfo()        
+        if (result.data !== null) {
+            this.groupedTitles = await this.buildAutoCompleteDataset(result)
+        }
     }
 
     async buildAutoCompleteDataset(raw: ContentSearchResponse): Promise<SelectItemGroup[]> {
@@ -186,7 +188,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             // { label: 'Pattern Matching', routerLink: ['/recursive'] },
             // { label: 'Saved Patterns', routerLink: ['/notes'] },
             // { label: 'Source RegEx', routerLink: ['/source'] },
-            
+
             // { separator: true },
             // { label: 'Activity Logs', routerLink: ['/activity-logs'], command: () => { this.navigate('/logs'); } },
         ];

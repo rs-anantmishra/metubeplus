@@ -60,10 +60,10 @@ export class PlaylistsComponent implements OnInit {
 
     async getAllPlaylists() {
         let result = await this.svcPlaylists.getAllPlaylists();
-        if (result !== null && result.data.length > 0) {
+        if (result.data !== null && result.data.length > 0) {
             this.svcSharedData.setlstPlaylists(result.data)
             this.lstPlaylists = this.getPagedResult(this.first, this.rows);
-        } else if (result === null) {
+        } else if (result.data === null) {
             this.totalRecords = 0
         }
     }
