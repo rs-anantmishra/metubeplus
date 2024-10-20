@@ -4,8 +4,9 @@ import { SharedDataService } from './shared-data.service';
 import { PlaylistsInfo, PlaylistsDataResponse } from '../classes/playlists';
 import { VideoData, VideoDataResponse } from '../classes/video-data';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
-const apiUrl: string = 'http://localhost:3000/api'
+const apiUrl: string = environment.baseURL
 
 @Injectable({
     providedIn: 'root'

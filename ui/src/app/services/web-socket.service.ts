@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
+import { environment } from '../../environments/environment';
+
+const apiUrl: string = environment.baseURL
 
 @Injectable({
     providedIn: 'root',
@@ -7,8 +10,9 @@ import { Socket } from 'ngx-socket-io';
 export class WebSocketService {
     private webSocket!: Socket;
     constructor() {
+        let wsUrl = apiUrl.replaceAll('http', 'ws').replaceAll('api', 'ws')
         this.webSocket = new Socket({
-            url: "ws://localhost:3000/ws/test",
+            url:  wsUrl + '/downloadstatus',
             options: {},
         });
     }
@@ -20,7 +24,7 @@ export class WebSocketService {
 
     // this method is used to get response from server
     receiveStatus() {
-        return this.webSocket.fromEvent('/ws/test')
+        return this.webSocket.fromEvent('/ws/downloadstatus')
     }
 
     //this method is used to send request to server

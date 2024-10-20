@@ -4,8 +4,9 @@ import { SharedDataService } from './shared-data.service';
 import { VideoData, VideoDataRequest, QueueDownloads, VideoDataResponse } from '../classes/video-data';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs'
 import { ContentSearch, ContentSearchResponse } from '../classes/search';
+import { environment } from '../../environments/environment';
 
-const apiUrl: string = 'http://localhost:3000/api'
+const apiUrl: string = environment.baseURL
 
 @Injectable({
     providedIn: 'root'
@@ -46,7 +47,8 @@ export class VideosService {
         return fetch(apiUrl + url, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Access-Control': 'Allow-Origin'
             }
         }).then(response => { return response.json(); })
 

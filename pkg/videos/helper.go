@@ -39,9 +39,6 @@ func getVideosPageInfo(videos []entities.Videos) []presenter.CardsInfoResponse {
 
 		//additional transforms
 		cardsInfo.MediaURL = urlTransforms(cardsInfo.MediaURL)
-		//cardsInfo.MediaURL = strings.Replace(cardsInfo.MediaURL, extractor.GetMediaDirectory(false), "http://localhost:3000/", -1)
-		//cardsInfo.MediaURL = strings.Replace(cardsInfo.MediaURL, "\\", "/", -1)
-
 		lstCardsInfo = append(lstCardsInfo, cardsInfo)
 	}
 
@@ -65,11 +62,6 @@ func getFilesInfo(files []entities.Files) (int, string, string, string) {
 			thumbnail = thumbnailURL
 
 			thumbnail = urlTransforms(thumbnailURL)
-			//thumbnail = strings.ReplaceAll(thumbnailURL, "..\\files", "http://localhost:3500")
-			//thumbnail = strings.ReplaceAll(thumbnail, "\\", "/")
-
-			//use this if you want to send the thumbnail as a base64 - uses way more data
-			// thumbnail = getImagesFromURL(thumbnailURL)
 		}
 	}
 
@@ -156,9 +148,6 @@ func getPlaylistsPageInfo(playlists []entities.Playlist) []presenter.PlaylistsIn
 		playlistInfo.PlaylistUploader = elem.PlaylistUploader
 		playlistInfo.ItemCount = elem.ItemCount
 		playlistInfo.YoutubePlaylistId = elem.YoutubePlaylistId
-		//playlistInfo.Thumbnail = elem.ThumbnailURL
-		//playlistInfo.Thumbnail = strings.ReplaceAll(playlistInfo.Thumbnail, "..\\files", "http://localhost:3500")
-		//playlistInfo.Thumbnail = strings.ReplaceAll(playlistInfo.Thumbnail, "\\", "/")
 		playlistInfo.Thumbnail = urlTransforms(elem.ThumbnailURL)
 
 		lstPlaylistsInfo = append(lstPlaylistsInfo, playlistInfo)
@@ -173,6 +162,9 @@ func urlTransforms(url string) string {
 
 	//change media directory to public url
 	url = strings.ReplaceAll(url, defaultFilesPath, filesHost)
+
+	//direction of slashes for url formation
+	url = strings.ReplaceAll(url, "\\", "/")
 
 	//these chars will not be handled by webserver in file names
 	//chars: # = %23

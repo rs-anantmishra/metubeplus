@@ -2,8 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SharedDataService } from './shared-data.service';
 import { StorageStatus, StorageStatusResponse } from '../classes/storage';
+import { environment } from '../../environments/environment';
 
-const apiUrl: string = 'http://localhost:3000/api'
+const apiUrl: string = environment.baseURL
 
 @Injectable({
     providedIn: 'root'
