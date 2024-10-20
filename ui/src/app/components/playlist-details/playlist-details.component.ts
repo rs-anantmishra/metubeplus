@@ -72,11 +72,7 @@ export class PlaylistDetailsComponent implements OnInit {
         //linkify
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
-        try {
-            this.player = new Plyr('#plyrId', { captions: { active: true }, debug: true });
-        } catch (e) {
-            console.log(e)
-        }
+        this.player = new Plyr('#plyrId', { captions: { active: true }, debug: true });
         this.loaded = true
     }
 
@@ -131,7 +127,7 @@ export class PlaylistDetailsComponent implements OnInit {
     getClass(video: VideoData): string {
         let result = ''
         this.isDarkMode = this.svcSharedData.getIsDarkMode()
-        if(this.isDarkMode) {
+        if (this.isDarkMode) {
             result = 'fieldset-playlist-content-dark'
         } else if (!this.isDarkMode) {
             result = 'fieldset-playlist-content-light'

@@ -41,19 +41,10 @@ export class VideoDetailsComponent implements OnInit, OnDestroy {
 
     async ngOnInit(): Promise<void> {
         this.selectedVideo = this.svcSharedData.getActivePlayerMetadata();
-        this.selectedVideo.thumbnail = this.selectedVideo.thumbnail.replaceAll('#', '%23')
-        this.selectedVideo.media_url = this.selectedVideo.media_url.replaceAll('#', '%23')
-        this.selectedVideo.webpage_url = this.selectedVideo.webpage_url.replaceAll('#', '%23')
-
         this.selectedVideo.description = this.cp1252_to_utf8(this.selectedVideo.description)
         this.selectedVideo.description = this.linkify(this.selectedVideo.description)
-        // this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, autoplay: true });
 
-        try {
-            this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, autoplay: true });
-        } catch (e) {
-            console.log(e)
-        }
+        this.player = new Plyr('#plyrId', { captions: { active: true }, loop: { active: true }, autoplay: true });
     }
 
     ngOnDestroy(): void {

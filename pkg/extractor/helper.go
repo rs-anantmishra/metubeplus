@@ -100,6 +100,7 @@ func getImagesFromURL(file e.Files) string {
 	return base64EncodedImage
 }
 
+// can be used if want to send base64 image in place of url
 func getImagesFromURLString(filepath string) string {
 	var base64EncodedImage string
 	splitter := "."

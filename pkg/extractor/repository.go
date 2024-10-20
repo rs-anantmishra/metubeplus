@@ -160,6 +160,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 				//So this would be like a User Defined Type in MSSQL which can
 				//be sent at once to SQLite
 				lstTagId = append(lstTagId, tagId)
+				_ = lstTagId
 			}
 
 			videoFileTagId := tagsOrCategoriesCheck(*r, tagId, "VideoFileTag", p.InsertVideoFileTagsCheck, ytVideoId)
@@ -191,6 +192,7 @@ func (r *repository) SaveMetadata(metadata []e.MediaInformation, fp e.Filepath) 
 				//So this would be like a User Defined Type in MSSQL which can
 				//be sent at once to SQLite
 				lstCategoryId = append(lstCategoryId, categoryId)
+				_ = lstCategoryId
 			}
 
 			videoFileCategoryId := tagsOrCategoriesCheck(*r, categoryId, "VideoFileCategory", p.InsertVideoFileCategoriesCheck, ytVideoId)

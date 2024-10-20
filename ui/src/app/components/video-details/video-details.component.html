@@ -2,11 +2,13 @@
     <a routerLink="/home" class="p-button font-bold" size="small">Router</a>
 </div>
 <div class="video-frame">
-    <video id='plyrId' controls crossorigin playsinline [poster]="selectedVideo.thumbnail" class="player-video">
-        <source class="player-source" src='{{selectedVideo.media_url}}' type='video/webm'>
-        <!-- Fallback for browsers that don't support the <video> element -->
-        <a href='{{selectedVideo.media_url}}' download>Download</a>
-    </video>
+    <div class="player-video">
+        <video id='plyrId' controls crossorigin playsinline [poster]="selectedVideo.thumbnail" >
+            <source class="player-source" src='{{selectedVideo.media_url}}' type='video/webm'>
+            <!-- Fallback for browsers that don't support the <video> element -->
+            <a href='{{selectedVideo.media_url}}' download>Download</a>
+        </video>
+    </div>
 </div>
 
 <p-panel class="video-content">
@@ -14,7 +16,8 @@
         <div class="header-section">
             <div class="header-title">
                 <span class="title-text">{{selectedVideo.title}}
-                    <a class="pi pi-external-link open-external" href="{{selectedVideo.webpage_url}}" target="_blank"></a>
+                    <a class="pi pi-external-link open-external" href="{{selectedVideo.webpage_url}}"
+                        target="_blank"></a>
                 </span> <br />
                 <div style="display: flex;">
                     <h4 class="channel-text">{{selectedVideo.channel}}</h4>
