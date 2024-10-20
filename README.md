@@ -7,4 +7,6 @@ It serves as a media library that you can build from yt. It is a front-end for y
 
 ![alt text](./screenshots/downloading.png "Alakh Niranjan")
 
+## :hammer_and_wrench: Prerequisites
+
 ## :rocket: Getting Started
