@@ -76,7 +76,7 @@ export class PlaylistsComponent implements OnInit {
 
     onPageChange(event: any) {
         //remember the page-size change
-        this.svcSharedData.setPageSizeCount(event.rows)
+        this.svcSharedData.setPageSizeCountPlaylist(event.rows)
         //set array to match page
         this.lstPlaylists = this.getPagedResult(event.first, event.rows)
         this.first = event.first

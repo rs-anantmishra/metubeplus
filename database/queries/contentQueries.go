@@ -80,7 +80,9 @@ INNER JOIN tblVideos V ON V.Id = PVF.VideoId
 INNER JOIN tblFiles F ON F.VideoId = PVF.VideoId
 WHERE P.Id > 0 
 	AND PVF.PlaylistVideoIndex = 1 
-	AND F.FileType = 'Thumbnail';`
+	AND F.FileType = 'Thumbnail'
+ORDER BY V.UploadDate DESC
+LIMIT 1;`
 
 const GetVideoMetadata_Playlists string = `Select DISTINCT V.Id, V.Title, V.Description, V.DurationSeconds, V.OriginalURL, V.WebpageURL, V.IsFileDownloaded, V.IsDeleted, C.Name, V.LiveStatus, D.Domain, V.LikeCount, V.YoutubeViewCount as 'ViewsCount', V.WatchCount, V.UploadDate, V.Availability, F.Format, V.YoutubeVideoId, V.CreatedDate
 FROM tblVideos V
