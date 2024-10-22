@@ -32,26 +32,29 @@ func (s *service) ExtractIngestMetadata(params e.IncomingRequest) ([]p.CardsInfo
 	var response []p.CardsInfoResponse
 
 	metadata, fp := s.download.ExtractMetadata()
-	domainCheck := checkContentDomain(metadata) //temporary check placed
-	if !domainCheck {
-		return response, errors.New("failed: domain constraint")
+	if len(metadata) > 0 {
+		domainCheck := checkContentDomain(metadata) //temporary check placed
+		if !domainCheck {
+			return response, errors.New("failed: domain constraint")
+		}
+
+		lstSavedInfo := s.repository.SaveMetadata(metadata, fp)
+		//error check here before continuing exec for thumbs and subs
+
+		var thumbnails []e.Files
+		var subtitles []e.Files
+
+		thumbnails = s.download.ExtractThumbnail(fp, lstSavedInfo)
+		s.repository.SaveThumbnail(thumbnails)
+
+		if params.SubtitlesReq {
+			subtitles = s.download.ExtractSubtitles(fp, lstSavedInfo)
+			s.repository.SaveSubtitles(subtitles)
+		}
+
+		response = createMetadataResponse(lstSavedInfo, subtitles, params.SubtitlesReq, thumbnails)
+		return response, nil
 	}
-
-	lstSavedInfo := s.repository.SaveMetadata(metadata, fp)
-	//error check here before continuing exec for thumbs and subs
-
-	var thumbnails []e.Files
-	var subtitles []e.Files
-
-	thumbnails = s.download.ExtractThumbnail(fp, lstSavedInfo)
-	s.repository.SaveThumbnail(thumbnails)
-
-	if params.SubtitlesReq {
-		subtitles = s.download.ExtractSubtitles(fp, lstSavedInfo)
-		s.repository.SaveSubtitles(subtitles)
-	}
-	response = createMetadataResponse(lstSavedInfo, subtitles, params.SubtitlesReq, thumbnails)
-
 	return response, nil
 }
 

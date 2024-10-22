@@ -63,18 +63,21 @@ func (d *download) ExtractMetadata() ([]e.MediaInformation, e.Filepath) {
 	var mediaInfo []e.MediaInformation
 
 	pResult = executeProcess(stdout, false)
-	mediaInfo = parseResults(pResult, VideoMetadata)
+	if len(pResult) > 0 {
+		mediaInfo = parseResults(pResult, VideoMetadata)
 
-	// helper method fix
-	mediaInfo = removeForbiddenChars(mediaInfo)
-	mediaInfo = cleanDirectoryStructureFields(mediaInfo)
+		// helper method fix
+		mediaInfo = removeForbiddenChars(mediaInfo)
+		mediaInfo = cleanDirectoryStructureFields(mediaInfo)
 
-	////////////////////////////////////
-	//handle shortened URL /////////////
-	////////////////////////////////////
+		////////////////////////////////////
+		//handle shortened URL /////////////
+		////////////////////////////////////
 
-	fp := e.Filepath{Domain: mediaInfo[0].Domain, Channel: mediaInfo[0].Channel, PlaylistTitle: mediaInfo[0].PlaylistTitle}
-	return mediaInfo, fp
+		fp := e.Filepath{Domain: mediaInfo[0].Domain, Channel: mediaInfo[0].Channel, PlaylistTitle: mediaInfo[0].PlaylistTitle}
+		return mediaInfo, fp
+	}
+	return nil, e.Filepath{}
 }
 
 func (d *download) ExtractMediaContent(smi e.SavedInfo) int {

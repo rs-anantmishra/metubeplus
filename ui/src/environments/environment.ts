@@ -1,9 +1,7 @@
-import { webSocket } from "rxjs/webSocket";
-
 export const environment = {
     DefaultLanguage: "en",
     production: false,
     development: true,
     environmentName: "DEV",
-    baseURL: "http://localhost:3000/api"
+    baseURL: "http://192.168.1.16:3000/api"
 };
